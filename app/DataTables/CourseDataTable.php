@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\Course;
+use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\EloquentDataTable;
 
@@ -18,7 +19,10 @@ class CourseDataTable extends DataTable
     {
         $dataTable = new EloquentDataTable($query);
 
-        return $dataTable->addColumn('action', 'courses.datatables_actions');
+
+        return $dataTable->addColumn('action', 'courses.datatables_actions')->editColumn('start_date', function ($contact){
+            return date('d/m/Y', strtotime($contact->created_at) );
+        });
     }
 
     /**
@@ -29,7 +33,7 @@ class CourseDataTable extends DataTable
      */
     public function query(Course $model)
     {
-        return $model->newQuery();
+        return $model->newQuery()->leftJoin('levels','levels.id','=','courses.level_id');
     }
 
     /**
@@ -65,10 +69,11 @@ class CourseDataTable extends DataTable
     protected function getColumns()
     {
         return [
-            'course',
+            Column::make('course')->title('Lớp học'),
+            Column::make('level')->title('Khối lớp'),
             'fee',
             'teacher',
-            'start_date',
+            Column::make('start_date')->title('Ngày mở'),
             'end_date',
             'status',
             'user_id'
