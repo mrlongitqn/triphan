@@ -5,6 +5,7 @@ namespace App\DataTables;
 use App\Models\Subject;
 use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\EloquentDataTable;
+use Yajra\DataTables\Html\Column;
 
 class SubjectDataTable extends DataTable
 {
@@ -42,17 +43,17 @@ class SubjectDataTable extends DataTable
         return $this->builder()
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->addAction(['width' => '120px', 'printable' => false])
+            ->addAction(['width' => '120px', 'printable' => false, 'title' => 'Hành động'])
             ->parameters([
-                'dom'       => 'Bfrtip',
+                'dom' => 'Bfrtip',
                 'stateSave' => true,
-                'order'     => [[0, 'desc']],
-                'buttons'   => [
-                   // ['extend' => 'create', 'className' => 'btn btn-default btn-sm no-corner',],
-                 //   ['extend' => 'export', 'className' => 'btn btn-default btn-sm no-corner',],
-                  //  ['extend' => 'print', 'className' => 'btn btn-default btn-sm no-corner',],
-                 //   ['extend' => 'reset', 'className' => 'btn btn-default btn-sm no-corner',],
-                   // ['extend' => 'reload', 'className' => 'btn btn-default btn-sm no-corner',],
+                'order' => [[0, 'desc']],
+                'buttons' => [
+                    // ['extend' => 'create', 'className' => 'btn btn-default btn-sm no-corner',],
+                    //   ['extend' => 'export', 'className' => 'btn btn-default btn-sm no-corner',],
+                    //  ['extend' => 'print', 'className' => 'btn btn-default btn-sm no-corner',],
+                    //   ['extend' => 'reset', 'className' => 'btn btn-default btn-sm no-corner',],
+                    // ['extend' => 'reload', 'className' => 'btn btn-default btn-sm no-corner',],
                 ],
             ]);
     }
@@ -65,7 +66,8 @@ class SubjectDataTable extends DataTable
     protected function getColumns()
     {
         return [
-            'subject'
+            Column::make('subject')->title('Môn học'),
+            Column::make('desc')->title('Mô tả'),
         ];
     }
 

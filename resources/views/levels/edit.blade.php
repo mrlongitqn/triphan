@@ -5,7 +5,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-12">
-                    <h1>Edit Level</h1>
+                    <h1>Cập nhập khối</h1>
                 </div>
             </div>
         </div>
@@ -26,8 +26,8 @@
             </div>
 
             <div class="card-footer">
-                {!! Form::submit('Save', ['class' => 'btn btn-primary']) !!}
-                <a href="{{ route('levels.index') }}" class="btn btn-default">Cancel</a>
+                {!! Form::submit('Lưu lại', ['class' => 'btn btn-primary']) !!}
+                <a href="{{ route('levels.index') }}" class="btn btn-default">Hủy bỏ</a>
             </div>
 
             {!! Form::close() !!}

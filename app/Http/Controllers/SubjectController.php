@@ -56,7 +56,7 @@ class SubjectController extends AppBaseController
 
         $subject = $this->subjectRepository->create($input);
 
-        Flash::success('Subject saved successfully.');
+        Flash::success('Đã lưu thành công.');
 
         return redirect(route('subjects.index'));
     }
@@ -73,7 +73,7 @@ class SubjectController extends AppBaseController
         $subject = $this->subjectRepository->find($id);
 
         if (empty($subject)) {
-            Flash::error('Subject not found');
+            Flash::error('Không tìm thấy môn học');
 
             return redirect(route('subjects.index'));
         }
@@ -93,7 +93,7 @@ class SubjectController extends AppBaseController
         $subject = $this->subjectRepository->find($id);
 
         if (empty($subject)) {
-            Flash::error('Subject not found');
+            Flash::error('Không tìm thấy môn học');
 
             return redirect(route('subjects.index'));
         }
@@ -114,14 +114,14 @@ class SubjectController extends AppBaseController
         $subject = $this->subjectRepository->find($id);
 
         if (empty($subject)) {
-            Flash::error('Subject not found');
+            Flash::error('Không tìm thấy môn học');
 
             return redirect(route('subjects.index'));
         }
 
         $subject = $this->subjectRepository->update($request->all(), $id);
 
-        Flash::success('Subject updated successfully.');
+        Flash::success('Đã cập nhật thành công.');
 
         return redirect(route('subjects.index'));
     }
@@ -138,14 +138,14 @@ class SubjectController extends AppBaseController
         $subject = $this->subjectRepository->find($id);
 
         if (empty($subject)) {
-            Flash::error('Subject not found');
+            Flash::error('Không tìm thấy môn học');
 
             return redirect(route('subjects.index'));
         }
 
         $this->subjectRepository->delete($id);
 
-        Flash::success('Subject deleted successfully.');
+        Flash::success('Đã xoa thành công.');
 
         return redirect(route('subjects.index'));
     }

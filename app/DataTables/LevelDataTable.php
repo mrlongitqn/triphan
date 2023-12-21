@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\Level;
+use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\EloquentDataTable;
 
@@ -42,12 +43,12 @@ class LevelDataTable extends DataTable
         return $this->builder()
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->addAction(['width' => '120px', 'printable' => false])
+            ->addAction(['width' => '120px', 'printable' => false, 'title'=>'Hành động'])
             ->parameters([
-                'dom'       => 'Bfrtip',
+                'dom' => 'Bfrtip',
                 'stateSave' => true,
-                'order'     => [[0, 'desc']],
-                'buttons'   => [
+                'order' => [[0, 'desc']],
+                'buttons' => [
 //                    ['extend' => 'create', 'className' => 'btn btn-default btn-sm no-corner',],
 //                    ['extend' => 'export', 'className' => 'btn btn-default btn-sm no-corner',],
 //                    ['extend' => 'print', 'className' => 'btn btn-default btn-sm no-corner',],
@@ -65,8 +66,8 @@ class LevelDataTable extends DataTable
     protected function getColumns()
     {
         return [
-            'level',
-            'desc'
+            Column::make('level')->title('Khối lớp'),
+            Column::make('desc')->title('Mô tả'),
         ];
     }
 

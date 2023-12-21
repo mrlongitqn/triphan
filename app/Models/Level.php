@@ -20,7 +20,7 @@ class Level extends Model
 
 
     public $table = 'levels';
-    
+
 
     protected $dates = ['deleted_at'];
 
@@ -48,8 +48,9 @@ class Level extends Model
      * @var array
      */
     public static $rules = [
-        
+        'level' => 'required',
+        'desc' => ''
     ];
 
-    
+
 }

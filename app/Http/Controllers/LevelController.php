@@ -56,7 +56,7 @@ class LevelController extends AppBaseController
 
         $level = $this->levelRepository->create($input);
 
-        Flash::success('Level saved successfully.');
+        Flash::success('Thêm khối lớp thành công.');
 
         return redirect(route('levels.index'));
     }
@@ -73,7 +73,7 @@ class LevelController extends AppBaseController
         $level = $this->levelRepository->find($id);
 
         if (empty($level)) {
-            Flash::error('Level not found');
+            Flash::error('Không tìm thấy khối lớp');
 
             return redirect(route('levels.index'));
         }
@@ -93,7 +93,7 @@ class LevelController extends AppBaseController
         $level = $this->levelRepository->find($id);
 
         if (empty($level)) {
-            Flash::error('Level not found');
+            Flash::error('Không tìm thấy khối lớp');
 
             return redirect(route('levels.index'));
         }
@@ -114,14 +114,14 @@ class LevelController extends AppBaseController
         $level = $this->levelRepository->find($id);
 
         if (empty($level)) {
-            Flash::error('Level not found');
+            Flash::error('Không tìm thấy khối lớp');
 
             return redirect(route('levels.index'));
         }
 
         $level = $this->levelRepository->update($request->all(), $id);
 
-        Flash::success('Level updated successfully.');
+        Flash::success('Cập nhật khối lớp thành công');
 
         return redirect(route('levels.index'));
     }
@@ -138,14 +138,14 @@ class LevelController extends AppBaseController
         $level = $this->levelRepository->find($id);
 
         if (empty($level)) {
-            Flash::error('Level not found');
+            Flash::error('Không tìm thấy khối lớp');
 
             return redirect(route('levels.index'));
         }
 
         $this->levelRepository->delete($id);
 
-        Flash::success('Level deleted successfully.');
+        Flash::success('Xóa khối lớp thành công.');
 
         return redirect(route('levels.index'));
     }

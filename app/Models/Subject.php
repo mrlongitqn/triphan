@@ -20,7 +20,7 @@ class Subject extends Model
 
 
     public $table = 'subjects';
-    
+
 
     protected $dates = ['deleted_at'];
 
@@ -48,8 +48,8 @@ class Subject extends Model
      * @var array
      */
     public static $rules = [
-        
+        'subject'=>'required'
     ];
 
-    
+
 }
