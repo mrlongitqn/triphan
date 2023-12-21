@@ -7,3 +7,11 @@
 
 
 
+<li class="nav-item">
+    <a href="{{ route('levels.index') }}"
+       class="nav-link {{ Request::is('levels*') ? 'active' : '' }}">
+        <p>Levels</p>
+    </a>
+</li>
+
+

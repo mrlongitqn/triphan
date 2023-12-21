@@ -42,3 +42,6 @@ Route::resource('subjects', App\Http\Controllers\SubjectController::class);
 
 
 
+
+
+Route::resource('levels', App\Http\Controllers\LevelController::class);
