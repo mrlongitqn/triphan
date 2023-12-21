@@ -50,3 +50,6 @@ Route::resource('levels', App\Http\Controllers\LevelController::class);
 Route::resource('courses', App\Http\Controllers\CourseController::class);
 
 
+
+
+Route::resource('students', App\Http\Controllers\StudentController::class);
