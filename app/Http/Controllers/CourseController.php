@@ -7,6 +7,8 @@ use App\Http\Requests;
 use App\Http\Requests\CreateCourseRequest;
 use App\Http\Requests\UpdateCourseRequest;
 use App\Repositories\CourseRepository;
+use App\Repositories\LevelRepository;
+use App\Repositories\SubjectRepository;
 use Flash;
 use App\Http\Controllers\AppBaseController;
 use Response;
@@ -15,10 +17,14 @@ class CourseController extends AppBaseController
 {
     /** @var CourseRepository $courseRepository*/
     private $courseRepository;
+    private $subjectRepository;
+    private $levelRepository;
 
-    public function __construct(CourseRepository $courseRepo)
+    public function __construct(CourseRepository $courseRepo, SubjectRepository  $subjectRepo, LevelRepository $levelRepo)
     {
         $this->courseRepository = $courseRepo;
+        $this->subjectRepository = $subjectRepo;
+        $this->levelRepository = $levelRepo;
     }
 
     /**
@@ -40,7 +46,9 @@ class CourseController extends AppBaseController
      */
     public function create()
     {
-        return view('courses.create');
+        $subjects = $this->subjectRepository->all()->pluck('subject', 'id');
+        $levels = $this->levelRepository->all()->pluck('level', 'id');
+        return view('courses.create', compact('subjects', 'levels'));
     }
 
     /**
@@ -53,10 +61,13 @@ class CourseController extends AppBaseController
     public function store(CreateCourseRequest $request)
     {
         $input = $request->all();
-
+        $input['status'] = 1;
+        $input['open'] =  substr($input['open'], -4);
+        $input['close'] =  substr($input['close'], -4);
+        $input['user_id'] =  $request->user()->id;
         $course = $this->courseRepository->create($input);
 
-        Flash::success('Course saved successfully.');
+        Flash::success('Đã thêm khóa học thành công.');
 
         return redirect(route('courses.index'));
     }
@@ -73,7 +84,7 @@ class CourseController extends AppBaseController
         $course = $this->courseRepository->find($id);
 
         if (empty($course)) {
-            Flash::error('Course not found');
+            Flash::error('Khóa học không tồn tại');
 
             return redirect(route('courses.index'));
         }
@@ -91,14 +102,15 @@ class CourseController extends AppBaseController
     public function edit($id)
     {
         $course = $this->courseRepository->find($id);
-
+        $subjects = $this->subjectRepository->all()->pluck('subject', 'id');
+        $levels = $this->levelRepository->all()->pluck('level', 'id');
         if (empty($course)) {
-            Flash::error('Course not found');
+            Flash::error('Khóa học không tồn tại');
 
             return redirect(route('courses.index'));
         }
 
-        return view('courses.edit')->with('course', $course);
+        return view('courses.edit', compact('course', 'subjects', 'levels' ));
     }
 
     /**
@@ -114,14 +126,14 @@ class CourseController extends AppBaseController
         $course = $this->courseRepository->find($id);
 
         if (empty($course)) {
-            Flash::error('Course not found');
+            Flash::error('Khóa học không tồn tại');
 
             return redirect(route('courses.index'));
         }
 
         $course = $this->courseRepository->update($request->all(), $id);
 
-        Flash::success('Course updated successfully.');
+        Flash::success('Cập nhật khóa học thành công.');
 
         return redirect(route('courses.index'));
     }
@@ -138,14 +150,35 @@ class CourseController extends AppBaseController
         $course = $this->courseRepository->find($id);
 
         if (empty($course)) {
-            Flash::error('Course not found');
+            Flash::error('Khóa học không tồn tại');
 
             return redirect(route('courses.index'));
         }
 
         $this->courseRepository->delete($id);
 
-        Flash::success('Course deleted successfully.');
+        Flash::success('Xóa khóa học thành công.');
+
+        return redirect(route('courses.index'));
+    }
+    /**
+     * Show the form for editing the specified Course.
+     *
+     * @param int $id
+     *
+     * @return Response
+     */
+    public function changeStatus($id)
+    {
+        $course = $this->courseRepository->find($id);
+
+        if (empty($course)) {
+            Flash::error('Khóa học không tồn tại');
+
+            return redirect(route('courses.index'));
+        }
+        $course->status = 0;
+        $this->courseRepository->delete($id);
 
         return redirect(route('courses.index'));
     }

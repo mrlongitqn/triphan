@@ -27,7 +27,7 @@ class Course extends Model
 
 
     public $table = 'courses';
-    
+
 
     protected $dates = ['deleted_at'];
 
@@ -42,7 +42,10 @@ class Course extends Model
         'start_date',
         'end_date',
         'status',
-        'user_id'
+        'user_id',
+        'schedules',
+        'open',
+        'close'
     ];
 
     /**
@@ -60,7 +63,10 @@ class Course extends Model
         'start_date' => 'date',
         'end_date' => 'date',
         'status' => 'integer',
-        'user_id' => 'integer'
+        'user_id' => 'integer',
+        'schedules'=>'string',
+        'open'=>'string',
+        'close'=>'string'
     ];
 
     /**
@@ -69,8 +75,17 @@ class Course extends Model
      * @var array
      */
     public static $rules = [
-        
+        'course' => 'required',
+        'fee' => 'required',
+        'level_id' => 'required',
+        'subject_id' => 'required',
+        'teacher' => 'string',
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'schedules'=>'',
+        'open'=>'',
+        'close'=>''
     ];
 
-    
+
 }

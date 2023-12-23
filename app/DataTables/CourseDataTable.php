@@ -18,10 +18,8 @@ class CourseDataTable extends DataTable
     public function dataTable($query)
     {
         $dataTable = new EloquentDataTable($query);
-
-
-        return $dataTable->addColumn('action', 'courses.datatables_actions')->editColumn('start_date', function ($contact){
-            return date('d/m/Y', strtotime($contact->created_at) );
+        return $dataTable->addColumn('action', 'courses.datatables_actions')->editColumn('start_date', function ($course){
+            return date('d/m/Y', strtotime($course->start_date) );
         });
     }
 
@@ -33,7 +31,7 @@ class CourseDataTable extends DataTable
      */
     public function query(Course $model)
     {
-        return $model->newQuery()->leftJoin('levels','levels.id','=','courses.level_id');
+        return $model->newQuery()->leftJoin('levels','levels.id','=','courses.level_id')->leftJoin('subjects', 'subjects.id', '=', 'courses.subject_id');
     }
 
     /**
@@ -46,7 +44,7 @@ class CourseDataTable extends DataTable
         return $this->builder()
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->addAction(['width' => '120px', 'printable' => false])
+            ->addAction(['width' => '120px', 'printable' => false, 'title'=>'Hành động'])
             ->parameters([
                 'dom'       => 'Bfrtip',
                 'stateSave' => true,
@@ -70,13 +68,13 @@ class CourseDataTable extends DataTable
     {
         return [
             Column::make('course')->title('Lớp học'),
-            Column::make('level')->title('Khối lớp'),
-            'fee',
-            'teacher',
+            Column::make('subject','subjects.subject')->title('Môn học'),
+            Column::make('level','levels.level')->title('Khối lớp'),
+            Column::make('fee')->title('Học phí')->renderJs('number', ',','.'),
             Column::make('start_date')->title('Ngày mở'),
-            'end_date',
-            'status',
-            'user_id'
+            Column::make('open')->title('Giờ bắt đầu'),
+            Column::make('close')->title('Giờ kết thúc'),
+            Column::make('schedules')->title('Lịch học'),
         ];
     }
 

@@ -5,12 +5,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Courses</h1>
+                    <h1>Quản lý lớp học</h1>
                 </div>
                 <div class="col-sm-6">
                     <a class="btn btn-primary float-right"
                        href="{{ route('courses.create') }}">
-                        Add New
+                        Thêm mới
                     </a>
                 </div>
             </div>
@@ -24,12 +24,12 @@
         <div class="clearfix"></div>
 
         <div class="card">
-            <div class="card-body p-0">
+            <div class="card-body pl-2 pr-2 pt-0 pb-0">
                 @include('courses.table')
 
                 <div class="card-footer clearfix">
                     <div class="float-right">
-                        
+
                     </div>
                 </div>
             </div>

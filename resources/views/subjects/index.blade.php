@@ -24,7 +24,7 @@
         <div class="clearfix"></div>
 
         <div class="card">
-            <div class="card-body p-0">
+            <div class="card-body pl-2 pr-2 pt-0 pb-0">
                 @include('subjects.table')
 
                 <div class="card-footer clearfix">

@@ -18,13 +18,8 @@ class CourseRepository extends BaseRepository
      */
     protected $fieldSearchable = [
         'course',
-        'fee',
-        'teacher',
-        'start_date',
-        'end_date',
-        'status',
-        'created_at',
-        'user_id'
+        'subjects.subject',
+        'levels.level',
     ];
 
     /**
