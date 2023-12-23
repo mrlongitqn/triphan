@@ -53,10 +53,12 @@ class StudentController extends AppBaseController
     public function store(CreateStudentRequest $request)
     {
         $input = $request->all();
-
+        $input['user_id'] =  $request->user()->id;
+        $input['status'] = 0;
         $student = $this->studentRepository->create($input);
 
-        Flash::success('Student saved successfully.');
+
+        Flash::success('Thêm học viên thành công.');
 
         return redirect(route('students.index'));
     }
@@ -73,7 +75,7 @@ class StudentController extends AppBaseController
         $student = $this->studentRepository->find($id);
 
         if (empty($student)) {
-            Flash::error('Student not found');
+            Flash::error('Học viên không tồn tại');
 
             return redirect(route('students.index'));
         }
@@ -93,7 +95,7 @@ class StudentController extends AppBaseController
         $student = $this->studentRepository->find($id);
 
         if (empty($student)) {
-            Flash::error('Student not found');
+            Flash::error('Học viên không tồn tại');
 
             return redirect(route('students.index'));
         }
@@ -114,14 +116,14 @@ class StudentController extends AppBaseController
         $student = $this->studentRepository->find($id);
 
         if (empty($student)) {
-            Flash::error('Student not found');
+            Flash::error('Học viên không tồn tại');
 
             return redirect(route('students.index'));
         }
 
         $student = $this->studentRepository->update($request->all(), $id);
 
-        Flash::success('Student updated successfully.');
+        Flash::success('Cập nhật học viên thành công.');
 
         return redirect(route('students.index'));
     }
@@ -138,14 +140,14 @@ class StudentController extends AppBaseController
         $student = $this->studentRepository->find($id);
 
         if (empty($student)) {
-            Flash::error('Student not found');
+            Flash::error('Học viên không tồn tại');
 
             return redirect(route('students.index'));
         }
 
         $this->studentRepository->delete($id);
 
-        Flash::success('Student deleted successfully.');
+        Flash::success('Xóa học viên thành công.');
 
         return redirect(route('students.index'));
     }

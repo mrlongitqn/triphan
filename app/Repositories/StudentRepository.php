@@ -18,18 +18,13 @@ class StudentRepository extends BaseRepository
      */
     protected $fieldSearchable = [
         'fullname',
-        'dob',
         'phone_number',
         'email',
-        'level_id',
         'school',
         'parent_name',
         'parent_phone1',
         'parent_phone2',
         'parent_mail',
-        'note',
-        'user_id',
-        'status'
     ];
 
     /**

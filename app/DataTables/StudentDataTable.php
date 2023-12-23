@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\Student;
+use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\EloquentDataTable;
 
@@ -18,7 +19,9 @@ class StudentDataTable extends DataTable
     {
         $dataTable = new EloquentDataTable($query);
 
-        return $dataTable->addColumn('action', 'students.datatables_actions');
+        return $dataTable->addColumn('action', 'students.datatables_actions')->editColumn('dob', function ($student){
+            return date('d/m/Y', strtotime($student->dob) );
+        });
     }
 
     /**
@@ -65,19 +68,18 @@ class StudentDataTable extends DataTable
     protected function getColumns()
     {
         return [
-            'fullname',
-            'dob',
-            'phone_number',
-            'email',
-            'level_id',
-            'school',
-            'parent_name',
-            'parent_phone1',
-            'parent_phone2',
-            'parent_mail',
-            'note',
-            'user_id',
-            'status'
+           Column::make('fullname')->title('Tên học viên'),
+           Column::make('dob','dob')->title('Ngày sinh'),
+           Column::make('level_id','level_id')->title('Lớp'),
+            Column::make('phone_number','phone_number')->title('Điện thoại'),
+
+//            'phone_number',
+//            'email',
+//            'level_id',
+//            'school',
+            Column::make('parent_name','parent_name')->title('Phụ huynh'),
+            Column::make('parent_phone1','parent_phone1')->title('Điện thoại 1'),
+            Column::make('parent_phone2','parent_phone2')->title('Điện thoại 1'),
         ];
     }
 

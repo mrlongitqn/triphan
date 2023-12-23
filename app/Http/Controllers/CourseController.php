@@ -61,7 +61,7 @@ class CourseController extends AppBaseController
     public function store(CreateCourseRequest $request)
     {
         $input = $request->all();
-        $input['status'] = 1;
+        $input['status'] = 0;
         $input['open'] =  substr($input['open'], -4);
         $input['close'] =  substr($input['close'], -4);
         $input['user_id'] =  $request->user()->id;

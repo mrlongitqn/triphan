@@ -5,7 +5,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-12">
-                    <h1>Edit Student</h1>
+                    <h1>Cập nhật thông tin học viên</h1>
                 </div>
             </div>
         </div>
@@ -18,7 +18,6 @@
         <div class="card">
 
             {!! Form::model($student, ['route' => ['students.update', $student->id], 'method' => 'patch']) !!}
-
             <div class="card-body">
                 <div class="row">
                     @include('students.fields')
@@ -26,8 +25,8 @@
             </div>
 
             <div class="card-footer">
-                {!! Form::submit('Save', ['class' => 'btn btn-primary']) !!}
-                <a href="{{ route('students.index') }}" class="btn btn-default">Cancel</a>
+                {!! Form::submit('Lưu lại', ['class' => 'btn btn-primary']) !!}
+                <a href="{{ route('students.index') }}" class="btn btn-default">Hủy bỏ</a>
             </div>
 
             {!! Form::close() !!}
