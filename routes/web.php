@@ -54,3 +54,15 @@ Route::resource('courses', App\Http\Controllers\CourseController::class);
 
 
 Route::resource('students', App\Http\Controllers\StudentController::class);
+
+
+Route::resource('courseStudents', App\Http\Controllers\CourseStudentController::class);
+
+
+Route::resource('fees', App\Http\Controllers\FeeController::class);
+
+
+Route::resource('marks', App\Http\Controllers\MarkController::class);
+
+
+Route::resource('sessionMarks', App\Http\Controllers\SessionMarkController::class);

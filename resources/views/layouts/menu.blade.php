@@ -32,3 +32,35 @@
 </li>
 
 
+<li class="nav-item">
+    <a href="{{ route('courseStudents.index') }}"
+       class="nav-link {{ Request::is('courseStudents*') ? 'active' : '' }}">
+        <p>Course Students</p>
+    </a>
+</li>
+
+
+<li class="nav-item">
+    <a href="{{ route('fees.index') }}"
+       class="nav-link {{ Request::is('fees*') ? 'active' : '' }}">
+        <p>Fees</p>
+    </a>
+</li>
+
+
+<li class="nav-item">
+    <a href="{{ route('marks.index') }}"
+       class="nav-link {{ Request::is('marks*') ? 'active' : '' }}">
+        <p>Marks</p>
+    </a>
+</li>
+
+
+<li class="nav-item">
+    <a href="{{ route('sessionMarks.index') }}"
+       class="nav-link {{ Request::is('sessionMarks*') ? 'active' : '' }}">
+        <p>Session Marks</p>
+    </a>
+</li>
+
+
