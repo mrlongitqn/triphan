@@ -35,7 +35,7 @@
 <li class="nav-item">
     <a href="{{ route('courseStudents.index') }}"
        class="nav-link {{ Request::is('courseStudents*') ? 'active' : '' }}">
-        <p>Course Students</p>
+        <p>Quản lý học</p>
     </a>
 </li>
 
@@ -43,7 +43,7 @@
 <li class="nav-item">
     <a href="{{ route('fees.index') }}"
        class="nav-link {{ Request::is('fees*') ? 'active' : '' }}">
-        <p>Fees</p>
+        <p>Quản lý học phí</p>
     </a>
 </li>
 
@@ -51,7 +51,7 @@
 <li class="nav-item">
     <a href="{{ route('marks.index') }}"
        class="nav-link {{ Request::is('marks*') ? 'active' : '' }}">
-        <p>Marks</p>
+        <p>Quản lý điểm</p>
     </a>
 </li>
 
@@ -59,7 +59,7 @@
 <li class="nav-item">
     <a href="{{ route('sessionMarks.index') }}"
        class="nav-link {{ Request::is('sessionMarks*') ? 'active' : '' }}">
-        <p>Session Marks</p>
+        <p>Đợt nhập điểm</p>
     </a>
 </li>
 

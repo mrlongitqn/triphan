@@ -54,9 +54,13 @@ Route::resource('courses', App\Http\Controllers\CourseController::class);
 
 
 Route::resource('students', App\Http\Controllers\StudentController::class);
+Route::get('student/search', [App\Http\Controllers\StudentController::class, 'search'])->name('student.search');
 
+Route::prefix('courseStudents')->group(function () {
+    Route::get('/{id?}', [App\Http\Controllers\CourseStudentController::class,'index'])->name('courseStudents.index');
+    Route::post('/store', [App\Http\Controllers\CourseStudentController::class,'store'])->name('courseStudents.store');
+});
 
-Route::resource('courseStudents', App\Http\Controllers\CourseStudentController::class);
 
 
 Route::resource('fees', App\Http\Controllers\FeeController::class);

@@ -6,19 +6,43 @@ use App\DataTables\CourseStudentDataTable;
 use App\Http\Requests;
 use App\Http\Requests\CreateCourseStudentRequest;
 use App\Http\Requests\UpdateCourseStudentRequest;
+use App\Repositories\CourseRepository;
 use App\Repositories\CourseStudentRepository;
+use App\Repositories\LevelRepository;
+use App\Repositories\StudentRepository;
+use App\Repositories\SubjectRepository;
 use Flash;
 use App\Http\Controllers\AppBaseController;
 use Response;
 
 class CourseStudentController extends AppBaseController
 {
-    /** @var CourseStudentRepository $courseStudentRepository*/
+    /** @var CourseStudentRepository $courseStudentRepository */
     private $courseStudentRepository;
+    /**
+     * @var LevelRepository
+     */
+    private $levelRepository;
+    /**
+     * @var CourseRepository
+     */
+    private $courseRepository;
+    /**
+     * @var SubjectRepository
+     */
+    private $subjectRepository;
+    /**
+     * @var StudentRepository
+     */
+    private $studentRepository;
 
-    public function __construct(CourseStudentRepository $courseStudentRepo)
+    public function __construct(CourseStudentRepository $courseStudentRepo, LevelRepository $levelRepository, CourseRepository $courseRepository, SubjectRepository $subjectRepository, StudentRepository  $studentRepository)
     {
         $this->courseStudentRepository = $courseStudentRepo;
+        $this->levelRepository = $levelRepository;
+        $this->courseRepository = $courseRepository;
+        $this->subjectRepository = $subjectRepository;
+        $this->studentRepository = $studentRepository;
     }
 
     /**
@@ -28,9 +52,18 @@ class CourseStudentController extends AppBaseController
      *
      * @return Response
      */
-    public function index(CourseStudentDataTable $courseStudentDataTable)
+    public function index($id = null)
     {
-        return $courseStudentDataTable->render('course_students.index');
+
+        $levels = $this->levelRepository->all();
+        $subjects = $this->subjectRepository->all();
+        $courses = $this->courseRepository->all();
+        if (count($courses) === 0) {
+            Flash::success('Vui lòng tạo các lớp học trước.');
+        }
+        $selected_course = $id == null ? $id = $courses[0] : $courses->find($id);
+        $courseStudent= $this->courseStudentRepository->getByCourse($selected_course->id)->get();
+        return view('course_students.index', compact('levels', 'courses', 'subjects', 'selected_course','courseStudent'));
     }
 
     /**
@@ -53,12 +86,25 @@ class CourseStudentController extends AppBaseController
     public function store(CreateCourseStudentRequest $request)
     {
         $input = $request->all();
+        $input['status']= 0;
+        $input['note'] = 'note';
+
+        $input['user_id']= $request->user()->id;
+        $exist = $this->courseStudentRepository->all([
+            'course_id'=>$request->course_id,
+            'student_id'=>$request->student_id
+        ])->count();
+        if($exist>0){
+            Flash::success('Học viên đã tồn tại trong lớp');
+
+            return redirect(route('courseStudents.index', $request->course_id));
+        }
 
         $courseStudent = $this->courseStudentRepository->create($input);
 
-        Flash::success('Course Student saved successfully.');
+        Flash::success('Đã thêm học viên vào lớp thành công');
 
-        return redirect(route('courseStudents.index'));
+        return redirect(route('courseStudents.index', $request->course_id));
     }
 
     /**

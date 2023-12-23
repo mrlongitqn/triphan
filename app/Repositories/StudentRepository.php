@@ -17,6 +17,7 @@ class StudentRepository extends BaseRepository
      * @var array
      */
     protected $fieldSearchable = [
+        'code',
         'fullname',
         'phone_number',
         'email',
@@ -43,5 +44,19 @@ class StudentRepository extends BaseRepository
     public function model()
     {
         return Student::class;
+    }
+
+    public function getByIds($ids){
+        return $this->model->newQuery()->whereIn('id', $ids)->get();
+    }
+
+    public function search($keyword, $limit=15){
+
+        return $this->model->newQuery()->orWhere( 'fullname','like', $keyword)
+            ->orWhere('code', 'like', $keyword)
+            ->orWhere('parent_name', 'like', $keyword)
+            ->orWhere('phone_number', 'like', $keyword)
+            ->orWhere('parent_phone1', 'like', $keyword)
+            ->orWhere('parent_phone2', 'like', $keyword)->limit($limit);
     }
 }

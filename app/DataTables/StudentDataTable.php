@@ -68,6 +68,7 @@ class StudentDataTable extends DataTable
     protected function getColumns()
     {
         return [
+           Column::make('code')->title('Mã học viên'),
            Column::make('fullname')->title('Tên học viên'),
            Column::make('dob','dob')->title('Ngày sinh'),
            Column::make('level_id','level_id')->title('Lớp'),

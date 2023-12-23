@@ -21,7 +21,7 @@ class CourseStudent extends Model
 
 
     public $table = 'course_students';
-    
+
 
     protected $dates = ['deleted_at'];
 
@@ -30,7 +30,9 @@ class CourseStudent extends Model
     public $fillable = [
         'course_id',
         'student_id',
-        'status'
+        'status',
+        'user_id',
+        'note'
     ];
 
     /**
@@ -42,7 +44,8 @@ class CourseStudent extends Model
         'id' => 'integer',
         'course_id' => 'integer',
         'student_id' => 'integer',
-        'status' => 'integer'
+        'status' => 'integer',
+        'note'=>'string'
     ];
 
     /**
@@ -51,8 +54,8 @@ class CourseStudent extends Model
      * @var array
      */
     public static $rules = [
-        
+
     ];
 
-    
+
 }

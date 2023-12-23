@@ -31,7 +31,7 @@ class Student extends Model
 
 
     public $table = 'students';
-    
+
 
     protected $dates = ['deleted_at'];
 
@@ -50,7 +50,9 @@ class Student extends Model
         'parent_mail',
         'note',
         'user_id',
-        'status'
+        'status',
+        'code',
+        'gender'
     ];
 
     /**
@@ -81,8 +83,8 @@ class Student extends Model
      * @var array
      */
     public static $rules = [
-        
+
     ];
 
-    
+
 }

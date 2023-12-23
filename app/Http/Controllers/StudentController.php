@@ -9,11 +9,12 @@ use App\Http\Requests\UpdateStudentRequest;
 use App\Repositories\StudentRepository;
 use Flash;
 use App\Http\Controllers\AppBaseController;
+use Illuminate\Http\Request;
 use Response;
 
 class StudentController extends AppBaseController
 {
-    /** @var StudentRepository $studentRepository*/
+    /** @var StudentRepository $studentRepository */
     private $studentRepository;
 
     public function __construct(StudentRepository $studentRepo)
@@ -53,14 +54,26 @@ class StudentController extends AppBaseController
     public function store(CreateStudentRequest $request)
     {
         $input = $request->all();
-        $input['user_id'] =  $request->user()->id;
+        $input['user_id'] = $request->user()->id;
         $input['status'] = 0;
         $student = $this->studentRepository->create($input);
-
+        $student->code = $this->generateStudentID($student->id);
+        $student->update();
 
         Flash::success('Thêm học viên thành công.');
 
         return redirect(route('students.index'));
+    }
+
+    function generateStudentID($id)
+    {
+        // Chuyển đổi $id thành một chuỗi
+        $idString = strval($id);
+
+        // Sử dụng str_pad để thêm số 0 phía trước nếu chiều dài chuỗi ít hơn 6
+        $paddedID = str_pad($idString, 6, '0', STR_PAD_LEFT);
+
+        return $paddedID;
     }
 
     /**
@@ -150,5 +163,21 @@ class StudentController extends AppBaseController
         Flash::success('Xóa học viên thành công.');
 
         return redirect(route('students.index'));
+    }
+
+    public function search(Request $request)
+    {
+        $keyword = $request->term;
+        $data = $this->studentRepository->search('%'.$keyword.'%')->selectRaw("id, CONCAT (code, '-',fullname) as text")->get();
+
+
+        return response()->json(
+            [
+                "results" => $data,
+                "pagination" => [
+                    'more'=>false
+                ]
+            ]
+        );
     }
 }

@@ -39,4 +39,11 @@ class CourseStudentRepository extends BaseRepository
     {
         return CourseStudent::class;
     }
+
+    public function getByCourse($course_id){
+        return $this->model->newQuery()->leftJoin('users','users.id','=','user_id')
+            ->leftJoin('students','student_id', '=', 'students.id')
+            ->where('course_id', '=',$course_id);
+    }
+
 }
