@@ -39,4 +39,6 @@ class CourseRepository extends BaseRepository
     {
         return Course::class;
     }
+
+
 }

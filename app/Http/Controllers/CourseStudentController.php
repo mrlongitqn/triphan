@@ -195,4 +195,12 @@ class CourseStudentController extends AppBaseController
 
         return redirect(route('courseStudents.index'));
     }
+
+    public function listCourses($student=0){
+        $course = $this->courseStudentRepository->getCoursesByStudent($student);
+        return response()->json([
+            'success'=>true,
+            'data'=>$course
+        ]);
+    }
 }

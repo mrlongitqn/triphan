@@ -6,19 +6,37 @@ use App\DataTables\FeeDataTable;
 use App\Http\Requests;
 use App\Http\Requests\CreateFeeRequest;
 use App\Http\Requests\UpdateFeeRequest;
+use App\Repositories\CourseRepository;
+use App\Repositories\CourseStudentRepository;
 use App\Repositories\FeeRepository;
+use App\Repositories\StudentRepository;
 use Flash;
 use App\Http\Controllers\AppBaseController;
 use Response;
 
 class FeeController extends AppBaseController
 {
-    /** @var FeeRepository $feeRepository*/
+    /** @var FeeRepository $feeRepository */
     private $feeRepository;
+    /**
+     * @var StudentRepository
+     */
+    private $studentRepository;
+    /**
+     * @var CourseRepository
+     */
+    private $courseRepository;
+    /**
+     * @var CourseStudentRepository
+     */
+    private $courseStudentRepository;
 
-    public function __construct(FeeRepository $feeRepo)
+    public function __construct(FeeRepository $feeRepo, StudentRepository $studentRepository, CourseRepository $courseRepository, CourseStudentRepository $courseStudentRepository)
     {
         $this->feeRepository = $feeRepo;
+        $this->studentRepository = $studentRepository;
+        $this->courseRepository = $courseRepository;
+        $this->courseStudentRepository = $courseStudentRepository;
     }
 
     /**
@@ -148,5 +166,17 @@ class FeeController extends AppBaseController
         Flash::success('Fee deleted successfully.');
 
         return redirect(route('fees.index'));
+    }
+
+    public function collect($student_id = null, $course_id = null)
+    {
+        $selected_course = 0;
+        if ($student_id == null || $student_id == 0)
+            return view('fees.collect', compact('selected_course'));
+        $student = $this->studentRepository->find($student_id);
+        if ($student == null)
+            return view('fees.collect', compact('selected_course'));
+        $courses = $this->courseStudentRepository->getCoursesByStudent($student_id);
+        return view('fees.collect', compact('student_id', 'selected_course', 'course_id', 'student', 'courses'));
     }
 }

@@ -56,16 +56,17 @@ Route::resource('courses', App\Http\Controllers\CourseController::class);
 Route::resource('students', App\Http\Controllers\StudentController::class);
 Route::get('student/search', [App\Http\Controllers\StudentController::class, 'search'])->name('student.search');
 
-Route::prefix('courseStudents')->group(function () {
+Route::prefix('course-students')->group(function () {
     Route::get('/{id?}', [App\Http\Controllers\CourseStudentController::class,'index'])->name('courseStudents.index');
+    Route::get('/list-courses/{id?}', [App\Http\Controllers\CourseStudentController::class,'listCourses'])->name('courseStudents.listCourse');
     Route::post('/store', [App\Http\Controllers\CourseStudentController::class,'store'])->name('courseStudents.store');
 });
 
 
 
-Route::resource('fees', App\Http\Controllers\FeeController::class);
+//Route::resource('fees', App\Http\Controllers\FeeController::class);
 
-
+Route::get('collect/{student_id?}/{course_id?}', [\App\Http\Controllers\FeeController::class, 'collect'])->name('fees.collect');
 Route::resource('marks', App\Http\Controllers\MarkController::class);
 
 
