@@ -44,4 +44,13 @@ class FeeRepository extends BaseRepository
     {
         return Fee::class;
     }
+
+    public function allFeesByCourseStudent($id){
+        return $this->all(['
+        course_student_id'=>$id])->get()->orderBy('id','desc');
+    }
+
+    public function lastMonthPayByCourseStudent($id){
+        return $this->model->newQuery()->where('course_student_id', '=',$id)->orderBy('id')->first();
+    }
 }

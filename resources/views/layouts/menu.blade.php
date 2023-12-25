@@ -41,7 +41,7 @@
 
 
 <li class="nav-item">
-    <a href="{{ route('fees.index') }}"
+    <a href="{{ route('fees.collect') }}"
        class="nav-link {{ Request::is('fees*') ? 'active' : '' }}">
         <p>Quản lý học phí</p>
     </a>

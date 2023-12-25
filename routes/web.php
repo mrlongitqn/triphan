@@ -54,15 +54,15 @@ Route::prefix("")->middleware('auth')->group(function () {
         Route::get('/update-status/{id?}', [App\Http\Controllers\CourseStudentController::class, 'updateStatus'])->name('courseStudents.updateStatus');
         Route::post('/store', [App\Http\Controllers\CourseStudentController::class, 'store'])->name('courseStudents.store');
         Route::delete('/destroy', [App\Http\Controllers\CourseStudentController::class, 'destroy'])->name('courseStudents.destroy');
+        Route::get('/list-student/{student?}', [App\Http\Controllers\CourseStudentController::class, 'listCourses'])->name('courseStudents.listCourse');
     });
 
-
-    Route::resource('fees', App\Http\Controllers\FeeController::class);
-
+    Route::prefix('fees')->group(function () {
+        Route::get('collect/{student_id?}/{course_id?}', [\App\Http\Controllers\FeeController::class, 'collect'])->name('fees.collect');
+        Route::get('get-list-fee/{id?}', [\App\Http\Controllers\FeeController::class, 'getListFee'])->name('fees.getListFee');
+    });
 
     Route::resource('marks', App\Http\Controllers\MarkController::class);
 
-
     Route::resource('sessionMarks', App\Http\Controllers\SessionMarkController::class);
 });
-

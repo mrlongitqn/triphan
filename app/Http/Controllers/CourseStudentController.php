@@ -36,7 +36,7 @@ class CourseStudentController extends AppBaseController
      */
     private $studentRepository;
 
-    public function __construct(CourseStudentRepository $courseStudentRepo, LevelRepository $levelRepository, CourseRepository $courseRepository, SubjectRepository $subjectRepository, StudentRepository  $studentRepository)
+    public function __construct(CourseStudentRepository $courseStudentRepo, LevelRepository $levelRepository, CourseRepository $courseRepository, SubjectRepository $subjectRepository, StudentRepository $studentRepository)
     {
         $this->courseStudentRepository = $courseStudentRepo;
         $this->levelRepository = $levelRepository;
@@ -62,8 +62,8 @@ class CourseStudentController extends AppBaseController
             Flash::success('Vui lòng tạo các lớp học trước.');
         }
         $selected_course = $id == null ? $id = $courses[0] : $courses->find($id);
-        $courseStudent= $this->courseStudentRepository->getByCourse($selected_course->id)->get();
-        return view('course_students.index', compact('levels', 'courses', 'subjects', 'selected_course','courseStudent'));
+        $courseStudent = $this->courseStudentRepository->getByCourse($selected_course->id)->get();
+        return view('course_students.index', compact('levels', 'courses', 'subjects', 'selected_course', 'courseStudent'));
     }
 
     /**
@@ -86,15 +86,15 @@ class CourseStudentController extends AppBaseController
     public function store(CreateCourseStudentRequest $request)
     {
         $input = $request->all();
-        $input['status']= 0;
+        $input['status'] = 0;
         $input['note'] = 'note';
 
-        $input['user_id']= $request->user()->id;
+        $input['user_id'] = $request->user()->id;
         $exist = $this->courseStudentRepository->all([
-            'course_id'=>$request->course_id,
-            'student_id'=>$request->student_id
+            'course_id' => $request->course_id,
+            'student_id' => $request->student_id
         ])->count();
-        if($exist>0){
+        if ($exist > 0) {
             Flash::success('Học viên đã tồn tại trong lớp');
 
             return redirect(route('courseStudents.index', $request->course_id));
@@ -196,22 +196,31 @@ class CourseStudentController extends AppBaseController
         return redirect(route('courseStudents.index'));
     }
 
-    public function updateStatus($id){
+    public function updateStatus($id)
+    {
         $courseStudent = $this->courseStudentRepository->find($id);
 
         if (empty($courseStudent)) {
             return response()->json([
-                'success'=>false,
-                'message'=>'Không tìm thấy học viên'
+                'success' => false,
+                'message' => 'Không tìm thấy học viên'
             ]);
         }
         $courseStudent->update([
-            'status'=>!$courseStudent->status
+            'status' => !$courseStudent->status
         ]);
         return response()->json([
-            'success'=>true,
-            'message'=>'Cập nhật thành công',
-            'data'=>!$courseStudent->status
+            'success' => true,
+            'message' => 'Cập nhật thành công',
+            'data' => !$courseStudent->status]);
+    }
+
+    public function listCourses($student = 0)
+    {
+        $course = $this->courseStudentRepository->getCoursesByStudent($student);
+        return response()->json([
+            'success' => true,
+            'data' => $course
         ]);
     }
 }
