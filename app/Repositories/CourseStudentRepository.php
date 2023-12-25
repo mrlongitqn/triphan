@@ -43,7 +43,8 @@ class CourseStudentRepository extends BaseRepository
     public function getByCourse($course_id){
         return $this->model->newQuery()->leftJoin('users','users.id','=','user_id')
             ->leftJoin('students','student_id', '=', 'students.id')
-            ->where('course_id', '=',$course_id);
+            ->where('course_id', '=',$course_id)
+            ->select(['course_students.id','students.code','students.fullname','students.dob', 'students.phone_number','course_students.created_at','users.name','course_students.status']);
     }
 
 }

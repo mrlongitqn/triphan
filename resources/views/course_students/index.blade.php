@@ -20,35 +20,7 @@
         }
     </style>
 @endpush
-@push('third_party_scripts')
-    <script src="{{asset('vendor/jstree/jstree.min.js')}}"></script>
-    <script>
-        $.jstree.defaults.core.themes.variant = "large";
-        $(function () {
 
-            $('#courses').jstree();
-            $("#courses").on("select_node.jstree", function (e, data) {
-                // Kiểm tra xem node có phải là node lá không
-                if (data.node.children.length === 0) {
-                    // Lấy href của node được chọn
-                    var nodeHref = data.node.a_attr.href;
-
-                    // Chuyển hướng đến href
-                    window.location.href = nodeHref;
-                }
-            });
-        });
-
-        $('.js-data-example-ajax').select2({
-            ajax: {
-                url: '{{route('student.search')}}',
-                dataType: 'json'
-                // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
-            }
-        });
-
-    </script>
-@endpush
 @section('content')
     <section class="content-header">
         <div class="container-fluid">
@@ -56,12 +28,12 @@
                 <div class="col-sm-6">
                     <h1>Quản lý học</h1>
                 </div>
-{{--                <div class="col-sm-6">--}}
-{{--                    <a class="btn btn-primary float-right"--}}
-{{--                       href="">--}}
-{{--                        Add New--}}
-{{--                    </a>--}}
-{{--                </div>--}}
+                {{--                <div class="col-sm-6">--}}
+                {{--                    <a class="btn btn-primary float-right"--}}
+                {{--                       href="">--}}
+                {{--                        Add New--}}
+                {{--                    </a>--}}
+                {{--                </div>--}}
             </div>
         </div>
     </section>
@@ -143,7 +115,10 @@
                                     </thead>
                                     <tbody>
                                     @foreach($courseStudent as $student)
-                                        <tr>
+                                        <tr @if($student->status == 1)
+                                                class="bg-secondary"
+                                            @endif
+                                        >
                                             <td><input type="checkbox"></td>
                                             <td>{{$student->code}}</td>
                                             <td>{{$student->fullname}}</td>
@@ -152,28 +127,41 @@
                                             <td>{{date('d-m-Y', strtotime($student->created_at))}}</td>
                                             <td>{{$student->name}}</td>
                                             <td>
-                                                {!! Form::open(['route' => ['courses.destroy',$student->id], 'method' => 'delete', 'class'=>'text-center']) !!}
                                                 <div class='btn-group'>
-                                                    <a href="{{ route('courses.show', $student->id) }}" title="Thu học phí" class='btn btn-default btn-xs'>
-                                                        <i class="fas fa-money-check"></i>
-                                                    </a>
-                                                    <a href="{{ route('courses.show', $student->id) }}" title="Xem điểm" class='btn btn-default btn-xs'>
-                                                        <i class="fas fa-file-signature"></i>
-                                                    </a>
-                                                    {{--    <a href="{{ route('courses.changeStatus', $id) }}" class='btn btn-default btn-xs'>--}}
-                                                    {{--        <i class="fa fa-edit"></i>--}}
-                                                    {{--    </a>--}}
-                                                    <a href="{{ route('courses.edit', $student->id) }}" class='btn btn-default btn-xs'>
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
-                                                    {!! Form::button('<i class="fa fa-trash"></i>', [
-                                                        'type' => 'submit',
-                                                        'class' => 'btn btn-danger btn-xs',
-                                                        'onclick' => "return confirm('Bạn chắc chắn xóa lớp học?')"
-                                                    ]) !!}
-                                                </div>
-                                                {!! Form::close() !!}
+                                                    @if($student->status == 0)
+                                                        <a href="{{ route('courses.show', $student->id) }}"
+                                                           title="Thu học phí" class='btn btn-default btn-xs'>
+                                                            <i class="fas fa-money-check"></i>
+                                                        </a>
+                                                        <a href="{{ route('courses.show', $student->id) }}" title="Xem điểm"
+                                                           class='btn btn-default btn-xs'>
+                                                            <i class="fas fa-file-signature"></i>
+                                                        </a>
+                                                        {{--    <a href="{{ route('courses.changeStatus', $id) }}" class='btn btn-default btn-xs'>--}}
+                                                        {{--        <i class="fa fa-edit"></i>--}}
+                                                        {{--    </a>--}}
 
+                                                        <a href="{{ route('courses.show', $student->id) }}" title="Xem điểm"
+                                                           class='btn btn-default btn-xs'>
+                                                            <i class="fas fa-file-signature"></i>
+                                                        </a>
+                                                        <a data-id="{{$student->id}}" href="javascript:"
+                                                           class='btn btn-default btn-xs changeStatus'>
+                                                            <i class="fas fa-check"></i>
+                                                        </a>
+
+                                                        <a data-id="{{$student->id}}" href="javascript:"
+                                                           class='btn btn-default btn-xs changeStatus'>
+                                                            <i class="fas fa-check"></i>
+                                                        </a>
+                                                    @else
+                                                        <a data-id="{{$student->id}}" href="javascript:"
+                                                           class='btn btn-default btn-xs changeStatus'>
+                                                            <i class="fas fa-check"></i>
+                                                        </a>
+                                                    @endif
+
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -187,8 +175,44 @@
             </div>
         </div>
 
-@endsection
-@push('page_script')
+        @endsection
+        @push('third_party_scripts')
+            <script src="{{asset('vendor/jstree/jstree.min.js')}}"></script>
+            <script>
+                $.jstree.defaults.core.themes.variant = "large";
+                $(function () {
 
-@endpush
+                    $('#courses').jstree();
+                    $("#courses").on("select_node.jstree", function (e, data) {
+                        // Kiểm tra xem node có phải là node lá không
+                        if (data.node.children.length === 0) {
+                            // Lấy href của node được chọn
+                            var nodeHref = data.node.a_attr.href;
+
+                            // Chuyển hướng đến href
+                            window.location.href = nodeHref;
+                        }
+                    });
+                });
+
+                $('.js-data-example-ajax').select2({
+                    ajax: {
+                        url: '{{route('student.search')}}',
+                        dataType: 'json'
+                        // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
+                    }
+                });
+                $(document).on('click', '.changeStatus', function () {
+                    if (confirm('Bạn chắn chắn đổi trạng thái đối với học viên này')) {
+                        $.get('{{ route('courseStudents.updateStatus') }}/' + $(this).data('id'), function (data) {
+                            if (data.success) {
+
+                            }
+                        });
+                    }
+
+                });
+
+            </script>
+    @endpush
 

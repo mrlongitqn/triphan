@@ -195,4 +195,23 @@ class CourseStudentController extends AppBaseController
 
         return redirect(route('courseStudents.index'));
     }
+
+    public function updateStatus($id){
+        $courseStudent = $this->courseStudentRepository->find($id);
+
+        if (empty($courseStudent)) {
+            return response()->json([
+                'success'=>false,
+                'message'=>'Không tìm thấy học viên'
+            ]);
+        }
+        $courseStudent->update([
+            'status'=>!$courseStudent->status
+        ]);
+        return response()->json([
+            'success'=>true,
+            'message'=>'Cập nhật thành công',
+            'data'=>!$courseStudent->status
+        ]);
+    }
 }

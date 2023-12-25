@@ -17,56 +17,52 @@ Auth::routes();
 //    return view('welcome');
 //});
 //
+Route::prefix("")->middleware('auth')->group(function () {
+    Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('generator_builder', '\InfyOm\GeneratorBuilder\Controllers\GeneratorBuilderController@builder')->name('io_generator_builder');
+
+    Route::get('field_template', '\InfyOm\GeneratorBuilder\Controllers\GeneratorBuilderController@fieldTemplate')->name('io_field_template');
+
+    Route::get('relation_field_template', '\InfyOm\GeneratorBuilder\Controllers\GeneratorBuilderController@relationFieldTemplate')->name('io_relation_field_template');
+
+    Route::post('generator_builder/generate', '\InfyOm\GeneratorBuilder\Controllers\GeneratorBuilderController@generate')->name('io_generator_builder_generate');
+
+    Route::post('generator_builder/rollback', '\InfyOm\GeneratorBuilder\Controllers\GeneratorBuilderController@rollback')->name('io_generator_builder_rollback');
+
+    Route::post(
+        'generator_builder/generate-from-file',
+        '\InfyOm\GeneratorBuilder\Controllers\GeneratorBuilderController@generateFromFile'
+    )->name('io_generator_builder_generate_from_file');
+
+    Route::resource('subjects', App\Http\Controllers\SubjectController::class);
 
 
-Route::get('generator_builder', '\InfyOm\GeneratorBuilder\Controllers\GeneratorBuilderController@builder')->name('io_generator_builder');
-
-Route::get('field_template', '\InfyOm\GeneratorBuilder\Controllers\GeneratorBuilderController@fieldTemplate')->name('io_field_template');
-
-Route::get('relation_field_template', '\InfyOm\GeneratorBuilder\Controllers\GeneratorBuilderController@relationFieldTemplate')->name('io_relation_field_template');
-
-Route::post('generator_builder/generate', '\InfyOm\GeneratorBuilder\Controllers\GeneratorBuilderController@generate')->name('io_generator_builder_generate');
-
-Route::post('generator_builder/rollback', '\InfyOm\GeneratorBuilder\Controllers\GeneratorBuilderController@rollback')->name('io_generator_builder_rollback');
-
-Route::post(
-    'generator_builder/generate-from-file',
-    '\InfyOm\GeneratorBuilder\Controllers\GeneratorBuilderController@generateFromFile'
-)->name('io_generator_builder_generate_from_file');
-
-Route::resource('subjects', App\Http\Controllers\SubjectController::class);
+    Route::resource('levels', App\Http\Controllers\LevelController::class);
 
 
+    Route::resource('courses', App\Http\Controllers\CourseController::class);
 
 
+    Route::resource('students', App\Http\Controllers\StudentController::class);
+    Route::get('student/search', [App\Http\Controllers\StudentController::class, 'search'])->name('student.search');
+
+    Route::prefix('courseStudents')->group(function () {
+        Route::get('/{id?}', [App\Http\Controllers\CourseStudentController::class, 'index'])->name('courseStudents.index');
+        Route::get('/update-status/{id?}', [App\Http\Controllers\CourseStudentController::class, 'updateStatus'])->name('courseStudents.updateStatus');
+        Route::post('/store', [App\Http\Controllers\CourseStudentController::class, 'store'])->name('courseStudents.store');
+        Route::delete('/destroy', [App\Http\Controllers\CourseStudentController::class, 'destroy'])->name('courseStudents.destroy');
+    });
 
 
-Route::resource('levels', App\Http\Controllers\LevelController::class);
+    Route::resource('fees', App\Http\Controllers\FeeController::class);
 
 
-Route::resource('courses', App\Http\Controllers\CourseController::class);
+    Route::resource('marks', App\Http\Controllers\MarkController::class);
 
 
-
-
-Route::resource('students', App\Http\Controllers\StudentController::class);
-Route::get('student/search', [App\Http\Controllers\StudentController::class, 'search'])->name('student.search');
-
-Route::prefix('courseStudents')->group(function () {
-    Route::get('/{id?}', [App\Http\Controllers\CourseStudentController::class,'index'])->name('courseStudents.index');
-    Route::post('/store', [App\Http\Controllers\CourseStudentController::class,'store'])->name('courseStudents.store');
+    Route::resource('sessionMarks', App\Http\Controllers\SessionMarkController::class);
 });
 
-
-
-Route::resource('fees', App\Http\Controllers\FeeController::class);
-
-
-Route::resource('marks', App\Http\Controllers\MarkController::class);
-
-
-Route::resource('sessionMarks', App\Http\Controllers\SessionMarkController::class);

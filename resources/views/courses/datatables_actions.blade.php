@@ -1,6 +1,6 @@
 {!! Form::open(['route' => ['courses.destroy', $id], 'method' => 'delete', 'class'=>'text-center']) !!}
 <div class='btn-group'>
-    <a href="{{ route('courses.show', $id) }}" title="Xem danh sách học viên" class='btn btn-default btn-xs'>
+    <a href="{{ route('courseStudents.index', $id) }}" title="Xem danh sách học viên" class='btn btn-default btn-xs'>
         <i class="fas fa-user-friends"></i>
     </a>
     <a href="{{ route('courses.show', $id) }}" title="In danh sách học viên" class='btn btn-default btn-xs'>
