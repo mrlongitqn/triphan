@@ -7,46 +7,41 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 /**
- * Class Fee
+ * Class FeeDetail
  * @package App\Models
- * @version December 23, 2023, 4:25 am UTC
+ * @version January 3, 2024, 2:58 pm UTC
  *
- * @property integer $course_student_id
- * @property integer $course_id
- * @property integer $student_id
- * @property integer $fee
+ * @property integer $origin
  * @property integer $amount
  * @property integer $remain
+ * @property integer $month
+ * @property integer $year
+ * @property string $note
  * @property integer $status
- * @property integer $refund
  */
-class Fee extends Model
+class FeeDetail extends Model
 {
     use SoftDeletes;
 
 
-    public $table = 'fees';
+    public $table = 'fee_details';
 
 
     protected $dates = ['deleted_at'];
 
 
-
     public $fillable = [
-        'course_student_id',
-        'course_id',
-        'student_id',
-        'total',
-        'discount',
+        'origin',
         'amount',
-        'refund',
-        'status',
-        'refund',
-        'code',
+        'remain',
+        'month',
+        'year',
         'note',
-        'user_id'
+        'status',
+        'course_student_id',
+        'fee_id'
     ];
-
+    public $timestamps = false;
     /**
      * The attributes that should be casted to native types.
      *
@@ -54,14 +49,13 @@ class Fee extends Model
      */
     protected $casts = [
         'id' => 'integer',
-        'course_student_id' => 'integer',
-        'course_id' => 'integer',
-        'student_id' => 'integer',
-        'fee' => 'integer',
+        'origin' => 'integer',
         'amount' => 'integer',
         'remain' => 'integer',
-        'status' => 'integer',
-        'refund' => 'integer'
+        'month' => 'integer',
+        'year' => 'integer',
+        'note' => 'string',
+        'status' => 'integer'
     ];
 
     /**

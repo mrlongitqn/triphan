@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9486a0b1cbecbe1b425584445d99ad96",
+    "content-hash": "93cea9d2c8c8f007e62d0f09b69e996d",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1707,6 +1707,76 @@
                 }
             ],
             "time": "2022-02-03T10:55:10+00:00"
+        },
+        {
+            "name": "jeremykenedy/laravel-users",
+            "version": "V4.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jeremykenedy/laravel-users.git",
+                "reference": "657391531371b9db78787afd928238f490687cd0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jeremykenedy/laravel-users/zipball/657391531371b9db78787afd928238f490687cd0",
+                "reference": "657391531371b9db78787afd928238f490687cd0",
+                "shasum": ""
+            },
+            "require": {
+                "laravelcollective/html": "^5.4|^5.5|^5.6|^5.7|^5.8|^6.0|^7.0|^8.0|^9.0",
+                "php": ">=7.1.3|^8.0"
+            },
+            "require-dev": {
+                "illuminate/support": "^7.12",
+                "laravel/laravel": "^7.12",
+                "laravel/tinker": "^2.4",
+                "orchestra/testbench": "^5.2"
+            },
+            "type": "package",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "jeremykenedy\\laravelusers\\LaravelUsersServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "jeremykenedy\\laravelusers\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "jeremykenedy",
+                    "email": "jeremykenedy@gmail.com"
+                }
+            ],
+            "description": "Laravel Users Management CRUD Package",
+            "keywords": [
+                "Users",
+                "crud",
+                "laravel",
+                "management"
+            ],
+            "support": {
+                "issues": "https://github.com/jeremykenedy/laravel-users/issues",
+                "source": "https://github.com/jeremykenedy/laravel-users/tree/V4.4.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/jeremykenedy",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/jeremykenedy",
+                    "type": "patreon"
+                }
+            ],
+            "time": "2023-11-02T02:58:58+00:00"
         },
         {
             "name": "laracasts/flash",

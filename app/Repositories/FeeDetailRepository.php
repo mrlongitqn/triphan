@@ -2,29 +2,28 @@
 
 namespace App\Repositories;
 
-use App\Models\Fee;
+use App\Models\FeeDetail;
 use App\Repositories\BaseRepository;
 
 /**
- * Class FeeRepository
+ * Class FeeDetailRepository
  * @package App\Repositories
- * @version December 23, 2023, 4:25 am UTC
+ * @version January 3, 2024, 2:58 pm UTC
 */
 
-class FeeRepository extends BaseRepository
+class FeeDetailRepository extends BaseRepository
 {
     /**
      * @var array
      */
     protected $fieldSearchable = [
-        'course_student_id',
-        'course_id',
-        'student_id',
-        'fee',
+        'origin',
         'amount',
         'remain',
-        'status',
-        'refund'
+        'month',
+        'year',
+        'note',
+        'status'
     ];
 
     /**
@@ -42,13 +41,9 @@ class FeeRepository extends BaseRepository
      **/
     public function model()
     {
-        return Fee::class;
+        return FeeDetail::class;
     }
-
-    public function allFeesByCourseStudent($id){
-        return $this->all(['
-        course_student_id'=>$id])->get()->orderBy('id','desc');
+    public function lastMonthPayByCourseStudent($id){
+        return $this->model->newQuery()->where('course_student_id', '=',$id)->orderBy('id','desc')->first();
     }
-
-
 }

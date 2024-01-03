@@ -22,6 +22,10 @@
         #courses_list li {
             cursor: pointer;
         }
+
+        .mm, .status {
+            width: 20px;
+        }
     </style>
 @endpush
 @push('third_party_scripts')
@@ -36,6 +40,7 @@
         });
         $('#student_code').on('change', function () {
             let id = $(this).val();
+            $('input[name="studentId"]').val(id);
             $.get('{{route('courseStudents.listCourse')}}/' + id, function (res) {
                 if (res.success) {
                     $('#courses_list').empty();
@@ -55,18 +60,18 @@
             $('#courses_list li').removeClass('active');
             $(this).addClass('active');
             let id = $(this).data('id');
+            $('input[name="courseStudentId"]').val(id);
+            console.log(id);
             let fee = $(this).data('fee');
             $.get('{{route('fees.getListFee')}}/' + id, function (data) {
-                console.log(data)
                 $('#feeTable tbody').empty();
                 data.list.forEach(function (m, i) {
-                    let d = new Date(m);
                     $('#feeTable tbody').append(
                         '<tr>' +
-                        '<td><input data-index=' + i + '  class="mm form-control" type="checkbox" name="' + d.getMonth() + '_' + d.getFullYear() + '" /></td>' +
-                        '<td>' + d.getMonth() + '/' + d.getFullYear() + '</td>' +
-                        '<td><input type="number" class="feeNum form-control" name="fee_' + d.getMonth() + '_' + d.getFullYear() + '" value="' + fee + '" /></td>' +
-                        '<td><input type="text" class="form-control" name="note_' + d.getMonth() + '_' + d.getFullYear() + '" value="" /></td>' +
+                        '<td><input data-index=' + i + '  class="mm form-control" type="checkbox" name="' + m + '" /></td>' +
+                        '<td>' + m + '</td>' +
+                        '<td><input type="number" class="feeNum form-control" name="fee_' + m + '" value="' + fee + '" /></td>' +
+                        '<td><input type="text" class="form-control" name="note_' + m + '" value="" /></td>' +
                         '</tr>'
                     );
                 });
@@ -104,7 +109,22 @@
             let p = parseInt($(this).val());
             remain = p - (amount / 1000);
             $('#remain').text(remain.toLocaleString());
-        })
+        });
+        function round(so) {
+            return Math.ceil(so / 1000) * 1000;
+        }
+        $('#save').on('click', function () {
+            if (array_index.length === 0) {
+                alert('Vui lòng chọn tháng cần thu');
+                return;
+            }
+            let ok = kiemTraDaySoBatDauTu0(array_index);
+            if (!ok) {
+                alert('Vui lòng chọn tháng cần thu liên tục');
+                return;
+            }
+            $('#formSave').submit();
+        });
 
         function calTotal(arr) {
             let t = 0;
@@ -115,7 +135,7 @@
             total = t;
             $('#total').text(t.toLocaleString());
             discount = parseInt($('#discount').val());
-            amount = total * (1 - discount / 100);
+            amount = round(total * (1 - discount / 100));
             $('#amount').text(amount.toLocaleString());
             pay = amount;
             $('#pay').val(pay / 1000);
@@ -183,7 +203,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-3">
-                        <form action="{{route('')}}"
+
                         <div class="card card-warning">
                             <div class="card-header">
                                 <strong>DANH SÁCH LỚP HỌC</strong>
@@ -209,83 +229,96 @@
                             </div>
 
                         </div>
+
                     </div>
 
                     <div class="col-sm-9">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">THU HỌC PHÍ</h3>
-                                <div class="card-tools">
-                                    <div class="input-group input-group-sm" style="width: 250px;">
+                        <form id="formSave" action="{{route('fees.saveCollect')}}" method="post">
+                            {{csrf_field()}}
+                            <input type="hidden" name="studentId"/>
+                            <input type="hidden" name="courseStudentId"/>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">THU HỌC PHÍ</h3>
+                                    <div class="card-tools">
+                                        <div class="input-group input-group-sm" style="width: 250px;">
 
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card-body table-responsive p-0">
+                                    <table id="feeTable" class="table table-hover text-nowrap">
+                                        <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Tháng</th>
+                                            <th>Số tiền</th>
+                                            <th>Ghi chú</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
+
+                                    <div class="col-sm-4 offset-8">
+                                        <table class="table">
+                                            <tr>
+                                                <td><label for="total">Tổng cộng</label></td>
+                                                <td><strong id="total">0</strong>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label for="discount">Chiết khấu</label>
+                                                </td>
+                                                <td>
+                                                    <input class="form-control" type="number" max="100" min="0"
+                                                           value="0" name="discount"
+                                                           id="discount">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label for="amount">Phải trả</label>
+                                                </td>
+                                                <td>
+                                                    <strong id="amount">0</strong>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label for="pay">Khách đưa</label>
+                                                </td>
+                                                <td>
+                                                    <input class="form-control" min="0" type="number" value="0"
+                                                           name="pay"
+                                                           id="pay">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label for="remain">Tiền thừa</label>
+                                                </td>
+                                                <td>
+                                                    <strong id="remain">0</strong>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
+                            <div class="right">
+                                <div class="form-group">
 
-                            <div class="card-body table-responsive p-0">
-                                <table id="feeTable" class="table table-hover text-nowrap">
-                                    <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Tháng</th>
-                                        <th>Số tiền</th>
-                                        <th>Ghi chú</th>
-                                        <th></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-
-                                    </tbody>
-                                </table>
-
-                                <div class="col-sm-4 offset-8">
-                                    <table class="table">
-                                        <tr>
-                                            <td><label for="total">Tổng cộng</label></td>
-                                            <td><strong id="total">0</strong>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="discount">Chiết khấu</label>
-                                            </td>
-                                            <td>
-                                                <input class="form-control" type="number" value="0" name="discount"
-                                                       id="discount">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="amount">Phải trả</label>
-                                            </td>
-                                            <td>
-                                                <strong id="amount">0</strong>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="pay">Khách đưa</label>
-                                            </td>
-                                            <td>
-                                                <input class="form-control" type="number" value="0" name="pay"
-                                                       id="pay">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="remain">Tiền thừa</label>
-                                            </td>
-                                            <td>
-                                                <strong id="remain">0</strong>
-                                            </td>
-                                        </tr>
-                                    </table>
+                                    <label>Ghi chú</label>
+                                    <input type="text" class="form-control" name="note">
                                 </div>
+
+                                <button type="button" id="save" class="btn btn-warning">Thu học phí</button>
                             </div>
-                        </div>
-                        <div class="pull-right">
-                            <button type="submit" class="btn btn-warning">Thu học phí</button>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>

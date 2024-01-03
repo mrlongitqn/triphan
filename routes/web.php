@@ -58,6 +58,7 @@ Route::prefix("")->middleware('auth')->group(function () {
     });
 
     Route::prefix('fees')->group(function () {
+        Route::get('/', [\App\Http\Controllers\FeeController::class, 'index'])->name('fees.index');
         Route::get('collect/{student_id?}/{course_id?}', [\App\Http\Controllers\FeeController::class, 'collect'])->name('fees.collect');
         Route::post('collect/{student_id?}/{course_id?}', [\App\Http\Controllers\FeeController::class, 'saveCollect'])->name('fees.saveCollect');
         Route::get('get-list-fee/{id?}', [\App\Http\Controllers\FeeController::class, 'getListFee'])->name('fees.getListFee');

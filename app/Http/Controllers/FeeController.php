@@ -8,11 +8,13 @@ use App\Http\Requests\CreateFeeRequest;
 use App\Http\Requests\UpdateFeeRequest;
 use App\Repositories\CourseRepository;
 use App\Repositories\CourseStudentRepository;
+use App\Repositories\FeeDetailRepository;
 use App\Repositories\FeeRepository;
 use App\Repositories\StudentRepository;
 use Carbon\Carbon;
 use Flash;
 use App\Http\Controllers\AppBaseController;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Date;
 use Response;
 
@@ -32,13 +34,18 @@ class FeeController extends AppBaseController
      * @var CourseStudentRepository
      */
     private $courseStudentRepository;
+    /**
+     * @var FeeDetailRepository
+     */
+    private $feeDetailRepository;
 
-    public function __construct(FeeRepository $feeRepo, StudentRepository $studentRepository, CourseRepository $courseRepository, CourseStudentRepository $courseStudentRepository)
+    public function __construct(FeeRepository $feeRepo, StudentRepository $studentRepository, CourseRepository $courseRepository, CourseStudentRepository $courseStudentRepository, FeeDetailRepository $feeDetailRepository)
     {
         $this->feeRepository = $feeRepo;
         $this->studentRepository = $studentRepository;
         $this->courseRepository = $courseRepository;
         $this->courseStudentRepository = $courseStudentRepository;
+        $this->feeDetailRepository = $feeDetailRepository;
     }
 
     /**
@@ -184,11 +191,68 @@ class FeeController extends AppBaseController
         return view('fees.collect', compact('student_id', 'selected_course', 'course_id', 'student', 'courses', 'fees'));
     }
 
-    public function saveCollect()
+    public function saveCollect(\Illuminate\Http\Request $request)
     {
+        $data = $request->all();
+        $courseStudent = $this->courseStudentRepository->find($data['courseStudentId']);
+        $course = $this->courseRepository->find($courseStudent->course_id);
+        $listMonth = $this->calMonth($data['courseStudentId']);
+        $total = 0;
+        $fee = $this->feeRepository->create([
+            'course_student_id'=>$courseStudent->id,
+            'course_id'=>$courseStudent->course_id,
+            'student_id'=>$courseStudent->student_id,
+            'total'=>0,
+            'amount'=>0,
+            'status'=>0,
+            'refund'=>0,
+            'discount'=>0,
+            'note'=>$data['note'],
+            'code'=>'TP',
+            'user_id'=>$request->user()->id
+        ]);
+        foreach ($listMonth as $item){
+            if($request->has($item)){
+                $date = explode('-', $item);
+                $this->feeDetailRepository->create([
+                    'course_student_id'=>$courseStudent->id,
+                    'origin'=>$course->fee,
+                    'amount'=> $data['fee_'.$item],
+                    'remain'=>0,
+                    'month'=>$date[0],
+                    'year'=>$date[1],
+                    'note'=>$data['note_'.$item],
+                    'fee_id'=>$fee->id,
+                    'status'=>0
+                ]);
+                $total += $data['fee_'.$item];
+            }else{
+              break;
+            }
+        }
+        $amount = $this->round($total * (1 - $data['discount']/100));
+        $fee->update([
+            'total'=>$total,
+            'discount'=>$data['discount'],
+            'amount'=>$amount,
+            'code'=> 'TP'.$this->generateFeeCode($fee->id)
+        ]);
 
+        return redirect(route('fees.index'))->with('fee_id',$fee->id);
     }
+    function generateFeeCode($id)
+    {
+        // Chuyển đổi $id thành một chuỗi
+        $idString = strval($id);
 
+        // Sử dụng str_pad để thêm số 0 phía trước nếu chiều dài chuỗi ít hơn 6
+        $paddedID = str_pad($idString, 9, '0', STR_PAD_LEFT);
+
+        return $paddedID;
+    }
+    function round($so) {
+        return ceil($so / 1000) * 1000;
+    }
     public function getListFee($id = 0)
     {
         $studentCourse = $this->courseStudentRepository->find($id);
@@ -204,22 +268,25 @@ class FeeController extends AppBaseController
             'success'=>false,
             'message'=>"Thông tin không tồn tại"
         ]);
-        $fee = $this->feeRepository->lastMonthPayByCourseStudent($id);
-        $date = Carbon::now();
-        if ($fee != null) {
-           $date = Carbon::create($fee->year,$fee->month, 1);
-        }
-        $listMonth = [];
 
-        for ($i = 1; $i <= 7; $i++) {
-            // Tính toán tháng tiếp theo
-            $listMonth[] = $date->clone()->addMonths($i);
-
-        }
-
+        $listMonth = $this->calMonth($id);
         return  response()->json([
             'success'=>true,
             'list'=>$listMonth
         ]);
+    }
+    function calMonth($studentCourseId): array
+    {
+        $fee = $this->feeDetailRepository->lastMonthPayByCourseStudent($studentCourseId);
+        $date = Carbon::now();
+        if ($fee != null) {
+            $date = Carbon::create($fee->year,$fee->month, 1)->addMonths(1);
+        }
+
+        $listMonth = [];
+        for ($i = 0; $i <= 7; $i++) {
+            $listMonth[] = $date->clone()->addMonths($i)->format('n-Y');
+        }
+        return $listMonth;
     }
 }
