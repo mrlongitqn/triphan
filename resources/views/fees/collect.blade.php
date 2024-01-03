@@ -18,7 +18,8 @@
             user-select: none;
             -webkit-user-select: none;
         }
-        #courses_list li{
+
+        #courses_list li {
             cursor: pointer;
         }
     </style>
@@ -38,22 +39,101 @@
             $.get('{{route('courseStudents.listCourse')}}/' + id, function (res) {
                 if (res.success) {
                     $('#courses_list').empty();
-                    if(res.data.length > 0){
+                    if (res.data.length > 0) {
                         res.data.forEach(function (v) {
-                            $('#courses_list').append('<li data-id="'+v.id+'" class="list-group-item">' +
-                                v.course + ' ('+v.fee.toLocaleString()+') - '+ moment(v.created_at).format('d/M/Y'));
+                            $('#courses_list').append('<li data-id="' + v.id + '" data-fee="' + v.fee + '" class="list-group-item">' +
+                                v.course + ' (' + v.fee.toLocaleString() + ') - ' + moment(v.created_at).format('d/M/Y'));
                         })
-                    }else{
+                    } else {
                         $('#courses_list').append('<p class="p2 text-center">Chưa có lớp</p>');
                     }
                 }
             })
         })
 
-        $(document).on('click', '#courses_list li', function (){
+        $(document).on('click', '#courses_list li', function () {
             $('#courses_list li').removeClass('active');
             $(this).addClass('active');
+            let id = $(this).data('id');
+            let fee = $(this).data('fee');
+            $.get('{{route('fees.getListFee')}}/' + id, function (data) {
+                console.log(data)
+                $('#feeTable tbody').empty();
+                data.list.forEach(function (m, i) {
+                    let d = new Date(m);
+                    $('#feeTable tbody').append(
+                        '<tr>' +
+                        '<td><input data-index=' + i + '  class="mm form-control" type="checkbox" name="' + d.getMonth() + '_' + d.getFullYear() + '" /></td>' +
+                        '<td>' + d.getMonth() + '/' + d.getFullYear() + '</td>' +
+                        '<td><input type="number" class="feeNum form-control" name="fee_' + d.getMonth() + '_' + d.getFullYear() + '" value="' + fee + '" /></td>' +
+                        '<td><input type="text" class="form-control" name="note_' + d.getMonth() + '_' + d.getFullYear() + '" value="" /></td>' +
+                        '</tr>'
+                    );
+                });
+
+            });
         });
+        var array_index = [];
+        var array_month = [];
+        var total = 0;
+        var discount = 0;
+        var amount = 0;
+        var pay = 0;
+        var remain = 0;
+        $(document).on('change', '#feeTable input[type=checkbox]', function () {
+            let c = $(this);
+            var isChecked = $(this).prop("checked");
+            if (isChecked) {
+                array_index.push(c.data('index'));
+                array_month.push(c.attr('name'));
+            } else {
+                array_index = array_index.filter((num) => num !== c.data('index'));
+                array_month = array_month.filter((m) => m !== c.attr('name'));
+            }
+            total = calTotal(array_month);
+
+        });
+        $(document).on('change', '.feeNum', function () {
+            calTotal(array_month);
+        });
+        $(document).on('change', '#discount', function () {
+            calTotal(array_month);
+        });
+
+        $(document).on('change', '#pay', function () {
+            let p = parseInt($(this).val());
+            remain = p - (amount / 1000);
+            $('#remain').text(remain.toLocaleString());
+        })
+
+        function calTotal(arr) {
+            let t = 0;
+            arr.forEach(m => {
+                t = t + parseInt($('input[name="fee_' + m + '"]').val());
+                console.log($('input[name="fee_' + m + '"]').val());
+            });
+            total = t;
+            $('#total').text(t.toLocaleString());
+            discount = parseInt($('#discount').val());
+            amount = total * (1 - discount / 100);
+            $('#amount').text(amount.toLocaleString());
+            pay = amount;
+            $('#pay').val(pay / 1000);
+            remain = 0;
+            $('#remain').text('0');
+            return t;
+        }
+
+
+        function kiemTraDaySoBatDauTu0(arr) {
+            arr.sort((a, b) => a - b);
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i] !== i) {
+                    return false;
+                }
+            }
+            return true;
+        }
 
     </script>
 @endpush
@@ -80,23 +160,21 @@
                     <div class="col-sm-12">
                         <div class="card card-primary">
                             <div class="card-header">
-                               <strong>THÔNG TIN SINH VIÊN</strong>
+                                <strong>THÔNG TIN SINH VIÊN</strong>
                             </div>
                             <div class="card-body p-0">
                                 <div class="col-sm-6">
 
                                     <div class="form-group">
                                         <label>Tìm kiếm sinh viên</label>
-                                        {{--                                    <div class="row">--}}
                                         <select name="student_code" style="width: 100%"
                                                 id="student_code">
                                             @if(isset($student))
-                                                <option value="{{$student->id}}" selected="selected">{{$student->code}} - {{$student->fullname}}</option>
+                                                <option value="{{$student->id}}" selected="selected">{{$student->code}}
+                                                    - {{$student->fullname}}</option>
                                             @endif
 
                                         </select>
-                                        {{--                                    </div>--}}
-
                                     </div>
                                 </div>
                             </div>
@@ -105,6 +183,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-3">
+                        <form action="{{route('')}}"
                         <div class="card card-warning">
                             <div class="card-header">
                                 <strong>DANH SÁCH LỚP HỌC</strong>
@@ -114,7 +193,8 @@
                                 <ul id="courses_list" class="list-group">
                                     @if(isset($courses))
                                         @foreach($courses as $course)
-                                            <li data-id="{{$course->id}}" data-course="{{$course->course_id}}" class="list-group-item
+                                            <li data-id="{{$course->id}}" data-fee="{{$course->fee}}"
+                                                data-course="{{$course->course_id}}" class="list-group-item
                                         {{$course->course_id == $course_id?"active":""}}
                                         ">{{$course->course}} ({{number_format($course->fee,0, ',')}})
                                                 - {{date('d/m/Y', strtotime($course->created_at))}}</li>
@@ -134,7 +214,7 @@
                     <div class="col-sm-9">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">DANH SÁCH HỌC VIÊN</h3>
+                                <h3 class="card-title">THU HỌC PHÍ</h3>
                                 <div class="card-tools">
                                     <div class="input-group input-group-sm" style="width: 250px;">
 
@@ -143,16 +223,13 @@
                             </div>
 
                             <div class="card-body table-responsive p-0">
-                                <table class="table table-hover text-nowrap">
+                                <table id="feeTable" class="table table-hover text-nowrap">
                                     <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Mã học viên</th>
-                                        <th>Họ tên</th>
-                                        <th>Ngày sinh</th>
-                                        <th>Điện thoại</th>
-                                        <th>Ngày bắt đầu học</th>
-                                        <th>Người thêm</th>
+                                        <th>Tháng</th>
+                                        <th>Số tiền</th>
+                                        <th>Ghi chú</th>
                                         <th></th>
                                     </tr>
                                     </thead>
@@ -160,8 +237,54 @@
 
                                     </tbody>
                                 </table>
-                            </div>
 
+                                <div class="col-sm-4 offset-8">
+                                    <table class="table">
+                                        <tr>
+                                            <td><label for="total">Tổng cộng</label></td>
+                                            <td><strong id="total">0</strong>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="discount">Chiết khấu</label>
+                                            </td>
+                                            <td>
+                                                <input class="form-control" type="number" value="0" name="discount"
+                                                       id="discount">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="amount">Phải trả</label>
+                                            </td>
+                                            <td>
+                                                <strong id="amount">0</strong>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="pay">Khách đưa</label>
+                                            </td>
+                                            <td>
+                                                <input class="form-control" type="number" value="0" name="pay"
+                                                       id="pay">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="remain">Tiền thừa</label>
+                                            </td>
+                                            <td>
+                                                <strong id="remain">0</strong>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-warning">Thu học phí</button>
                         </div>
                     </div>
                 </div>

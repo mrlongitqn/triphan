@@ -179,7 +179,14 @@ class FeeController extends AppBaseController
         if ($student == null)
             return view('fees.collect', compact('selected_course'));
         $courses = $this->courseStudentRepository->getCoursesByStudent($student_id);
-        return view('fees.collect', compact('student_id', 'selected_course', 'course_id', 'student', 'courses'));
+        $fees = $this->getListFee($course_id);
+
+        return view('fees.collect', compact('student_id', 'selected_course', 'course_id', 'student', 'courses', 'fees'));
+    }
+
+    public function saveCollect()
+    {
+
     }
 
     public function getListFee($id = 0)
@@ -199,16 +206,20 @@ class FeeController extends AppBaseController
         ]);
         $fee = $this->feeRepository->lastMonthPayByCourseStudent($id);
         $date = Carbon::now();
-        if ($fee == null) {
-
-
-            for ($i = 1; $i <= 8; $i++) {
-                // Tính toán tháng tiếp theo
-                $thoiDiemTiepTheo = $date->addMonths($i);
-
-                // Xuất kết quả
-                echo $thoiDiemTiepTheo->format('F') . "\n";
-            }
+        if ($fee != null) {
+           $date = Carbon::create($fee->year,$fee->month, 1);
         }
+        $listMonth = [];
+
+        for ($i = 1; $i <= 7; $i++) {
+            // Tính toán tháng tiếp theo
+            $listMonth[] = $date->clone()->addMonths($i);
+
+        }
+
+        return  response()->json([
+            'success'=>true,
+            'list'=>$listMonth
+        ]);
     }
 }
