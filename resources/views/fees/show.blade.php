@@ -1,29 +1,93 @@
-@extends('layouts.app')
+@php
+    $date = \Carbon\Carbon::parse($fee->created_at);
+@endphp
+<div class="invoice p-3 mb-3">
 
-@section('content')
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>Fee Details</h1>
-                </div>
-                <div class="col-sm-6">
-                    <a class="btn btn-default float-right"
-                       href="{{ route('fees.index') }}">
-                        Back
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div class="row">
+        <div class="col-12">
+            <h1 style="text-align: center">CHI TIẾT HĐ: {{$fee->fee_code}}</h1>
+            <h4 style="text-align: center">Thời gian thu: {{$date->format('H:i d/m/Y')}}</h4>
+            <h4 style="text-align: center">Người thu: {{$user->name}}</h4>
 
-    <div class="content px-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    @include('fees.show_fields')
-                </div>
-            </div>
         </div>
     </div>
-@endsection
+
+
+    <div class="row">
+        <div class="col-12 table-responsive">
+            <table class="table no-boder">
+
+                <tbody>
+                <tr>
+                    <td>Họ viên:</td>
+                    <td>{{$student->fullname}}</td>
+
+                </tr>
+                <tr>
+                    <td>Thu HP lớp:</td>
+                    <td>{{$course->course}}</td>
+                </tr>
+                <tr>
+                    <td>Nội dung thu:</td>
+                    <td>{{$fee_text}}</td>
+                </tr>
+                <tr>
+                    <td>Tổng tiền:</td>
+                    <td>{{number_format($fee->total, 0, ',')}}</td>
+                </tr>
+                <tr>
+                    <td>Giảm giá:</td>
+                    <td>{{number_format($fee->discount, 0, ',')}}%</td>
+                </tr>
+                <tr>
+                    <td>Số tiền cần thu:</td>
+                    <td>{{number_format($fee->amount, 0, ',')}}</td>
+                </tr>
+                <tr>
+                    <td>Bằng chữ:</td>
+                    <td>{{$amount_text}}</td>
+                </tr>
+                <tr>
+                    <td>Ghi chú</td>
+                    <td>{{$fee->note}}</td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+        <h3>Chi tiết thu</h3>
+        <div class="col-12 table-responsive">
+            <table class="table no-boder">
+                <thead>
+                <tr>
+                    <td>STT
+                    </td>
+                    <td>Tháng</td>
+                    <td>Học phí</td>
+                    <td>Tiền thu</td>
+                    <td>Ghi chú</td>
+                </tr>
+                </thead>
+
+                <tbody>
+                @foreach($details as $i =>$item)
+
+                    <tr>
+                        <td>{{$i+1}}
+                        </td>
+                        <td>{{$item->month.'/'.$item->year}}</td>
+                        <td>{{number_format($item->origin)}}</td>
+                        <td>{{number_format($item->amount)}}</td>
+                        <td>{{$item->note}}</td>
+                    </tr>
+                @endforeach
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+
+</div>

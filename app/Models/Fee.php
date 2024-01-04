@@ -42,7 +42,7 @@ class Fee extends Model
         'refund',
         'status',
         'refund',
-        'code',
+        'fee_code',
         'note',
         'user_id'
     ];

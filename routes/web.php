@@ -62,6 +62,9 @@ Route::prefix("")->middleware('auth')->group(function () {
         Route::get('collect/{student_id?}/{course_id?}', [\App\Http\Controllers\FeeController::class, 'collect'])->name('fees.collect');
         Route::post('collect/{student_id?}/{course_id?}', [\App\Http\Controllers\FeeController::class, 'saveCollect'])->name('fees.saveCollect');
         Route::get('get-list-fee/{id?}', [\App\Http\Controllers\FeeController::class, 'getListFee'])->name('fees.getListFee');
+        Route::get('bill/{id?}', [\App\Http\Controllers\FeeController::class, 'getBill'])->name('fees.getBill');
+        Route::get('show/{id?}', [\App\Http\Controllers\FeeController::class, 'show'])->name('fees.show');
+        Route::get('cancel', [\App\Http\Controllers\FeeController::class, 'cancel'])->name('fees.cancel');
     });
 
     Route::resource('marks', App\Http\Controllers\MarkController::class);

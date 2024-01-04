@@ -17,14 +17,8 @@ class FeeRepository extends BaseRepository
      * @var array
      */
     protected $fieldSearchable = [
-        'course_student_id',
-        'course_id',
-        'student_id',
-        'fee',
-        'amount',
-        'remain',
-        'status',
-        'refund'
+        'fees.code',
+        'students.fullname'
     ];
 
     /**
@@ -48,6 +42,9 @@ class FeeRepository extends BaseRepository
     public function allFeesByCourseStudent($id){
         return $this->all(['
         course_student_id'=>$id])->get()->orderBy('id','desc');
+    }
+    public function getByCode($code){
+        return $this->allQuery()->firstOrCreate(['fee_code'=>$code]);
     }
 
 

@@ -3,6 +3,8 @@
 namespace App\DataTables;
 
 use App\Models\Fee;
+use Carbon\Carbon;
+use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\EloquentDataTable;
 
@@ -18,7 +20,9 @@ class FeeDataTable extends DataTable
     {
         $dataTable = new EloquentDataTable($query);
 
-        return $dataTable->addColumn('action', 'fees.datatables_actions');
+        return $dataTable->addColumn('action', 'fees.datatables_actions')->editColumn('created_at',function ($fee){
+            return Carbon::parse($fee->created_at)->format('H:i d/m/Y');
+        });
     }
 
     /**
@@ -29,7 +33,10 @@ class FeeDataTable extends DataTable
      */
     public function query(Fee $model)
     {
-        return $model->newQuery();
+        return $model->newQuery()
+            ->leftJoin('courses', 'courses.id', '=', 'fees.course_id')
+            ->leftJoin('students', 'students.id', '=', 'fees.student_id')
+            ->leftJoin('users', 'users.id', '=', 'fees.user_id')->select('fees.*', 'fullname', 'name', 'course');
     }
 
     /**
@@ -65,14 +72,13 @@ class FeeDataTable extends DataTable
     protected function getColumns()
     {
         return [
-            'course_student_id',
-            'course_id',
-            'student_id',
-            'fee',
-            'amount',
-            'remain',
-            'status',
-            'refund'
+            Column::make('id','fees.id')->hidden(),
+            Column::make('fee_code')->title('Mã HĐ'),
+            Column::make('fullname','students.fullname')->title('Học viên'),
+            Column::make('course', 'courses.course')->title('Lớp học'),
+            Column::make('amount')->title('Số tiền')->renderJs('number', ',','.'),
+            Column::make('created_at', 'fees.created_at')->title('Thời gian'),
+            Column::make('name','users.name')->title('Người thu'),
         ];
     }
 
