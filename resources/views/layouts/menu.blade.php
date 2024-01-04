@@ -46,21 +46,27 @@
         <p>Quản lý học phí</p>
     </a>
 </li>
-
-
 <li class="nav-item">
-    <a href="{{ route('marks.index') }}"
-       class="nav-link {{ Request::is('marks*') ? 'active' : '' }}">
-        <p>Quản lý điểm</p>
+    <a href="{{ route('users') }}"
+       class="nav-link {{ Request::is('users*') ? 'active' : '' }}">
+        <p>Quản lý người dùng</p>
     </a>
 </li>
 
 
-<li class="nav-item">
-    <a href="{{ route('sessionMarks.index') }}"
-       class="nav-link {{ Request::is('sessionMarks*') ? 'active' : '' }}">
-        <p>Đợt nhập điểm</p>
-    </a>
-</li>
+{{--<li class="nav-item">--}}
+{{--    <a href="{{ route('marks.index') }}"--}}
+{{--       class="nav-link {{ Request::is('marks*') ? 'active' : '' }}">--}}
+{{--        <p>Quản lý điểm</p>--}}
+{{--    </a>--}}
+{{--</li>--}}
+
+
+{{--<li class="nav-item">--}}
+{{--    <a href="{{ route('sessionMarks.index') }}"--}}
+{{--       class="nav-link {{ Request::is('sessionMarks*') ? 'active' : '' }}">--}}
+{{--        <p>Đợt nhập điểm</p>--}}
+{{--    </a>--}}
+{{--</li>--}}
 
 

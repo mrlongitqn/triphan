@@ -129,14 +129,14 @@
                                             <td>
                                                 <div class='btn-group'>
                                                     @if($student->status == 0)
-                                                        <a href="{{ route('courses.show', $student->id) }}"
+                                                        <a href="{{ route('fees.collect', $student->id) }}"
                                                            title="Thu học phí" class='btn btn-default btn-xs'>
                                                             <i class="fas fa-money-check"></i>
                                                         </a>
-                                                        <a href="{{ route('courses.show', $student->id) }}" title="Xem điểm"
-                                                           class='btn btn-default btn-xs'>
-                                                            <i class="fas fa-file-signature"></i>
-                                                        </a>
+{{--                                                        <a href="{{ route('courses.show', $student->id) }}" title="Xem điểm"--}}
+{{--                                                           class='btn btn-default btn-xs'>--}}
+{{--                                                            <i class="fas fa-file-signature"></i>--}}
+{{--                                                        </a>--}}
                                                         {{--    <a href="{{ route('courses.changeStatus', $id) }}" class='btn btn-default btn-xs'>--}}
                                                         {{--        <i class="fa fa-edit"></i>--}}
                                                         {{--    </a>--}}
@@ -145,10 +145,7 @@
                                                            class='btn btn-default btn-xs'>
                                                             <i class="fas fa-file-signature"></i>
                                                         </a>
-                                                        <a data-id="{{$student->id}}" href="javascript:"
-                                                           class='btn btn-default btn-xs changeStatus'>
-                                                            <i class="fas fa-check"></i>
-                                                        </a>
+
 
                                                         <a data-id="{{$student->id}}" href="javascript:"
                                                            class='btn btn-default btn-xs changeStatus'>
