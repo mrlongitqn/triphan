@@ -7,6 +7,7 @@ use App\Http\Requests;
 use App\Http\Requests\CreateCourseStudentRequest;
 use App\Http\Requests\UpdateCourseStudentRequest;
 use App\Repositories\CourseRepository;
+use App\Repositories\CourseSessionRepository;
 use App\Repositories\CourseStudentRepository;
 use App\Repositories\LevelRepository;
 use App\Repositories\StudentRepository;
@@ -35,14 +36,20 @@ class CourseStudentController extends AppBaseController
      * @var StudentRepository
      */
     private $studentRepository;
+    /**
+     * @var CourseSessionRepository
+     */
+    private $courseSessionRepository;
 
-    public function __construct(CourseStudentRepository $courseStudentRepo, LevelRepository $levelRepository, CourseRepository $courseRepository, SubjectRepository $subjectRepository, StudentRepository $studentRepository)
+    public function __construct(CourseStudentRepository $courseStudentRepo, LevelRepository $levelRepository, CourseRepository $courseRepository, SubjectRepository $subjectRepository, StudentRepository $studentRepository,
+    CourseSessionRepository $courseSessionRepository)
     {
         $this->courseStudentRepository = $courseStudentRepo;
         $this->levelRepository = $levelRepository;
         $this->courseRepository = $courseRepository;
         $this->subjectRepository = $subjectRepository;
         $this->studentRepository = $studentRepository;
+        $this->courseSessionRepository = $courseSessionRepository;
     }
 
     /**
@@ -63,7 +70,8 @@ class CourseStudentController extends AppBaseController
         }
         $selected_course = $id == null ? $id = $courses[0] : $courses->find($id);
         $courseStudent = $this->courseStudentRepository->getByCourse($selected_course->id)->get();
-        return view('course_students.index', compact('levels', 'courses', 'subjects', 'selected_course', 'courseStudent'));
+        $courseSessions = $this->courseSessionRepository->all();
+        return view('course_students.index', compact('levels', 'courses', 'subjects', 'selected_course', 'courseStudent', 'courseSessions'));
     }
 
     /**

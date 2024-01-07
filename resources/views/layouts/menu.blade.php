@@ -70,3 +70,19 @@
 {{--</li>--}}
 
 
+<li class="nav-item">
+    <a href="{{ route('courseSessions.index') }}"
+       class="nav-link {{ Request::is('courseSessions*') ? 'active' : '' }}">
+        <p>Course Sessions</p>
+    </a>
+</li>
+
+
+<li class="nav-item">
+    <a href="{{ route('courseSessionStudents.index') }}"
+       class="nav-link {{ Request::is('courseSessionStudents*') ? 'active' : '' }}">
+        <p>Course Session Students</p>
+    </a>
+</li>
+
+

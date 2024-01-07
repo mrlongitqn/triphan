@@ -71,3 +71,9 @@ Route::prefix("")->middleware('auth')->group(function () {
 
     Route::resource('sessionMarks', App\Http\Controllers\SessionMarkController::class);
 });
+
+
+Route::resource('courseSessions', App\Http\Controllers\CourseSessionController::class);
+
+
+Route::resource('courseSessionStudents', App\Http\Controllers\CourseSessionStudentController::class);

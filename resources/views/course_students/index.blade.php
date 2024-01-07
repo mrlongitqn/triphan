@@ -57,27 +57,41 @@
                                 <div id="courses">
                                     <ul>
                                         @foreach($levels as $level)
-                                            <li> {{$level->level}}
-                                                <ul>
-                                                    @foreach($courses->where('level_id', $level->id) as $course)
-                                                        <li><a
-                                                                @if($course->id == $selected_course->id)
-                                                                    class="jstree-clicked"
-                                                                @endif
-                                                                href="{{route('courseStudents.index', $course->id)}}">{{$course->course}}</a>
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            </li>
-                                        @endforeach
+                                            @php
+                                                $by_level = $courses->where('level_id', '=', $level->id);
+                                            @endphp
+                                            @if($by_level->count()>0)
+                                                <li> {{$level->level}}
+                                                    <ul>
+                                                        @foreach($subjects as $subject)
+                                                            @php
+                                                                $by_course = $courses->where('level_id', '=', $level->id)->where('subject_id','=', $subject->id);
+                                                            @endphp
+                                                            @if($by_course->count()>0)
+                                                                <li>{{$subject->subject}}
+                                                                    <ul>
+                                                                        @foreach($by_course as $course)
+                                                                            <li><a
+                                                                                    @if($course->id == $selected_course->id)
+                                                                                        class="jstree-clicked"
+                                                                                    @endif
+                                                                                    href="{{route('courseStudents.index', $course->id)}}">{{$course->course}}</a>
+                                                                            </li>
+                                                                        @endforeach
+                                                                    </ul>
+                                                                </li>
+                                                            @endif
 
+                                                        @endforeach
+                                                    </ul>
+                                                </li>
+                                            @endif
+                                        @endforeach
                                     </ul>
                                 </div>
                             </div>
-
                         </div>
                     </div>
-
                     <div class="col-sm-10">
                         <div class="card">
                             <div class="card-header">
@@ -133,15 +147,16 @@
                                                            title="Thu học phí" class='btn btn-default btn-xs'>
                                                             <i class="fas fa-money-check"></i>
                                                         </a>
-{{--                                                        <a href="{{ route('courses.show', $student->id) }}" title="Xem điểm"--}}
-{{--                                                           class='btn btn-default btn-xs'>--}}
-{{--                                                            <i class="fas fa-file-signature"></i>--}}
-{{--                                                        </a>--}}
+                                                        {{--                                                        <a href="{{ route('courses.show', $student->id) }}" title="Xem điểm"--}}
+                                                        {{--                                                           class='btn btn-default btn-xs'>--}}
+                                                        {{--                                                            <i class="fas fa-file-signature"></i>--}}
+                                                        {{--                                                        </a>--}}
                                                         {{--    <a href="{{ route('courses.changeStatus', $id) }}" class='btn btn-default btn-xs'>--}}
                                                         {{--        <i class="fa fa-edit"></i>--}}
                                                         {{--    </a>--}}
 
-                                                        <a href="{{ route('courses.show', $student->id) }}" title="Xem điểm"
+                                                        <a href="{{ route('courses.show', $student->id) }}"
+                                                           title="Xem điểm"
                                                            class='btn btn-default btn-xs'>
                                                             <i class="fas fa-file-signature"></i>
                                                         </a>
