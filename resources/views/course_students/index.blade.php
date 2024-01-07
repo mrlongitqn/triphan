@@ -99,14 +99,55 @@
                                 <div class="card-tools">
                                     <div class="input-group input-group-sm" style="width: 250px;">
 
-                                        {!! Form::open(['route' => 'courseStudents.store']) !!}
+                                        {!! Form::open(['route' => 'courseStudents.store' , 'id'=>'formSave']) !!}
                                         <input type="hidden" name="course_id" value="{{$selected_course->id}}">
                                         <select name="student_id" style="width: 200px"
                                                 class="js-data-example-ajax"></select>
+                                        @if($courseSessions->count()>0)
+                                            <div class="modal fade show" id="modal-session" aria-modal="true"
+                                                 role="dialog">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">Vui lòng chọn ca học</h4>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                    aria-label="Close">
+                                                                <span aria-hidden="true">×</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            @foreach($courseSessions as $ses)
+                                                                <div class="form-group">
+                                                                    <div class="custom-control custom-checkbox">
+                                                                        <input class="custom-control-input"
+                                                                               type="checkbox" name="courseSession[]"
+                                                                               id="customCheckbox{{$ses->id}}"
+                                                                               value="{{$ses->id}}">
+                                                                        <label for="customCheckbox{{$ses->id}}"
+                                                                               class="custom-control-label">{{$ses->day_of_week}}
+                                                                            - {{$ses->session}}</label>
+                                                                    </div>
+                                                                </div>
+                                                            @endforeach
 
-                                        <button type="submit" class="btn btn-default pull-right">
+                                                        </div>
+                                                        <div class="modal-footer justify-content-between">
+                                                            <button type="button" class="btn btn-default"
+                                                                    data-dismiss="modal">Đóng
+                                                            </button>
+                                                            <button type="submit" class="btn btn-primary">Thêm vào lớp
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        @endif
+
+                                        <button type="button" class="btn btn-default pull-right" id="btnSave">
                                             <i class="fas fa-plus"></i>
                                         </button>
+
 
                                         {!! Form::close() !!}
                                     </div>
@@ -224,6 +265,14 @@
                     }
 
                 });
+                var hasSession = {{$courseSessions->count()}};
+                $('#btnSave').on('click', function () {
+                    if (hasSession > 0)
+                        $('#modal-session').modal('show');
+                    else {
+                        $('#formSave').submit();
+                    }
+                })
 
             </script>
     @endpush

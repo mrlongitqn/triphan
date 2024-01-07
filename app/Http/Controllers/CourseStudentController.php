@@ -8,6 +8,7 @@ use App\Http\Requests\CreateCourseStudentRequest;
 use App\Http\Requests\UpdateCourseStudentRequest;
 use App\Repositories\CourseRepository;
 use App\Repositories\CourseSessionRepository;
+use App\Repositories\CourseSessionStudentRepository;
 use App\Repositories\CourseStudentRepository;
 use App\Repositories\LevelRepository;
 use App\Repositories\StudentRepository;
@@ -40,9 +41,13 @@ class CourseStudentController extends AppBaseController
      * @var CourseSessionRepository
      */
     private $courseSessionRepository;
+    /**
+     * @var CourseSessionStudentRepository
+     */
+    private $courseSessionStudentRepository;
 
     public function __construct(CourseStudentRepository $courseStudentRepo, LevelRepository $levelRepository, CourseRepository $courseRepository, SubjectRepository $subjectRepository, StudentRepository $studentRepository,
-    CourseSessionRepository $courseSessionRepository)
+                                CourseSessionRepository $courseSessionRepository, CourseSessionStudentRepository  $courseSessionStudentRepository)
     {
         $this->courseStudentRepository = $courseStudentRepo;
         $this->levelRepository = $levelRepository;
@@ -50,6 +55,7 @@ class CourseStudentController extends AppBaseController
         $this->subjectRepository = $subjectRepository;
         $this->studentRepository = $studentRepository;
         $this->courseSessionRepository = $courseSessionRepository;
+        $this->courseSessionStudentRepository = $courseSessionStudentRepository;
     }
 
     /**
@@ -66,11 +72,19 @@ class CourseStudentController extends AppBaseController
         $subjects = $this->subjectRepository->all();
         $courses = $this->courseRepository->all();
         if (count($courses) === 0) {
-            Flash::success('Vui lòng tạo các lớp học trước.');
+            Flash::error('Vui lòng tạo các lớp học trước.');
+            return redirect(route('courses.index'));
         }
-        $selected_course = $id == null ? $id = $courses[0] : $courses->find($id);
+
+        $selected_course = $id == null ? $courses[0] : $courses->find($id);
+        if ($selected_course === null) {
+            Flash::error('Lớp học không tồn tại.');
+            return redirect(route('courseStudents.index'));
+        }
         $courseStudent = $this->courseStudentRepository->getByCourse($selected_course->id)->get();
-        $courseSessions = $this->courseSessionRepository->all();
+        $courseSessions = $this->courseSessionRepository->all([
+            'course_id' => $selected_course->id
+        ]);
         return view('course_students.index', compact('levels', 'courses', 'subjects', 'selected_course', 'courseStudent', 'courseSessions'));
     }
 
@@ -96,7 +110,6 @@ class CourseStudentController extends AppBaseController
         $input = $request->all();
         $input['status'] = 0;
         $input['note'] = 'note';
-
         $input['user_id'] = $request->user()->id;
         $exist = $this->courseStudentRepository->all([
             'course_id' => $request->course_id,
@@ -104,12 +117,19 @@ class CourseStudentController extends AppBaseController
         ])->count();
         if ($exist > 0) {
             Flash::success('Học viên đã tồn tại trong lớp');
-
             return redirect(route('courseStudents.index', $request->course_id));
         }
-
         $courseStudent = $this->courseStudentRepository->create($input);
-
+        if ($request->has('courseSession')) {
+            $courseSessions = $request->courseSession;
+            foreach ($courseSessions as $courseSession){
+                $this->courseSessionStudentRepository->create([
+                    'course_id'=>$request->course_id,
+                    'session_id'=>$courseSession,
+                    'student_id'=>$request->student_id
+                ]);
+            }
+        }
         Flash::success('Đã thêm học viên vào lớp thành công');
 
         return redirect(route('courseStudents.index', $request->course_id));
