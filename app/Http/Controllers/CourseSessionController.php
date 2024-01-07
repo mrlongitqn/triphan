@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateCourseSessionRequest;
 use App\Http\Requests\UpdateCourseSessionRequest;
+use App\Repositories\CourseRepository;
 use App\Repositories\CourseSessionRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
@@ -14,10 +15,15 @@ class CourseSessionController extends AppBaseController
 {
     /** @var CourseSessionRepository $courseSessionRepository*/
     private $courseSessionRepository;
+    /**
+     * @var CourseRepository
+     */
+    private $courseRepository;
 
-    public function __construct(CourseSessionRepository $courseSessionRepo)
+    public function __construct(CourseSessionRepository $courseSessionRepo, CourseRepository  $courseRepository)
     {
         $this->courseSessionRepository = $courseSessionRepo;
+        $this->courseRepository = $courseRepository;
     }
 
     /**
@@ -29,10 +35,14 @@ class CourseSessionController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $courseSessions = $this->courseSessionRepository->paginate(10);
+        $id = $request->course;
+        $course = $this->courseRepository->find($id);
+        if($course == null){
+            abort(404);
+        }
+        $courseSessions = $this->courseSessionRepository->all(['course_id'=>$id]);
 
-        return view('course_sessions.index')
-            ->with('courseSessions', $courseSessions);
+        return view('course_sessions.index', compact('courseSessions', 'course'));
     }
 
     /**
@@ -40,9 +50,11 @@ class CourseSessionController extends AppBaseController
      *
      * @return Response
      */
-    public function create()
+    public function create(Request  $request)
     {
-        return view('course_sessions.create');
+        $id = $request->course;
+        $course = $this->courseRepository->find($id);
+        return view('course_sessions.create', compact('course'));
     }
 
     /**
@@ -58,9 +70,11 @@ class CourseSessionController extends AppBaseController
 
         $courseSession = $this->courseSessionRepository->create($input);
 
-        Flash::success('Course Session saved successfully.');
+        Flash::success('Đã tạo ca học thành công.');
 
-        return redirect(route('courseSessions.index'));
+        return redirect(route('courseSessions.index', [
+            'course'=>$courseSession->course_id
+        ]));
     }
 
     /**
@@ -93,6 +107,7 @@ class CourseSessionController extends AppBaseController
     public function edit($id)
     {
         $courseSession = $this->courseSessionRepository->find($id);
+        $course = $this->courseRepository->find($courseSession->course_id);
 
         if (empty($courseSession)) {
             Flash::error('Course Session not found');
@@ -100,7 +115,7 @@ class CourseSessionController extends AppBaseController
             return redirect(route('courseSessions.index'));
         }
 
-        return view('course_sessions.edit')->with('courseSession', $courseSession);
+        return view('course_sessions.edit', compact('course', 'courseSession'));
     }
 
     /**
@@ -125,7 +140,9 @@ class CourseSessionController extends AppBaseController
 
         Flash::success('Course Session updated successfully.');
 
-        return redirect(route('courseSessions.index'));
+        return redirect(route('courseSessions.index',[
+            'course'=>$courseSession->course_id
+        ]));
     }
 
     /**

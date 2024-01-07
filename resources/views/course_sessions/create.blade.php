@@ -5,7 +5,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-12">
-                    <h1>Create Course Session</h1>
+                    <h1>Thêm ca cho lớp: {{$course->course}}</h1>
                 </div>
             </div>
         </div>
@@ -28,8 +28,10 @@
             </div>
 
             <div class="card-footer">
-                {!! Form::submit('Save', ['class' => 'btn btn-primary']) !!}
-                <a href="{{ route('courseSessions.index') }}" class="btn btn-default">Cancel</a>
+                {!! Form::submit('Lưu lại', ['class' => 'btn btn-primary']) !!}
+                <a href="{{ route('courseSessions.index',[
+            'course'=>$courseSession->course_id
+        ]) }}" class="btn btn-default">Hủy bỏ</a>
             </div>
 
             {!! Form::close() !!}

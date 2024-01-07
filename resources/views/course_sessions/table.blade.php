@@ -2,25 +2,24 @@
     <table class="table" id="courseSessions-table">
         <thead>
         <tr>
-            <th>Course Id</th>
-        <th>Day Of Week</th>
-        <th>Session</th>
-            <th colspan="3">Action</th>
+            <th>Thứ</th>
+            <th>Tên ca</th>
+            <th>Hành động</th>
         </tr>
         </thead>
         <tbody>
+        @if($courseSessions->count()==0)
+            <tr><td colspan="3" class="text-center">
+                    Chưa có ca học nào
+                </td> </tr>
+        @endif
         @foreach($courseSessions as $courseSession)
             <tr>
-                <td>{{ $courseSession->course_id }}</td>
-            <td>{{ $courseSession->day_of_week }}</td>
-            <td>{{ $courseSession->session }}</td>
-                <td width="120">
+                <td>{{ $courseSession->day_of_week }}</td>
+                <td>{{ $courseSession->session }}</td>
+                <td width="190">
                     {!! Form::open(['route' => ['courseSessions.destroy', $courseSession->id], 'method' => 'delete']) !!}
                     <div class='btn-group'>
-                        <a href="{{ route('courseSessions.show', [$courseSession->id]) }}"
-                           class='btn btn-default btn-xs'>
-                            <i class="far fa-eye"></i>
-                        </a>
                         <a href="{{ route('courseSessions.edit', [$courseSession->id]) }}"
                            class='btn btn-default btn-xs'>
                             <i class="far fa-edit"></i>

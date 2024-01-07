@@ -31,7 +31,8 @@ class CourseDataTable extends DataTable
      */
     public function query(Course $model)
     {
-        return $model->newQuery()->leftJoin('levels','levels.id','=','courses.level_id')->leftJoin('subjects', 'subjects.id', '=', 'courses.subject_id');
+        return $model->newQuery()->leftJoin('levels','levels.id','=','courses.level_id')->leftJoin('subjects', 'subjects.id', '=', 'courses.subject_id')
+            ->select('courses.*', 'level', 'subject');
     }
 
     /**

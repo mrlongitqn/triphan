@@ -6,6 +6,9 @@
     <a href="{{ route('courses.show', $id) }}" title="In danh sách học viên" class='btn btn-default btn-xs'>
         <i class="fa fa-print"></i>
     </a>
+    <a href="{{ route('courseSessions.index',['course'=>$id]) }}" title="Xem ca học" class='btn btn-default btn-xs'>
+        <i class="fas fa-calendar"></i>
+    </a>
 {{--    <a href="{{ route('courses.changeStatus', $id) }}" class='btn btn-default btn-xs'>--}}
 {{--        <i class="fa fa-edit"></i>--}}
 {{--    </a>--}}
