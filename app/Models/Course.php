@@ -79,7 +79,6 @@ class Course extends Model
         'fee' => 'required',
         'level_id' => 'required',
         'subject_id' => 'required',
-        'teacher' => 'string',
         'start_date' => 'date',
         'end_date' => 'date',
         'schedules'=>'',

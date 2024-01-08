@@ -81,3 +81,5 @@ Route::resource('courseSessions', App\Http\Controllers\CourseSessionController::
 
 
 Route::resource('courseSessionStudents', App\Http\Controllers\CourseSessionStudentController::class);
+
+Route::get('import', [\App\Http\Controllers\ImportController::class, 'index']);
