@@ -53,6 +53,7 @@ class CourseSessionController extends AppBaseController
     public function create(Request  $request)
     {
         $id = $request->course;
+
         $course = $this->courseRepository->find($id);
         return view('course_sessions.create', compact('course'));
     }

@@ -39,4 +39,11 @@ class CourseSessionStudentRepository extends BaseRepository
     {
         return CourseSessionStudent::class;
     }
+
+    public function listStudentBySession($course, $session){
+        $data = $this->allQuery()->leftJoin('students', 'students.id', '=', 'course_session_students.student_id')
+            ->where('session_id', '=', $session)
+            ->select('students.*')->get();
+        return $data;
+    }
 }

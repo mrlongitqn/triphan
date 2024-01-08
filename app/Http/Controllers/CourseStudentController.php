@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\CourseStudentDataTable;
-use App\Http\Requests;
+
 use App\Http\Requests\CreateCourseStudentRequest;
 use App\Http\Requests\UpdateCourseStudentRequest;
 use App\Repositories\CourseRepository;
@@ -14,7 +14,7 @@ use App\Repositories\LevelRepository;
 use App\Repositories\StudentRepository;
 use App\Repositories\SubjectRepository;
 use Flash;
-use App\Http\Controllers\AppBaseController;
+use Illuminate\Http\Request;
 use Response;
 
 class CourseStudentController extends AppBaseController
@@ -47,7 +47,7 @@ class CourseStudentController extends AppBaseController
     private $courseSessionStudentRepository;
 
     public function __construct(CourseStudentRepository $courseStudentRepo, LevelRepository $levelRepository, CourseRepository $courseRepository, SubjectRepository $subjectRepository, StudentRepository $studentRepository,
-                                CourseSessionRepository $courseSessionRepository, CourseSessionStudentRepository  $courseSessionStudentRepository)
+                                CourseSessionRepository $courseSessionRepository, CourseSessionStudentRepository $courseSessionStudentRepository)
     {
         $this->courseStudentRepository = $courseStudentRepo;
         $this->levelRepository = $levelRepository;
@@ -85,6 +85,14 @@ class CourseStudentController extends AppBaseController
         $courseSessions = $this->courseSessionRepository->all([
             'course_id' => $selected_course->id
         ]);
+        $studentSession = $this->courseSessionStudentRepository->all(['course_id' => $selected_course->id]);
+
+        foreach ($courseStudent as $value) {
+            $sessionBy = $studentSession->where('student_id', '=', $value->student_id);
+
+            $value->sessions = $sessionBy->pluck('session_id')->join(',');
+        }
+
         return view('course_students.index', compact('levels', 'courses', 'subjects', 'selected_course', 'courseStudent', 'courseSessions'));
     }
 
@@ -122,17 +130,55 @@ class CourseStudentController extends AppBaseController
         $courseStudent = $this->courseStudentRepository->create($input);
         if ($request->has('courseSession')) {
             $courseSessions = $request->courseSession;
-            foreach ($courseSessions as $courseSession){
+            foreach ($courseSessions as $courseSession) {
                 $this->courseSessionStudentRepository->create([
-                    'course_id'=>$request->course_id,
-                    'session_id'=>$courseSession,
-                    'student_id'=>$request->student_id
+                    'course_id' => $request->course_id,
+                    'session_id' => $courseSession,
+                    'student_id' => $request->student_id
                 ]);
             }
         }
         Flash::success('Đã thêm học viên vào lớp thành công');
 
         return redirect(route('courseStudents.index', $request->course_id));
+    }
+
+
+    public function updateSession(Request $request)
+    {
+        $data = $request->all();
+        $courseStudent = $this->courseStudentRepository->find($data['studentCourseId']);
+        if ($courseStudent == null)
+            abort(404);
+        $old = $this->courseSessionStudentRepository->all([
+            'course_id' => $courseStudent->course_id,
+            'student_id' => $courseStudent->student_id
+        ]);
+        if (isset($data['courseSession'])) {
+            foreach ($old as $item) {
+                if (in_array($item->session_id, $data['courseSession'])) {
+                    //unset($item)
+                    if (($key = array_search($item->session_id, $data['courseSession'])) !== false) {
+                        unset($data['courseSession'][$key]);
+                    }
+                } else {
+                    $item->delete();
+                }
+            }
+            foreach ($data['courseSession'] as $i) {
+                $this->courseSessionStudentRepository->create([
+                    'course_id' => $courseStudent->course_id,
+                    'student_id' => $courseStudent->student_id,
+                    'session_id' => $i,
+                ]);
+            }
+        } else {
+            foreach ($old as $item) {
+                $item->delete();
+            }
+        }
+
+        return redirect(route('courseStudents.index', $courseStudent->course_id));
     }
 
     /**
@@ -250,5 +296,17 @@ class CourseStudentController extends AppBaseController
             'success' => true,
             'data' => $course
         ]);
+    }
+
+    public function printList($course){
+        $courseModel  = $this->courseRepository->find($course);
+        $studentSession = $this->courseStudentRepository->getByCourse($course)->get();
+        return view('course_students.listStudent', compact('courseModel', 'studentSession'));
+    }
+    public function printListBySession($course = 0, $session = 0){
+        $courseModel  = $this->courseRepository->find($course);
+        $studentSession = $this->courseSessionStudentRepository->listStudentBySession($course,$session);
+        $sessionModel = $this->courseSessionRepository->find($session);
+        return view('course_students.listStudent', compact('courseModel', 'studentSession', 'sessionModel'));
     }
 }

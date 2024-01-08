@@ -97,7 +97,32 @@
                             <div class="card-header">
                                 <h3 class="card-title">DANH SÁCH HỌC VIÊN</h3>
                                 <div class="card-tools">
-                                    <div class="input-group input-group-sm" style="width: 250px;">
+                                    <div class="btn-group" style="margin-left: 20px">
+                                        <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" data-offset="-52" aria-expanded="false">
+                                            <i class="fas fa-print"></i>
+                                        </button>
+                                        <div class="dropdown-menu" role="menu">
+                                            <a target="_blank" href="{{route('courseStudents.printList')}}/{{$selected_course->id}}" class="dropdown-item">In danh sách lớp</a>
+                                            <a href="#" class="dropdown-item">Danh sách nợ học phí</a>
+
+                                            <a href="#" class="dropdown-item">View calendar</a>
+                                        </div>
+                                    </div>
+                                    @if($courseSessions->count()>0)
+                                        <div class="btn-group" style="margin-left: 20px">
+                                            <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" data-offset="-52" aria-expanded="false">
+                                                <i class="far fa-calendar-alt"></i> In theo ca
+                                            </button>
+                                            <div class="dropdown-menu" role="menu" style="">
+
+                                                @foreach($courseSessions as $ses)
+                                                    <a  target="_blank" href="{{route('courseStudents.printListBySession')}}/{{$selected_course->id}}/{{$ses->id}}" class="dropdown-item">{{$ses->day_of_week}} - {{$ses->session}}</a>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    <div class="input-group input-group-sm" style="width: 250px; float: right; margin-left: 40px">
 
                                         {!! Form::open(['route' => 'courseStudents.store' , 'id'=>'formSave']) !!}
                                         <input type="hidden" name="course_id" value="{{$selected_course->id}}">
@@ -202,6 +227,13 @@
                                                             <i class="fas fa-file-signature"></i>
                                                         </a>
 
+                                                        <a href="javascript:"
+                                                           title="Xem ca học"
+                                                           data-id="{{$student->id}}"
+                                                           data-sessions="{{$student->sessions}}"
+                                                           class='btn btn-default btn-xs btnSession'>
+                                                            <i class="fas fa-calendar"></i>
+                                                        </a>
 
                                                         <a data-id="{{$student->id}}" href="javascript:"
                                                            class='btn btn-default btn-xs changeStatus'>
@@ -228,6 +260,51 @@
             </div>
         </div>
 
+        @if($courseSessions->count()>0)
+            <div class="modal fade show" id="modal-update-session" aria-modal="true"
+                 role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Danh sách ca học</h4>
+                            <button type="button" class="close" data-dismiss="modal"
+                                    aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <form action="{{route('courseStudents.updateSession')}}" method="post">
+
+                            <input name="_token" type="hidden" value="{{csrf_token()}}">
+                            <input type="hidden" name="studentCourseId" id="studentCourseId" value="0">
+                            <div class="modal-body">
+                                @foreach($courseSessions as $ses)
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox">
+                                            <input class="custom-control-input update-check"
+                                                   type="checkbox" name="courseSession[]"
+                                                   id="update_session_{{$ses->id}}"
+                                                   value="{{$ses->id}}">
+                                            <label for="update_session_{{$ses->id}}"
+                                                   class="custom-control-label">{{$ses->day_of_week}}
+                                                - {{$ses->session}}</label>
+                                        </div>
+                                    </div>
+                                @endforeach
+
+                            </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default"
+                                        data-dismiss="modal">Đóng
+                                </button>
+                                <button type="submit" class="btn btn-primary">Cập nhật ca
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        @endif
         @endsection
         @push('third_party_scripts')
             <script src="{{asset('vendor/jstree/jstree.min.js')}}"></script>
@@ -272,7 +349,19 @@
                     else {
                         $('#formSave').submit();
                     }
-                })
+                });
+                $('.btnSession').on('click', function () {
+                    let studentCourseId = $(this).data('id');
+                    $('#studentCourseId').val(studentCourseId);
+                    let sessions = $(this).data('sessions')+"";
+                    const array = sessions.split(',');
+                    $(".update-check").prop("checked", false);
+                    array.forEach(x=>{
+                        $('#update_session_'+x).prop('checked', 'checked');
+                    })
+
+                    $('#modal-update-session').modal('show');
+                });
 
             </script>
     @endpush

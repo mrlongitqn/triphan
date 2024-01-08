@@ -23,7 +23,7 @@
             cursor: pointer;
         }
 
-        .mm, .status {
+        .mm, .ff, .status {
             width: 20px;
         }
     </style>
@@ -65,13 +65,14 @@
             let fee = $(this).data('fee');
             $.get('{{route('fees.getListFee')}}/' + id, function (data) {
                 $('#feeTable tbody').empty();
-                data.list.forEach(function (m, i) {
+                data.list.months.forEach(function (m, i) {
                     $('#feeTable tbody').append(
                         '<tr>' +
                         '<td><input data-index=' + i + '  class="mm form-control" type="checkbox" name="' + m + '" /></td>' +
                         '<td>' + m + '</td>' +
-                        '<td><input type="number" class="feeNum form-control" name="fee_' + m + '" value="' + fee + '" /></td>' +
+                        '<td><input type="number" class="feeNum form-control" name="fee_' + m + '" value="' + ((i === 0 && data.list.remain > 0) ? data.list.remain : fee) + '" /></td>' +
                         '<td><input type="text" class="form-control" name="note_' + m + '" value="" /></td>' +
+                        '<td><input data-index=' + i + '  class="ff form-control" type="checkbox" name="full_' + m + '" /></td>' +
                         '</tr>'
                     );
                 });
@@ -85,9 +86,10 @@
         var amount = 0;
         var pay = 0;
         var remain = 0;
-        $(document).on('change', '#feeTable input[type=checkbox]', function () {
+        $(document).on('change', '#feeTable .mm', function () {
             let c = $(this);
             var isChecked = $(this).prop("checked");
+            $('input[name="full_' + c.attr('name') + '"]').prop("checked", "checked");
             if (isChecked) {
                 array_index.push(c.data('index'));
                 array_month.push(c.attr('name'));
@@ -107,12 +109,14 @@
 
         $(document).on('change', '#pay', function () {
             let p = parseInt($(this).val());
-            remain = p - (amount / 1000);
+            remain = p - amount ;
             $('#remain').text(remain.toLocaleString());
         });
+
         function round(so) {
             return Math.ceil(so / 1000) * 1000;
         }
+
         $('#save').on('click', function () {
             if (array_index.length === 0) {
                 alert('Vui lòng chọn tháng cần thu');
@@ -138,7 +142,7 @@
             amount = round(total * (1 - discount / 100));
             $('#amount').text(amount.toLocaleString());
             pay = amount;
-            $('#pay').val(pay / 1000);
+            $('#pay').val(pay);
             remain = 0;
             $('#remain').text('0');
             return t;
@@ -255,6 +259,7 @@
                                             <th>Tháng</th>
                                             <th>Số tiền</th>
                                             <th>Ghi chú</th>
+                                            <th>Đã thu đủ</th>
                                         </tr>
                                         </thead>
                                         <tbody>

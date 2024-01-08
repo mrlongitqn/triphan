@@ -27,6 +27,14 @@
             <div class="card-body p-0">
                 @include('course_sessions.table')
             </div>
+            <div class="card-footer">
+
+                    <a class="btn btn-warning"
+                       href="{{ route('courses.index') }}">
+                      Quay về
+                    </a>
+
+            </div>
 
         </div>
     </div>

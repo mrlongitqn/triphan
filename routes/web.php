@@ -55,6 +55,9 @@ Route::prefix("")->middleware('auth')->group(function () {
         Route::post('/store', [App\Http\Controllers\CourseStudentController::class, 'store'])->name('courseStudents.store');
         Route::delete('/destroy', [App\Http\Controllers\CourseStudentController::class, 'destroy'])->name('courseStudents.destroy');
         Route::get('/list-student/{student?}', [App\Http\Controllers\CourseStudentController::class, 'listCourses'])->name('courseStudents.listCourse');
+        Route::post('/update-session', [App\Http\Controllers\CourseStudentController::class, 'updateSession'])->name('courseStudents.updateSession');
+        Route::get('/print-list/{course?}', [App\Http\Controllers\CourseStudentController::class, 'printList'])->name('courseStudents.printList');
+        Route::get('/print-list-by-session/{course?}/{session?}', [App\Http\Controllers\CourseStudentController::class, 'printListBySession'])->name('courseStudents.printListBySession');
     });
 
     Route::prefix('fees')->group(function () {
@@ -65,6 +68,7 @@ Route::prefix("")->middleware('auth')->group(function () {
         Route::get('bill/{id?}', [\App\Http\Controllers\FeeController::class, 'getBill'])->name('fees.getBill');
         Route::get('show/{id?}', [\App\Http\Controllers\FeeController::class, 'show'])->name('fees.show');
         Route::get('cancel', [\App\Http\Controllers\FeeController::class, 'cancel'])->name('fees.cancel');
+        Route::get('list-debt-by-course/{course?}', [\App\Http\Controllers\FeeController::class, 'listFeeDebtByCourse'])->name('fees.listFeeDebtByCourse');
     });
 
     Route::resource('marks', App\Http\Controllers\MarkController::class);

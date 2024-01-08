@@ -109,9 +109,8 @@ class FeeController extends AppBaseController
         $details = $this->feeDetailRepository->allQuery()->where('fee_id', '=', $fee->id)->get();
 
         $fee_text = 'Thu học phí tháng ';
-        foreach ($details as $detail)
-        {
-            $fee_text = $fee_text . $detail->month.'/'.$detail->year.'; ';
+        foreach ($details as $detail) {
+            $fee_text = $fee_text . $detail->month . '/' . $detail->year . '; ';
         }
         $user = User::find($fee->user_id);
         $student = $this->studentRepository->find($fee->student_id);
@@ -207,7 +206,7 @@ class FeeController extends AppBaseController
         $data = $request->all();
         $courseStudent = $this->courseStudentRepository->find($data['courseStudentId']);
         $course = $this->courseRepository->find($courseStudent->course_id);
-        $listMonth = $this->calMonth($data['courseStudentId']);
+        $listMonth = $this->calMonth($data['courseStudentId'])['months'];
         $total = 0;
         $fee = $this->feeRepository->create([
             'course_student_id' => $courseStudent->id,
@@ -218,7 +217,7 @@ class FeeController extends AppBaseController
             'status' => 0,
             'refund' => 0,
             'discount' => 0,
-            'note' => $data['note'],
+            'note' => $data['note'] . "",
             'fee_code' => 'TP',
             'user_id' => $request->user()->id
         ]);
@@ -230,12 +229,12 @@ class FeeController extends AppBaseController
                     'course_student_id' => $courseStudent->id,
                     'origin' => $course->fee,
                     'amount' => $data['fee_' . $item],
-                    'remain' => 0,
+                    'remain' => isset($data['full_' . $item]) ? 0 : $course->fee - $data['fee_' . $item],
                     'month' => $date[0],
                     'year' => $date[1],
-                    'note' => $data['note_' . $item],
+                    'note' => $data['note_' . $item] . "",
                     'fee_id' => $fee->id,
-                    'status' => 0
+                    'status' => isset($data['full_' . $item]) ? 1 : 0
                 ]);
                 $total += $data['fee_' . $item];
             } else {
@@ -296,15 +295,25 @@ class FeeController extends AppBaseController
     {
         $fee = $this->feeDetailRepository->lastMonthPayByCourseStudent($studentCourseId);
         $date = Carbon::now();
+        $remain = 0;
         if ($fee != null) {
-            $date = Carbon::create($fee->year, $fee->month, 1)->addMonths(1);
+            if ($fee->status == 0) {
+                $date = Carbon::create($fee->year, $fee->month, 1);
+                $remain = $fee->remain;
+            } else {
+                $date = Carbon::create($fee->year, $fee->month, 1)->addMonths(1);
+            }
+
         }
 
         $listMonth = [];
         for ($i = 0; $i <= 7; $i++) {
             $listMonth[] = $date->clone()->addMonths($i)->format('n-Y');
         }
-        return $listMonth;
+        return [
+            'months' => $listMonth,
+            'remain' => $remain
+        ];
     }
 
     function getBill($id = 0)
@@ -314,9 +323,8 @@ class FeeController extends AppBaseController
         $details = $this->feeDetailRepository->allQuery()->where('fee_id', '=', $fee->id)->get();
 
         $fee_text = 'Thu học phí tháng ';
-        foreach ($details as $detail)
-        {
-            $fee_text = $fee_text . $detail->month.'/'.$detail->year.'; ';
+        foreach ($details as $detail) {
+            $fee_text = $fee_text . $detail->month . '/' . $detail->year . '; ';
         }
         $user = User::find($fee->user_id);
         $student = $this->studentRepository->find($fee->student_id);
@@ -324,12 +332,24 @@ class FeeController extends AppBaseController
         return view('fees.bill', compact('fee', 'details', 'student', 'course', 'fee_text', 'amount_text', 'user'));
     }
 
-    function cancel (Request $request)
+    function cancel(Request $request)
     {
         $code = $request->code;
         $fee = $this->feeRepository->getByCode($code);
-        $fee->update(['status'=>1]);
+        $fee->update(['status' => 1]);
         $fee->save();
         return redirect(route('fees.index'));
     }
+
+    //Get danh sách nợ học phí theo lớp
+    public function listFeeDebtByCourse($course=0)
+    {
+        $listStudent = $this->courseStudentRepository->getByCourse($course)->get()->pluck('id');
+        dd($listStudent);
+        $date = Carbon::now();
+        $listFees = $this->feeDetailRepository->allQuery()->selectRaw(' course_student_id, Max(id) as id')->groupBy('course_student_id');
+    }
+
+
+    //Get tất car học sinh nợ HP
 }

@@ -21,7 +21,7 @@ class CourseSession extends Model
 
 
     public $table = 'course_sessions';
-    
+
 
     protected $dates = ['deleted_at'];
 
@@ -51,8 +51,8 @@ class CourseSession extends Model
      * @var array
      */
     public static $rules = [
-        
+        'session'=>'required'
     ];
 
-    
+
 }

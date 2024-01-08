@@ -30,7 +30,7 @@
             <div class="card-footer">
                 {!! Form::submit('Lưu lại', ['class' => 'btn btn-primary']) !!}
                 <a href="{{ route('courseSessions.index',[
-            'course'=>$courseSession->course_id
+            'course'=>$course->id
         ]) }}" class="btn btn-default">Hủy bỏ</a>
             </div>
 
