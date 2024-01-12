@@ -201,7 +201,7 @@
                                         >
                                             <td><input type="checkbox"></td>
                                             <td>{{$student->code}}</td>
-                                            <td>{{$student->fullname}} {!! $student->fee_status==0?'<span class="badge bg-warning">Nợ học phí</span>':'' !!}</td>
+                                            <td>{{$student->fullname}} {!! $student->fee_status==1?'':'<span class="badge bg-warning">Nợ học phí</span>' !!}</td>
                                             <td>{{date('d-m-Y', strtotime($student->dob))}}</td>
                                             <td>{{$student->phone}}</td>
                                             <td>{{date('d-m-Y', strtotime($student->created_at))}}</td>
@@ -213,19 +213,6 @@
                                                            title="Thu học phí" class='btn btn-default btn-xs'>
                                                             <i class="fas fa-money-check"></i>
                                                         </a>
-                                                        {{--                                                        <a href="{{ route('courses.show', $student->id) }}" title="Xem điểm"--}}
-                                                        {{--                                                           class='btn btn-default btn-xs'>--}}
-                                                        {{--                                                            <i class="fas fa-file-signature"></i>--}}
-                                                        {{--                                                        </a>--}}
-                                                        {{--    <a href="{{ route('courses.changeStatus', $id) }}" class='btn btn-default btn-xs'>--}}
-                                                        {{--        <i class="fa fa-edit"></i>--}}
-                                                        {{--    </a>--}}
-
-{{--                                                        <a href="{{ route('courses.show', $student->id) }}"--}}
-{{--                                                           title="Xem điểm"--}}
-{{--                                                           class='btn btn-default btn-xs'>--}}
-{{--                                                            <i class="fas fa-file-signature"></i>--}}
-{{--                                                        </a>--}}
                                                         @if($courseSessions->count()>0)
                                                         <a href="javascript:"
                                                            title="Xem ca học"

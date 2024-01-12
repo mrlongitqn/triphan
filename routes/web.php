@@ -72,6 +72,12 @@ Route::prefix("")->middleware('auth')->group(function () {
         Route::get('jobUpdateFeeList', [\App\Http\Controllers\FeeController::class, 'jobUpdateFeeList'])->name('fees.jobUpdateFeeList');
     });
 
+    Route::prefix('reports')->group(function (){
+        Route::get('export-debt-list', [\App\Http\Controllers\ReportController::class, 'ExportDebtList'])->name('reports.ExportDebtList');
+        Route::get('report-collect', [\App\Http\Controllers\ReportController::class, 'ReportCollect'])->name('reports.ReportCollect');
+
+    });
+
     Route::resource('marks', App\Http\Controllers\MarkController::class);
 
     Route::resource('sessionMarks', App\Http\Controllers\SessionMarkController::class);

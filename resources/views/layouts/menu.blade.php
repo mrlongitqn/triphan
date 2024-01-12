@@ -53,6 +53,28 @@
     </a>
 </li>
 
+<li class="nav-item">
+    <a href="javascript:"
+       class="nav-link {{ Request::is('reports*') ? 'active' : '' }}">
+        <p>Báo cáo thống kê <i class="fas fa-angle-left right"></i></p>
+    </a>
+    <ul class="nav nav-treeview">
+        <li class="nav-item">
+            <a href="{{route('reports.ExportDebtList')}}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Danh sách chưa nộp học phí</p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{route('reports.ReportCollect')}}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Báo cáo thu học phí</p>
+            </a>
+        </li>
+    </ul>
+</li>
+
+
 
 {{--<li class="nav-item">--}}
 {{--    <a href="{{ route('marks.index') }}"--}}

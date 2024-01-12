@@ -117,8 +117,10 @@ class CourseStudentController extends AppBaseController
     {
         $input = $request->all();
         $input['status'] = 0;
-        $input['note'] = 'note';
+        $input['fee_status'] = 0;
+        $input['note'] = '';
         $input['user_id'] = $request->user()->id;
+
         $exist = $this->courseStudentRepository->all([
             'course_id' => $request->course_id,
             'student_id' => $request->student_id
@@ -135,7 +137,7 @@ class CourseStudentController extends AppBaseController
                     'course_id' => $request->course_id,
                     'session_id' => $courseSession,
                     'student_id' => $request->student_id,
-                    'course_student_id'=>$courseStudent->id
+                    'course_student_id'=>$courseStudent->id,
                 ]);
             }
         }

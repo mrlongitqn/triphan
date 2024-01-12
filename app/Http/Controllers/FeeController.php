@@ -239,8 +239,8 @@ class FeeController extends AppBaseController
                 ]);
                 $total += $data['fee_' . $item];
                 $feeMonth = Carbon::create($date[1], $date[0], 1);
-                if ($feeMonth >= $now &&  isset($data['full_' . $item])) {
-                    $courseStudent->fee_status = 1;
+                if($feeMonth == $now){
+                    $courseStudent->fee_status =  isset($data['full_' . $item])?1:2;
                     $courseStudent->save();
                 }
             } else {
@@ -352,8 +352,7 @@ class FeeController extends AppBaseController
     public function listFeeDebtByCourse($course = 0)
     {
         $courseModel = $this->courseRepository->find($course);
-        $listStudent = $this->courseStudentRepository->getByCourse($course, [0])->where('fee_status','=',0)->orderBy('id', 'asc')->get();
-
+        $listStudent = $this->courseStudentRepository->getByCourse($course, [0])->where('fee_status','!=',1)->orderBy('id', 'asc')->get();
         $listIds = $listStudent->pluck('id');
         $date = Carbon::now()->firstOfMonth();
 
@@ -375,6 +374,7 @@ class FeeController extends AppBaseController
                 if ($lastMonth->status == 0) {
                     $lastMonthValue = $lastMonthValue->addMonths(-1);
                 }
+
                 $soThang = $date->diffInMonths($lastMonthValue, false);
 
                 if ($soThang < 0) {
@@ -400,6 +400,7 @@ class FeeController extends AppBaseController
             ->where('status', '=', 1)
             ->pluck('course_student_id')->toArray();
         $this->courseStudentRepository->allQuery()->where('status', '=', 0)
+            ->where('fee_status', '!=',2)
             ->whereNotIn('id', $listFee)->update(
                 [
                     'fee_status' => 0

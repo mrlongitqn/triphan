@@ -23,7 +23,8 @@ class FeeDetailRepository extends BaseRepository
         'month',
         'year',
         'note',
-        'status'
+        'status',
+        'course_student_id'
     ];
 
     /**
