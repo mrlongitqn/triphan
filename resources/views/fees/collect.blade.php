@@ -320,6 +320,15 @@
                                     <label>Ghi chú</label>
                                     <input type="text" class="form-control" name="note">
                                 </div>
+                                <div class="form-group">
+
+                                    <label for="payment_type">Hình thức thanh toán</label>
+                                    <select id="payment_type" name="payment_type" class="form-control">
+                                        <option value="0">Tiền mặt</option>
+                                        <option value="1">Chuyển khoản</option>
+                                        <option value="2">Quẹt thẻ</option>
+                                    </select>
+                                </div>
 
                                 <button type="button" id="save" class="btn btn-warning">Thu học phí</button>
                             </div>

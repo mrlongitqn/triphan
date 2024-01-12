@@ -32,7 +32,8 @@ class CourseStudent extends Model
         'student_id',
         'status',
         'user_id',
-        'note'
+        'note',
+        'fee_status'
     ];
 
     /**

@@ -9,8 +9,7 @@ use App\Repositories\BaseRepository;
  * Class CourseSessionStudentRepository
  * @package App\Repositories
  * @version January 7, 2024, 11:15 am +07
-*/
-
+ */
 class CourseSessionStudentRepository extends BaseRepository
 {
     /**
@@ -40,8 +39,12 @@ class CourseSessionStudentRepository extends BaseRepository
         return CourseSessionStudent::class;
     }
 
-    public function listStudentBySession($course, $session){
-        $data = $this->allQuery()->leftJoin('students', 'students.id', '=', 'course_session_students.student_id')
+    public function listStudentBySession($course, $session)
+    {
+        $data = $this->allQuery()
+            ->join('course_students', 'course_students.id', '=', 'course_session_students.course_student_id')
+            ->leftJoin('students', 'students.id', '=', 'course_session_students.student_id')
+            ->where('course_students.status','=',0)
             ->where('session_id', '=', $session)
             ->select('students.*')->get();
         return $data;

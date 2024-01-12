@@ -30,7 +30,7 @@ class LevelDataTable extends DataTable
      */
     public function query(Level $model)
     {
-        return $model->newQuery();
+        return $model->newQuery()->orderBy('id','desc');
     }
 
     /**

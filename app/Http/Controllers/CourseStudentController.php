@@ -134,7 +134,8 @@ class CourseStudentController extends AppBaseController
                 $this->courseSessionStudentRepository->create([
                     'course_id' => $request->course_id,
                     'session_id' => $courseSession,
-                    'student_id' => $request->student_id
+                    'student_id' => $request->student_id,
+                    'course_student_id'=>$courseStudent->id
                 ]);
             }
         }
@@ -170,6 +171,7 @@ class CourseStudentController extends AppBaseController
                     'course_id' => $courseStudent->course_id,
                     'student_id' => $courseStudent->student_id,
                     'session_id' => $i,
+                    'course_student_id'=>$data['studentCourseId']
                 ]);
             }
         } else {
@@ -291,16 +293,21 @@ class CourseStudentController extends AppBaseController
 
     public function listCourses($student = 0)
     {
-        $course = $this->courseStudentRepository->getCoursesByStudent($student);
+        $course = $this->courseStudentRepository->getCoursesByStudent($student, [0]);
         return response()->json([
             'success' => true,
             'data' => $course
         ]);
     }
 
-    public function printList($course){
+    public function printList($course, $type='all'){
+        switch ($type){
+            case 'on':$status = [0]; break;
+            case 'off':$status = [1]; break;
+            default :$status = [0,1]; break;
+        }
         $courseModel  = $this->courseRepository->find($course);
-        $studentSession = $this->courseStudentRepository->getByCourse($course)->get();
+        $studentSession = $this->courseStudentRepository->getByCourse($course, $status)->get();
         return view('course_students.listStudent', compact('courseModel', 'studentSession'));
     }
     public function printListBySession($course = 0, $session = 0){

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -85,11 +85,7 @@
 
     <div class="row" style="margin-top: 40px">
         <div class="col-12">
-            <h3 style="text-align: center">DANH SÁCH LỚP {{$courseModel->course}}</h3>
-            @if(isset($sessionModel))
-                <h6 style="text-align: center">Ca {{$sessionModel->session}}</h6>
-            @endif
-
+            <h3 style="text-align: center">DANH SÁCH NỢ THEO LỚP {{$courseModel->course}}</h3>
         </div>
     </div>
 
@@ -112,84 +108,32 @@
                         Điện thoại
                     </td>
                     <td>
-                        Ghi chú
+                        Số tháng
                     </td>
-                    <td width="50px">
+                    <td>
+                        Tháng nợ bắt đầu
                     </td>
-                    <td width="50px">
-                    </td>
-                    <td width="50px">
-                    </td>
-                    <td width="50px">
-                    </td>
-                    <td width="50px">
-                    </td>
-                    <td width="50px">
-                    </td>
-                    <td width="50px">
-                    </td>
-                    <td width="50px">
-                    </td>
+
                 </tr>
                 </thead>
                 <tbody>
                 @php
                     $i = 1;
                 @endphp
-                @foreach($studentSession as $student)
+                @foreach($result as $student)
                     <tr>
                         <td align="center">{{$i++}}</td>
                         <td>{{$student->fullname}}</td>
                         <td>{{date('d/m/Y', strtotime($student->dob) )}}</td>
                         <td>{{$student->parent_phone1 }}</td>
-                        <td>{{$student->status == 1?'Nghỉ luôn':''}}</td>
-                        <td>
-                        </td>
-                        <td>
-                        </td>
-                        <td>
-                        </td>
-                        <td>
-                        </td>
-                        <td>
-                        </td>
-                        <td>
-                        </td>
-                        <td>
-                        </td>
+                        <td>{{$student->debt_month_num}}</td>
+                        <td>{{$student->debt_month_start->format('m-Y')}}</td>
                     </tr>
                 @endforeach
                 </tbody>
             </table>
-
         </div>
-
     </div>
-    {{--    <div class="row text-center" id="footer">--}}
-    {{--        <div class="col-4">--}}
-    {{--            <p><br/></p>--}}
-    {{--            <p><strong>Giám đốc</strong></p>--}}
-    {{--            <p>(Ký và ghi rõ họ tên)</p>--}}
-    {{--        </div>--}}
-    {{--        <div class="col-4">--}}
-    {{--            <p><br/></p>--}}
-    {{--            <p><strong>Người nộp tiền</strong></p>--}}
-    {{--            <p>(Ký và ghi rõ họ tên)</p>--}}
-    {{--        </div>--}}
-    {{--        <div class="col-4">--}}
-    {{--          --}}
-    {{--            <p>Đà Nẵng, ngày .... tháng .... năm ....</p>--}}
-    {{--            <p><strong>Người thu tiền</strong></p>--}}
-    {{--            <p>(Ký và ghi rõ họ tên)</p>--}}
-    {{--            <p><br/>--}}
-    {{--                <br>--}}
-    {{--                <br>--}}
-    {{--                <br>--}}
-    {{--                {{$user->name}}</p>--}}
-    {{--        </div>--}}
-    {{--    </div>--}}
-
-
 </div>
 <script type="text/javascript">
     setTimeout(function () {

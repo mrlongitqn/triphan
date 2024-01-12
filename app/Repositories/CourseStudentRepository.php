@@ -40,16 +40,19 @@ class CourseStudentRepository extends BaseRepository
         return CourseStudent::class;
     }
 
-    public function getByCourse($course_id){
+    public function getByCourse($course_id, $status= [0,1]){
         return $this->model->newQuery()->leftJoin('users','users.id','=','user_id')
             ->leftJoin('students','student_id', '=', 'students.id')
             ->where('course_id', '=',$course_id)
-            ->select(['course_students.id','students.code','students.fullname','students.dob', 'students.phone_number','course_students.created_at','users.name','course_students.status', 'student_id']);
+            ->whereIn('course_students.status', $status)
+            ->select(['course_students.id','students.code','students.fullname','students.dob', 'students.phone_number','students.parent_phone1','course_students.created_at','users.name','fee_status','course_students.status', 'student_id', 'course_students.status']);
     }
 
-    public function getCoursesByStudent($student_id){
+    public function getCoursesByStudent($student_id, $status){
         return $this->model->newQuery()->leftJoin('courses', 'courses.id', '=', 'course_id')
-            ->where('student_id', $student_id)->select(['course_students.id', 'course_id','course', 'fee', 'course_students.created_at'])->get();
+            ->where('student_id', $student_id)
+           ->whereIn('course_students.status',$status)
+            ->select(['course_students.id', 'course_id','course', 'fee', 'course_students.created_at'])->get();
     }
 
 }

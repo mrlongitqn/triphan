@@ -195,7 +195,7 @@ class FeeController extends AppBaseController
         $student = $this->studentRepository->find($student_id);
         if ($student == null)
             return view('fees.collect', compact('selected_course'));
-        $courses = $this->courseStudentRepository->getCoursesByStudent($student_id);
+        $courses = $this->courseStudentRepository->getCoursesByStudent($student_id, [0]);
         $fees = $this->getListFee($course_id);
 
         return view('fees.collect', compact('student_id', 'selected_course', 'course_id', 'student', 'courses', 'fees'));
@@ -206,7 +206,7 @@ class FeeController extends AppBaseController
         $data = $request->all();
         $courseStudent = $this->courseStudentRepository->find($data['courseStudentId']);
         $course = $this->courseRepository->find($courseStudent->course_id);
-        $listMonth = $this->calMonth($data['courseStudentId'])['months'];
+        $listMonth = $this->calMonth($courseStudent)['months'];
         $total = 0;
         $fee = $this->feeRepository->create([
             'course_student_id' => $courseStudent->id,
@@ -219,10 +219,11 @@ class FeeController extends AppBaseController
             'discount' => 0,
             'note' => $data['note'] . "",
             'fee_code' => 'TP',
-            'user_id' => $request->user()->id
+            'user_id' => $request->user()->id,
+            'payment_type'=>$request->payment_type
         ]);
-
-        foreach ($listMonth as $item) {
+        $now = Carbon::now()->firstOfMonth();
+        foreach ($listMonth as $i => $item) {
             if ($request->has($item)) {
                 $date = explode('-', $item);
                 $this->feeDetailRepository->create([
@@ -237,6 +238,11 @@ class FeeController extends AppBaseController
                     'status' => isset($data['full_' . $item]) ? 1 : 0
                 ]);
                 $total += $data['fee_' . $item];
+                $feeMonth = Carbon::create($date[1], $date[0], 1);
+                if ($feeMonth >= $now &&  isset($data['full_' . $item])) {
+                    $courseStudent->fee_status = 1;
+                    $courseStudent->save();
+                }
             } else {
                 break;
             }
@@ -284,17 +290,17 @@ class FeeController extends AppBaseController
                 'message' => "Thông tin không tồn tại"
             ]);
 
-        $listMonth = $this->calMonth($id);
+        $listMonth = $this->calMonth($studentCourse);
         return response()->json([
             'success' => true,
             'list' => $listMonth
         ]);
     }
 
-    function calMonth($studentCourseId): array
+    function calMonth($studentCourse): array
     {
-        $fee = $this->feeDetailRepository->lastMonthPayByCourseStudent($studentCourseId);
-        $date = Carbon::now();
+        $fee = $this->feeDetailRepository->lastMonthPayByCourseStudent($studentCourse->id);
+        //  $date = Carbon::now();
         $remain = 0;
         if ($fee != null) {
             if ($fee->status == 0) {
@@ -303,7 +309,8 @@ class FeeController extends AppBaseController
             } else {
                 $date = Carbon::create($fee->year, $fee->month, 1)->addMonths(1);
             }
-
+        } else {
+            $date = $studentCourse->created_at;
         }
 
         $listMonth = [];
@@ -342,14 +349,60 @@ class FeeController extends AppBaseController
     }
 
     //Get danh sách nợ học phí theo lớp
-    public function listFeeDebtByCourse($course=0)
+    public function listFeeDebtByCourse($course = 0)
     {
-        $listStudent = $this->courseStudentRepository->getByCourse($course)->get()->pluck('id');
-        dd($listStudent);
-        $date = Carbon::now();
-        $listFees = $this->feeDetailRepository->allQuery()->selectRaw(' course_student_id, Max(id) as id')->groupBy('course_student_id');
+        $courseModel = $this->courseRepository->find($course);
+        $listStudent = $this->courseStudentRepository->getByCourse($course, [0])->where('fee_status','=',0)->orderBy('id', 'asc')->get();
+
+        $listIds = $listStudent->pluck('id');
+        $date = Carbon::now()->firstOfMonth();
+
+        $listMaxFees = $this->feeDetailRepository->allQuery()->selectRaw('course_student_id, Max(id) as key_id')->whereIn('course_student_id', $listIds)->groupBy('course_student_id')->pluck('key_id');
+
+        $listFees = $this->feeDetailRepository->allQuery()->whereIn('id', $listMaxFees)->get();
+        $result = [];
+        foreach ($listStudent as $item) {
+            $lastMonth = $listFees->where('course_student_id', '=', $item->id)->first();
+
+            if ($lastMonth == null) {
+                $soThang = $date->diffInMonths($item->created_at, false);
+                $item->debt_status = true;
+                $item->debt_month_num = abs($soThang) + 1;
+                $item->debt_month_start = $item->created_at->firstOfMonth();
+                $result[] = $item;
+            } else {
+                $lastMonthValue = Carbon::create($lastMonth->year, $lastMonth->month, 1);
+                if ($lastMonth->status == 0) {
+                    $lastMonthValue = $lastMonthValue->addMonths(-1);
+                }
+                $soThang = $date->diffInMonths($lastMonthValue, false);
+
+                if ($soThang < 0) {
+                    $item->debt_status = true;
+                    $item->debt_month_num = abs($soThang) + 1;
+                    $item->debt_month_start = $lastMonthValue;
+                    $result[] = $item;
+                }
+
+            }
+        }
+
+        return view('fees.listDebtByCourse', compact('result','courseModel'));
     }
 
 
-    //Get tất car học sinh nợ HP
+    function jobUpdateFeeList()
+    {
+        $currentMonth = Carbon::now()->firstOfMonth();
+        $listFee = $this->feeDetailRepository->allQuery()
+            ->where('year', '=', $currentMonth->year)
+            ->where('month', '=', $currentMonth->month)
+            ->where('status', '=', 1)
+            ->pluck('course_student_id')->toArray();
+        $this->courseStudentRepository->allQuery()->where('status', '=', 0)
+            ->whereNotIn('id', $listFee)->update(
+                [
+                    'fee_status' => 0
+                ]);
+    }
 }

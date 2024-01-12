@@ -102,10 +102,10 @@
                                             <i class="fas fa-print"></i>
                                         </button>
                                         <div class="dropdown-menu" role="menu">
-                                            <a target="_blank" href="{{route('courseStudents.printList')}}/{{$selected_course->id}}" class="dropdown-item">In danh sách lớp</a>
-                                            <a href="#" class="dropdown-item">Danh sách nợ học phí</a>
+                                            <a target="_blank" href="{{route('courseStudents.printList')}}/{{$selected_course->id}}/on" class="dropdown-item">In danh sách lớp</a>
+                                            <a target="_blank" href="{{route('fees.listFeeDebtByCourse')}}/{{$selected_course->id}}" class="dropdown-item">Danh sách nợ học phí</a>
 
-                                            <a href="#" class="dropdown-item">View calendar</a>
+                                            <a target="_blank" href="{{route('courseStudents.printList')}}/{{$selected_course->id}}" class="dropdown-item">In danh sách tổng</a>
                                         </div>
                                     </div>
                                     @if($courseSessions->count()>0)
@@ -201,7 +201,7 @@
                                         >
                                             <td><input type="checkbox"></td>
                                             <td>{{$student->code}}</td>
-                                            <td>{{$student->fullname}}</td>
+                                            <td>{{$student->fullname}} {!! $student->fee_status==0?'<span class="badge bg-warning">Nợ học phí</span>':'' !!}</td>
                                             <td>{{date('d-m-Y', strtotime($student->dob))}}</td>
                                             <td>{{$student->phone}}</td>
                                             <td>{{date('d-m-Y', strtotime($student->created_at))}}</td>
@@ -209,7 +209,7 @@
                                             <td>
                                                 <div class='btn-group'>
                                                     @if($student->status == 0)
-                                                        <a href="{{ route('fees.collect', $student->id) }}"
+                                                        <a href="{{ route('fees.collect', $student->student_id) }}"
                                                            title="Thu học phí" class='btn btn-default btn-xs'>
                                                             <i class="fas fa-money-check"></i>
                                                         </a>
@@ -221,26 +221,27 @@
                                                         {{--        <i class="fa fa-edit"></i>--}}
                                                         {{--    </a>--}}
 
-                                                        <a href="{{ route('courses.show', $student->id) }}"
-                                                           title="Xem điểm"
-                                                           class='btn btn-default btn-xs'>
-                                                            <i class="fas fa-file-signature"></i>
-                                                        </a>
-
+{{--                                                        <a href="{{ route('courses.show', $student->id) }}"--}}
+{{--                                                           title="Xem điểm"--}}
+{{--                                                           class='btn btn-default btn-xs'>--}}
+{{--                                                            <i class="fas fa-file-signature"></i>--}}
+{{--                                                        </a>--}}
+                                                        @if($courseSessions->count()>0)
                                                         <a href="javascript:"
                                                            title="Xem ca học"
                                                            data-id="{{$student->id}}"
                                                            data-sessions="{{$student->sessions}}"
                                                            class='btn btn-default btn-xs btnSession'>
-                                                            <i class="fas fa-calendar"></i>
+                                                            <i class="fas fa-calendar-alt"></i>
                                                         </a>
+                                                        @endif
 
-                                                        <a data-id="{{$student->id}}" href="javascript:"
+                                                        <a data-id="{{$student->id}}" href="javascript:" title="Nghỉ học"
                                                            class='btn btn-default btn-xs changeStatus'>
-                                                            <i class="fas fa-check"></i>
+                                                            <i class="fas fa-times"></i>
                                                         </a>
                                                     @else
-                                                        <a data-id="{{$student->id}}" href="javascript:"
+                                                        <a data-id="{{$student->id}}"  title="Mở lại" href="javascript:"
                                                            class='btn btn-default btn-xs changeStatus'>
                                                             <i class="fas fa-check"></i>
                                                         </a>
@@ -251,7 +252,14 @@
                                         </tr>
                                     @endforeach
                                     </tbody>
+
+
+
                                 </table>
+                                <p>
+                                    Tổng số {{$courseStudent->count()}} học viên,
+                                    có {{$courseStudent->where('status','=',1)->count()}} học viên nghỉ học
+                                </p>
                             </div>
 
                         </div>
@@ -336,7 +344,8 @@
                     if (confirm('Bạn chắn chắn đổi trạng thái đối với học viên này')) {
                         $.get('{{ route('courseStudents.updateStatus') }}/' + $(this).data('id'), function (data) {
                             if (data.success) {
-
+                                // Reload trang ngay lập tức
+                                location.reload();
                             }
                         });
                     }

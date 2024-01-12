@@ -21,7 +21,7 @@ class CourseSessionStudent extends Model
 
 
     public $table = 'course_session_students';
-    
+
 
     protected $dates = ['deleted_at'];
 
@@ -30,7 +30,8 @@ class CourseSessionStudent extends Model
     public $fillable = [
         'course_id',
         'session_id',
-        'student_id'
+        'student_id',
+        'course_student_id'
     ];
 
     /**
@@ -42,7 +43,8 @@ class CourseSessionStudent extends Model
         'id' => 'integer',
         'course_id' => 'integer',
         'session_id' => 'integer',
-        'student_id' => 'integer'
+        'student_id' => 'integer',
+        'course_student_id'=>'integer'
     ];
 
     /**
@@ -51,8 +53,8 @@ class CourseSessionStudent extends Model
      * @var array
      */
     public static $rules = [
-        
+
     ];
 
-    
+
 }

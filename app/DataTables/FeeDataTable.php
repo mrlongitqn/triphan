@@ -22,6 +22,14 @@ class FeeDataTable extends DataTable
 
         return $dataTable->addColumn('action', 'fees.datatables_actions')->editColumn('created_at',function ($fee){
             return Carbon::parse($fee->created_at)->format('H:i d/m/Y');
+        })->editColumn('payment_type',function ($fee){
+            switch ($fee->payment_type){
+                case 0: return 'Tiền mặt';
+                case 1: return  'Chuyển khoản';
+                case 2: return 'Quẹt thẻ';
+                default: return $fee->payment_type;
+            }
+
         });
     }
 
@@ -51,7 +59,7 @@ class FeeDataTable extends DataTable
             ->minifiedAjax()
             ->addAction(['width' => '120px', 'printable' => false])
             ->parameters([
-                'dom'       => 'Bfrtip',
+              //  'dom'       => 'Bfrtip',
                 'stateSave' => true,
                 'order'     => [[0, 'desc']],
 //                'buttons'   => [
@@ -78,6 +86,7 @@ class FeeDataTable extends DataTable
             Column::make('course', 'courses.course')->title('Lớp học'),
             Column::make('amount')->title('Số tiền')->renderJs('number', ',','.'),
             Column::make('created_at', 'fees.created_at')->title('Thời gian'),
+            Column::make('payment_type', 'fees.created_at')->title('Hình thức'),
             Column::make('name','users.name')->title('Người thu'),
         ];
     }
