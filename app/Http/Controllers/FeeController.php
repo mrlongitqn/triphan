@@ -348,6 +348,10 @@ class FeeController extends AppBaseController
         return redirect(route('fees.index'));
     }
 
+    function refund(Request $request){
+
+    }
+
     //Get danh sách nợ học phí theo lớp
     public function listFeeDebtByCourse($course = 0)
     {
