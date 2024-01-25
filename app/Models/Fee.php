@@ -30,7 +30,7 @@ class Fee extends Model
 
     protected $dates = ['deleted_at'];
 
-
+//status: 0 normal, 1 cancel, 2 refund
 
     public $fillable = [
         'course_student_id',
@@ -45,7 +45,8 @@ class Fee extends Model
         'fee_code',
         'note',
         'user_id',
-        'payment_type'
+        'payment_type',
+        'reason'
     ];
 
     /**
@@ -62,7 +63,8 @@ class Fee extends Model
         'amount' => 'integer',
         'remain' => 'integer',
         'status' => 'integer',
-        'refund' => 'integer'
+        'refund' => 'integer',
+
     ];
 
     /**

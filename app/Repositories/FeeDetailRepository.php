@@ -45,6 +45,11 @@ class FeeDetailRepository extends BaseRepository
         return FeeDetail::class;
     }
     public function lastMonthPayByCourseStudent($id){
-        return $this->model->newQuery()->where('course_student_id', '=',$id)->orderBy('id','desc')->first();
+        $data = $this->model->newQuery()->where('fee_details.course_student_id', '=',$id)
+            ->leftJoin('fees','fees.id','=','fee_details.fee_id')
+            ->where('fees.status','=',0)
+            ->select('fee_details.*')
+            ->orderBy('fee_details.id','desc')->first();
+       return $data;
     }
 }

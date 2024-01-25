@@ -29,7 +29,8 @@ class FeeDataTable extends DataTable
                 case 2: return 'Quẹt thẻ';
                 default: return $fee->payment_type;
             }
-
+        })->editColumn('fee_code',function ($fee){
+            return '<strong>'.$fee->fee_code.'</strong>';
         });
     }
 

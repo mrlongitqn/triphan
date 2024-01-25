@@ -5,9 +5,11 @@
 
     <div class="row">
         <div class="col-12">
-            <h1 style="text-align: center">CHI TIẾT HĐ: {{$fee->fee_code}}</h1>
-            <h4 style="text-align: center">Thời gian thu: {{$date->format('H:i d/m/Y')}}</h4>
-            <h4 style="text-align: center">Người thu: {{$user->name}}</h4>
+            <h4 style="text-align: center">
+                <span class="badge {{($fee->status === '0'? 'badge-success': ($fee->status === 1?'badge badge-danger':'badge-warning'))}}">{{($fee->status === '0'? 'ĐÃ THU': ($fee->status === 1?'ĐÃ HỦY':'ĐÃ HOÀN TRẢ'))}}</span></h4>
+            <h4 style="text-align: center">CHI TIẾT HĐ: {{$fee->fee_code}}</h4>
+            <h6 style="text-align: center">Thời gian thu: {{$date->format('H:i d/m/Y')}}</h6>
+            <h6 style="text-align: center">Người thu: {{$user->name}}</h6>
 
         </div>
     </div>

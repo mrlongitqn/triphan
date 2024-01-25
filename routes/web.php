@@ -67,6 +67,7 @@ Route::prefix("")->middleware('auth')->group(function () {
         Route::get('get-list-fee/{id?}', [\App\Http\Controllers\FeeController::class, 'getListFee'])->name('fees.getListFee');
         Route::get('bill/{id?}', [\App\Http\Controllers\FeeController::class, 'getBill'])->name('fees.getBill');
         Route::get('show/{id?}', [\App\Http\Controllers\FeeController::class, 'show'])->name('fees.show');
+        Route::get('fee-by-student/{id?}', [\App\Http\Controllers\FeeController::class, 'feeByStudent'])->name('fees.feeByStudent');
         Route::get('cancel', [\App\Http\Controllers\FeeController::class, 'cancel'])->name('fees.cancel');
         Route::get('list-debt-by-course/{course?}', [\App\Http\Controllers\FeeController::class, 'listFeeDebtByCourse'])->name('fees.listFeeDebtByCourse');
         Route::get('jobUpdateFeeList', [\App\Http\Controllers\FeeController::class, 'jobUpdateFeeList'])->name('fees.jobUpdateFeeList');
@@ -75,6 +76,7 @@ Route::prefix("")->middleware('auth')->group(function () {
     Route::prefix('reports')->group(function (){
         Route::get('export-debt-list', [\App\Http\Controllers\ReportController::class, 'ExportDebtList'])->name('reports.ExportDebtList');
         Route::get('report-collect', [\App\Http\Controllers\ReportController::class, 'ReportCollect'])->name('reports.ReportCollect');
+        Route::get('report-collect-cancel', [\App\Http\Controllers\ReportController::class, 'ReportCollectCancel'])->name('reports.ReportCollectCancel');
 
     });
 
@@ -90,3 +92,6 @@ Route::resource('courseSessions', App\Http\Controllers\CourseSessionController::
 Route::resource('courseSessionStudents', App\Http\Controllers\CourseSessionStudentController::class);
 
 Route::get('import', [\App\Http\Controllers\ImportController::class, 'index']);
+
+
+Route::resource('refunds', App\Http\Controllers\RefundController::class);

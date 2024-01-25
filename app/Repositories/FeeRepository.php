@@ -18,7 +18,8 @@ class FeeRepository extends BaseRepository
      */
     protected $fieldSearchable = [
         'fees.code',
-        'students.fullname'
+        'students.fullname',
+        'student_id'
     ];
 
     /**
@@ -46,6 +47,14 @@ class FeeRepository extends BaseRepository
     public function getByCode($code){
         return $this->allQuery()->firstOrCreate(['fee_code'=>$code]);
     }
-
+    public function byStudent($id){
+        $query = $this->model->newQuery();
+        $result = $query->leftJoin('courses', 'courses.id','=','course_id')
+            ->leftJoin('users', 'users.id','=','fees.user_id')
+            ->where('student_id','=', $id)
+            ->where('fees.status',0)
+            ->orderByDesc('id')->take(5)->select('fees.*','course', 'name');
+        return $result->get();
+    }
 
 }

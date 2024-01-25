@@ -5,7 +5,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Thống kê thu học phí</h1>
+                    <h1>Thống kê hủy học phí</h1>
                 </div>
                 <div class="col-sm-6">
                     <a class="btn btn-primary float-right" id="exportExcel"
@@ -29,17 +29,17 @@
                     <div class="row">
 
 
-                        <div class="col-3">
-                            <div class="form-group">
-                                <label for="user">Nhân viên</label>
-                                <select id="user" name="selectedUsers[]" class="form-control select2" multiple>
-                                    @foreach($listUser as $user)
-                                        <option @if(in_array($user->id, $selectedUsers)) selected
-                                                @endif value="{{$user->id}}">{{$user->name}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
+{{--                        <div class="col-3">--}}
+{{--                            <div class="form-group">--}}
+{{--                                <label for="user">Nhân viên</label>--}}
+{{--                                <select id="user" name="selectedUsers[]" class="form-control select2" multiple>--}}
+{{--                                    @foreach($listUser as $user)--}}
+{{--                                        <option @if(in_array($user->id, $selectedUsers)) selected--}}
+{{--                                                @endif value="{{$user->id}}">{{$user->name}}</option>--}}
+{{--                                    @endforeach--}}
+{{--                                </select>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
                         <div class="col-3">
 
                             <div class="form-group">
@@ -73,7 +73,7 @@
                         <th>Học viên</th>
                         <th>Khóa học</th>
                         <th>Số tiền</th>
-                        <th>Ghi chú</th>
+                        <th>Lý do hủy</th>
                     </tr>
                     @if(count($data)==0)
                         <tr>
@@ -86,16 +86,17 @@
                     @endphp
                     @foreach($data as $item)
                         @php
+                            $reason = json_decode($item->reason);
                             $total = $total+$item->amount;
                         @endphp
                         <tr>
                             <td>{{$i++}}</td>
-                            <td>{{$listUser->find($item->user_id)->name}}</td>
+                            <td>{{$listUser->find($reason->user_id)->name}}</td>
                             <td>{{$item->created_at->format('H:i d/m/Y')}}</td>
                             <td>{{$item->fullname}}</td>
                             <td>{{$item->course}}</td>
                             <td style="text-align: right">{{number_format($item->amount)}}</td>
-                            <td>{{$item->note}}</td>
+                            <td>{{$reason->reason}}</td>
                         </tr>
                     @endforeach
 

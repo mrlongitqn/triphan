@@ -71,6 +71,12 @@
                 <p>Báo cáo thu học phí</p>
             </a>
         </li>
+        <li class="nav-item">
+            <a href="{{route('reports.ReportCollectCancel')}}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Báo cáo hủy học phí</p>
+            </a>
+        </li>
     </ul>
 </li>
 
@@ -106,5 +112,13 @@
 {{--        <p>Course Session Students</p>--}}
 {{--    </a>--}}
 {{--</li>--}}
+
+
+<li class="nav-item">
+    <a href="{{ route('refunds.index') }}"
+       class="nav-link {{ Request::is('refunds*') ? 'active' : '' }}">
+        <p>Refunds</p>
+    </a>
+</li>
 
 

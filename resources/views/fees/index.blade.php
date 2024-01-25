@@ -58,24 +58,25 @@
 
     </div>
     <div class="modal fade" id="modal-cancel" style="display: none;" aria-hidden="true">
-        <form action="{{route('fees.cancel')}}">
+        <form id="frmCancel" action="{{route('fees.cancel')}}">
 
 
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Default Modal</h4>
+                    <h4 class="modal-title">Hủy thu học phí</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Bạn có chắc chắn hủy hóa đơn: <span id="fee_code"></span></p>
+                    <label for="reason">Vui lòng nhập lý do hủy thu cho hóa đơn: <span id="fee_code"></span></label>
                     <input type="hidden" name="code" value="">
+                    <textarea id="reason" name="reason" class="form-control"></textarea>
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
-                    <button type="submit" id="btn_cancel" class="btn btn-primary">Xác nhận hủy</button>
+                    <button type="button" id="btn_cancel" class="btn btn-primary">Xác nhận hủy</button>
                 </div>
             </div>
 
@@ -121,7 +122,17 @@
            let code = $(this).data('id');
            $('input[name="code"]').val(code);
             let modal = $('#modal-cancel');
+            $('#fee_code').html(code);
             modal.modal('show');
         });
+        $(document).on('click', '#btn_cancel', function (){
+          let text = $('#reason').val();
+          if(text.length<5){
+              alert('Vui lòng nhập lý do hủy');
+              return;
+          }
+          $('#frmCancel').submit();
+        });
+
     </script>
 @endpush

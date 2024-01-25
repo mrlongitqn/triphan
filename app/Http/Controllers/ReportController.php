@@ -100,17 +100,34 @@ class ReportController extends AppBaseController
         $startDate = Carbon::createFromFormat('d/m/Y', $parseDate[0]);
         $endDate = Carbon::createFromFormat('d/m/Y', $parseDate[1])->addDays(1);
         $selectedUsers = $request->selectedUsers ?? [];
-        $userId = $request->userId;
-        $studentId = $request->studentId;
 
-        $data = $this->feeRepository->allQuery()->whereBetween('fees.created_at', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')]);
+        $data = $this->feeRepository->allQuery()->whereBetween('fees.created_at', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])->where('fees.status','=',0);
 
         if (count($selectedUsers) > 0) {
             $data = $data->whereIn('fees.user_id', $selectedUsers);
         }
         $data = $data->leftJoin('courses', 'courses.id', '=', 'fees.course_id')->leftJoin('students', 'students.id', '=', 'fees.student_id')->select('fees.*', 'fullname', 'course')->get();
-
-
         return view('reports.report_collect', compact('listUser', 'selectedUsers', 'datetime', 'data'));
+    }
+    public function ReportCollectCancel(Request $request)
+    {
+        $listUser = User::select('id', 'name')->get();
+        $datetime = $request->datetime;
+        if ($datetime === null) {
+            $date = Carbon::now();
+            $datetime = $date->format('d/m/Y') . ' - ' . $date->format('d/m/Y');
+        }
+        $parseDate = explode(' - ', $datetime);
+        $startDate = Carbon::createFromFormat('d/m/Y', $parseDate[0]);
+        $endDate = Carbon::createFromFormat('d/m/Y', $parseDate[1])->addDays(1);
+        $selectedUsers = $request->selectedUsers ?? [];
+
+        $data = $this->feeRepository->allQuery()->whereBetween('fees.updated_at', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])->where('fees.status','=',1);
+
+        if (count($selectedUsers) > 0) {
+            $data = $data->whereIn('fees.user_id', $selectedUsers);
+        }
+        $data = $data->leftJoin('courses', 'courses.id', '=', 'fees.course_id')->leftJoin('students', 'students.id', '=', 'fees.student_id')->select('fees.*', 'fullname', 'course')->get();
+        return view('reports.report_collect_cancel', compact('listUser', 'selectedUsers', 'datetime', 'data'));
     }
 }
