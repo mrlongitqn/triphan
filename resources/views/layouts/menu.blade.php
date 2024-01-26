@@ -117,7 +117,7 @@
 <li class="nav-item">
     <a href="{{ route('refunds.index') }}"
        class="nav-link {{ Request::is('refunds*') ? 'active' : '' }}">
-        <p>Refunds</p>
+        <p>Trả học phí</p>
     </a>
 </li>
 

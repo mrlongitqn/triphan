@@ -73,7 +73,7 @@ Route::prefix("")->middleware('auth')->group(function () {
         Route::get('jobUpdateFeeList', [\App\Http\Controllers\FeeController::class, 'jobUpdateFeeList'])->name('fees.jobUpdateFeeList');
     });
 
-    Route::prefix('reports')->group(function (){
+    Route::prefix('reports')->group(function () {
         Route::get('export-debt-list', [\App\Http\Controllers\ReportController::class, 'ExportDebtList'])->name('reports.ExportDebtList');
         Route::get('report-collect', [\App\Http\Controllers\ReportController::class, 'ReportCollect'])->name('reports.ReportCollect');
         Route::get('report-collect-cancel', [\App\Http\Controllers\ReportController::class, 'ReportCollectCancel'])->name('reports.ReportCollectCancel');
@@ -83,15 +83,17 @@ Route::prefix("")->middleware('auth')->group(function () {
     Route::resource('marks', App\Http\Controllers\MarkController::class);
 
     Route::resource('sessionMarks', App\Http\Controllers\SessionMarkController::class);
+    Route::resource('courseSessions', App\Http\Controllers\CourseSessionController::class);
+
+
+    Route::resource('courseSessionStudents', App\Http\Controllers\CourseSessionStudentController::class);
+
+    Route::get('import', [\App\Http\Controllers\ImportController::class, 'index']);
+
+
+    Route::resource('refunds', App\Http\Controllers\RefundController::class);
+    Route::get('refunds/{id?}', [\App\Http\Controllers\RefundController::class, 'show'])->name('refunds.show');
 });
 
 
-Route::resource('courseSessions', App\Http\Controllers\CourseSessionController::class);
 
-
-Route::resource('courseSessionStudents', App\Http\Controllers\CourseSessionStudentController::class);
-
-Route::get('import', [\App\Http\Controllers\ImportController::class, 'index']);
-
-
-Route::resource('refunds', App\Http\Controllers\RefundController::class);

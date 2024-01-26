@@ -17,12 +17,9 @@ class RefundRepository extends BaseRepository
      * @var array
      */
     protected $fieldSearchable = [
-        'user_id',
-        'fee_ids',
         'reason',
         'total',
         'amount',
-        'status'
     ];
 
     /**

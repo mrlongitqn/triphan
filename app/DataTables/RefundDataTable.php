@@ -3,6 +3,8 @@
 namespace App\DataTables;
 
 use App\Models\Refund;
+use Carbon\Carbon;
+use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\EloquentDataTable;
 
@@ -17,8 +19,9 @@ class RefundDataTable extends DataTable
     public function dataTable($query)
     {
         $dataTable = new EloquentDataTable($query);
-
-        return $dataTable->addColumn('action', 'refunds.datatables_actions');
+        return $dataTable->addColumn('action', 'refunds.datatables_actions')->editColumn('created_at', function ($fee) {
+            return Carbon::parse($fee->created_at)->format('H:i d/m/Y');
+        });
     }
 
     /**
@@ -29,7 +32,9 @@ class RefundDataTable extends DataTable
      */
     public function query(Refund $model)
     {
-        return $model->newQuery();
+        return $model->newQuery()->leftJoin('students', 'students.id', '=', 'refunds.student_id')
+            ->leftJoin('users', 'users.id', '=', 'refunds.user_id')
+            ->select('refunds.*', 'students.fullname', 'users.name');
     }
 
     /**
@@ -44,10 +49,10 @@ class RefundDataTable extends DataTable
             ->minifiedAjax()
             ->addAction(['width' => '120px', 'printable' => false])
             ->parameters([
-                'dom'       => 'Bfrtip',
+                'dom' => 'Bfrtip',
                 'stateSave' => true,
-                'order'     => [[0, 'desc']],
-                'buttons'   => [
+                'order' => [[0, 'desc']],
+                'buttons' => [
                     ['extend' => 'create', 'className' => 'btn btn-default btn-sm no-corner',],
                     ['extend' => 'export', 'className' => 'btn btn-default btn-sm no-corner',],
                     ['extend' => 'print', 'className' => 'btn btn-default btn-sm no-corner',],
@@ -65,12 +70,13 @@ class RefundDataTable extends DataTable
     protected function getColumns()
     {
         return [
-            'user_id',
-            'fee_ids',
-            'reason',
-            'total',
-            'amount',
-            'status'
+            Column::make('id', 'refunds.id')->hidden(),
+            Column::make('created_at', 'refunds.created_at')->title('Thời gian'),
+            Column::make('fullname', 'students.fullname')->title('Học viên'),
+            Column::make('total')->title('Số tiền trên HĐ')->renderJs('number', ',', '.'),
+            Column::make('amount')->title('Số tiền hoàn trả')->renderJs('number', ',', '.'),
+            Column::make('reason', 'refunds.reason')->title('Lý do'),
+            Column::make('name', 'users.name')->title('Người trả'),
         ];
     }
 

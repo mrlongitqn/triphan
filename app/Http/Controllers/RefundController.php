@@ -6,8 +6,11 @@ use App\DataTables\RefundDataTable;
 use App\Http\Requests;
 use App\Http\Requests\CreateRefundRequest;
 use App\Http\Requests\UpdateRefundRequest;
+use App\Models\User;
+use App\Repositories\CourseRepository;
 use App\Repositories\FeeRepository;
 use App\Repositories\RefundRepository;
+use App\Repositories\StudentRepository;
 use Flash;
 use App\Http\Controllers\AppBaseController;
 use Response;
@@ -20,11 +23,23 @@ class RefundController extends AppBaseController
      * @var FeeRepository
      */
     private $feeRepository;
+    /**
+     * @var StudentRepository
+     */
+    private $studentRepository;
+    /**
+     * @var CourseRepository
+     */
+    private $courseRepository;
 
-    public function __construct(RefundRepository $refundRepo, FeeRepository  $feeRepository)
+    public function __construct(RefundRepository $refundRepo, FeeRepository  $feeRepository,
+    StudentRepository $studentRepository, CourseRepository $courseRepository
+    )
     {
         $this->refundRepository = $refundRepo;
         $this->feeRepository = $feeRepository;
+        $this->studentRepository = $studentRepository;
+        $this->courseRepository = $courseRepository;
     }
 
     /**
@@ -88,7 +103,7 @@ class RefundController extends AppBaseController
      *
      * @return Response
      */
-    public function show($id)
+    public function show($id=0)
     {
         $refund = $this->refundRepository->find($id);
 
@@ -97,8 +112,14 @@ class RefundController extends AppBaseController
 
             return redirect(route('refunds.index'));
         }
+        $user = User::find($refund->user_id);
+        $student = $this->studentRepository->find($refund->student_id);
+        $fees = $this->feeRepository->allQuery()->whereIn('fees.id', json_decode($refund->fee_ids))
+            ->leftJoin('courses','courses.id','=','fees.course_id')
+            ->select('fees.*', 'course')
+            ->get();
 
-        return view('refunds.show')->with('refund', $refund);
+        return view('refunds.show', compact('refund', 'user', 'student', 'fees'));
     }
 
     /**
@@ -123,7 +144,7 @@ class RefundController extends AppBaseController
 
     /**
      * Update the specified Refund in storage.
-     *
+     *0
      * @param int $id
      * @param UpdateRefundRequest $request
      *

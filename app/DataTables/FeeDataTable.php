@@ -24,14 +24,19 @@ class FeeDataTable extends DataTable
             return Carbon::parse($fee->created_at)->format('H:i d/m/Y');
         })->editColumn('payment_type',function ($fee){
             switch ($fee->payment_type){
-                case 0: return 'Tiền mặt';
+                case 0: return '<strong>Tiền mặt</strong>';
                 case 1: return  'Chuyển khoản';
                 case 2: return 'Quẹt thẻ';
                 default: return $fee->payment_type;
             }
         })->editColumn('fee_code',function ($fee){
-            return '<strong>'.$fee->fee_code.'</strong>';
-        });
+            switch ($fee->status){
+                case 0: return '<strong>'.$fee->fee_code.'</strong> <span class="badge badge-success">Đã thu</span>';
+                case 1: return   '<strong>'.$fee->fee_code.'</strong> <span class="badge badge-danger">Đã hủy</span>';
+                case 2: return  '<strong>' . $fee->fee_code . '</strong> <span class="badge badge-warning">Đã hoàn trả</span>';
+                default: return $fee->payment_type;
+            }
+        })->escapeColumns('fee_code');
     }
 
     /**
