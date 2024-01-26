@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Repositories\CourseStudentRepository;
 use App\Repositories\FeeDetailRepository;
 use App\Repositories\FeeRepository;
+use App\Repositories\RefundRepository;
 use App\Repositories\StudentRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -29,9 +30,13 @@ class ReportController extends AppBaseController
      * @var FeeRepository
      */
     private $feeRepository;
+    /**
+     * @var RefundRepository
+     */
+    private $refundRepository;
 
     public function __construct(CourseStudentRepository $courseStudentRepository, FeeDetailRepository $feeDetailRepository,
-                                StudentRepository       $studentRepository, FeeRepository $feeRepository
+                                StudentRepository       $studentRepository, FeeRepository $feeRepository, RefundRepository  $refundRepository
     )
     {
 
@@ -39,6 +44,7 @@ class ReportController extends AppBaseController
         $this->feeDetailRepository = $feeDetailRepository;
         $this->studentRepository = $studentRepository;
         $this->feeRepository = $feeRepository;
+        $this->refundRepository = $refundRepository;
     }
 
     public function ExportDebtList()
@@ -108,6 +114,36 @@ class ReportController extends AppBaseController
         }
         $data = $data->leftJoin('courses', 'courses.id', '=', 'fees.course_id')->leftJoin('students', 'students.id', '=', 'fees.student_id')->select('fees.*', 'fullname', 'course')->get();
         return view('reports.report_collect', compact('listUser', 'selectedUsers', 'datetime', 'data'));
+    }
+
+    public function ReportCollectRefund(Request $request)
+    {
+        $listUser = User::select('id', 'name')->get();
+        $datetime = $request->datetime;
+        if ($datetime === null) {
+            $date = Carbon::now();
+            $datetime = $date->format('d/m/Y') . ' - ' . $date->format('d/m/Y');
+        }
+        $parseDate = explode(' - ', $datetime);
+        $startDate = Carbon::createFromFormat('d/m/Y', $parseDate[0]);
+        $endDate = Carbon::createFromFormat('d/m/Y', $parseDate[1])->addDays(1);
+        $selectedUsers = $request->selectedUsers ?? [];
+
+        $data = $this->feeRepository->allQuery()->whereBetween('fees.created_at', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])->where('fees.status','=',0);
+
+        $refunds = $this->refundRepository->allQuery()->whereBetween('refunds.created_at',  [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')]);
+        if (count($selectedUsers) > 0) {
+            $data = $data->whereIn('fees.user_id', $selectedUsers);
+            $refunds = $refunds->whereIn('refunds.user_id', $selectedUsers);
+        }
+        //Collect
+        $data = $data->leftJoin('courses', 'courses.id', '=', 'fees.course_id')->leftJoin('students', 'students.id', '=', 'fees.student_id')->select('fees.*', 'fullname', 'course')->get();
+
+        //Refund
+        $refunds = $refunds->leftJoin('students', 'students.id', '=', 'refunds.student_id')->select('refunds.*' , 'students.fullname')->get();
+
+
+        return view('reports.report_collect_refund', compact('listUser', 'selectedUsers', 'datetime', 'data','refunds'));
     }
     public function ReportCollectCancel(Request $request)
     {

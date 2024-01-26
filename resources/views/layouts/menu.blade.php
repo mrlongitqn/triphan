@@ -47,11 +47,13 @@
     </a>
 </li>
 <li class="nav-item">
-    <a href="{{ route('users') }}"
-       class="nav-link {{ Request::is('users*') ? 'active' : '' }}">
-        <p>Quản lý người dùng</p>
+    <a href="{{ route('refunds.index') }}"
+       class="nav-link {{ Request::is('refunds*') ? 'active' : '' }}">
+        <p>Trả học phí</p>
     </a>
 </li>
+
+
 
 <li class="nav-item">
     <a href="javascript:"
@@ -72,6 +74,12 @@
             </a>
         </li>
         <li class="nav-item">
+            <a href="{{route('reports.ReportCollectRefund')}}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Báo cáo thu/trả học phí</p>
+            </a>
+        </li>
+        <li class="nav-item">
             <a href="{{route('reports.ReportCollectCancel')}}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Báo cáo hủy học phí</p>
@@ -80,7 +88,12 @@
     </ul>
 </li>
 
-
+<li class="nav-item">
+    <a href="{{ route('users') }}"
+       class="nav-link {{ Request::is('users*') ? 'active' : '' }}">
+        <p>Quản lý người dùng</p>
+    </a>
+</li>
 
 {{--<li class="nav-item">--}}
 {{--    <a href="{{ route('marks.index') }}"--}}
@@ -114,11 +127,5 @@
 {{--</li>--}}
 
 
-<li class="nav-item">
-    <a href="{{ route('refunds.index') }}"
-       class="nav-link {{ Request::is('refunds*') ? 'active' : '' }}">
-        <p>Trả học phí</p>
-    </a>
-</li>
 
 

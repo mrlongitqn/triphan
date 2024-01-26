@@ -67,6 +67,9 @@
                 </form>
                 <table id="tableFee" class="table table-striped">
                     <tr>
+                        <th colspan="7">DANH SÁCH THU</th>
+                    </tr>
+                    <tr>
                         <th>STT</th>
                         <th>Người thu</th>
                         <th>Thời gian</th>
@@ -98,11 +101,47 @@
                             <td>{{$item->note}}</td>
                         </tr>
                     @endforeach
-
+                    <tr>
+                        <th colspan="7">DANH SÁCH HOÀN TRẢ</th>
+                    </tr>
+                    <tr>
+                        <th>STT</th>
+                        <th>Người trả</th>
+                        <th>Thời gian</th>
+                        <th>Học viên</th>
+                        <th>Số tiền đã thu</th>
+                        <th>Số tiền hoàn trả</th>
+                        <th>Lý do trả</th>
+                    </tr>
+                    @if(count($refunds)==0)
+                        <tr>
+                            <td colspan="7" style="text-align: center">Chưa có dữ liệu</td>
+                        </tr>
+                    @endif
+                    @php
+                        $i =1;
+                        $refund = 0;
+                    @endphp
+                    @foreach($refunds as $item)
+                        @php
+                            $refund = $refund+$item->amount;
+                        @endphp
+                        <tr>
+                            <td>{{$i++}}</td>
+                            <td>{{$listUser->find($item->user_id)->name}}</td>
+                            <td>{{$item->created_at->format('H:i d/m/Y')}}</td>
+                            <td>{{$item->fullname}}</td>
+                            <td>{{number_format($item->total)}}</td>
+                            <td style="text-align: right">{{number_format($item->amount)}}</td>
+                            <td>{{$item->reason}}</td>
+                        </tr>
+                    @endforeach
                 </table>
                 <div class="card-footer clearfix">
-                    <div class="float-right">
-                        Tổng tiền: <strong> {{ number_format($total)}}</strong>
+                    <div class="float-right text-right">
+                        <p>Tổng tiền thu vào: <strong> {{ number_format($total)}}</strong></p>
+                        <p>Tổng tiền hoàn trả: <strong> {{ number_format($refund)}}</strong></p>
+                        <p>Còn lại: <strong> {{ number_format($total-$refund)}}</strong></p>
                     </div>
                 </div>
             </div>

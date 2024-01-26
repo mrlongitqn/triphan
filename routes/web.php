@@ -76,6 +76,7 @@ Route::prefix("")->middleware('auth')->group(function () {
     Route::prefix('reports')->group(function () {
         Route::get('export-debt-list', [\App\Http\Controllers\ReportController::class, 'ExportDebtList'])->name('reports.ExportDebtList');
         Route::get('report-collect', [\App\Http\Controllers\ReportController::class, 'ReportCollect'])->name('reports.ReportCollect');
+        Route::get('report-collect-refund', [\App\Http\Controllers\ReportController::class, 'ReportCollectRefund'])->name('reports.ReportCollectRefund');
         Route::get('report-collect-cancel', [\App\Http\Controllers\ReportController::class, 'ReportCollectCancel'])->name('reports.ReportCollectCancel');
 
     });
