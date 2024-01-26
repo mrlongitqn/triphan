@@ -6,19 +6,60 @@ use App\DataTables\MarkDataTable;
 use App\Http\Requests;
 use App\Http\Requests\CreateMarkRequest;
 use App\Http\Requests\UpdateMarkRequest;
+use App\Repositories\CourseRepository;
+use App\Repositories\CourseSessionRepository;
+use App\Repositories\CourseSessionStudentRepository;
+use App\Repositories\CourseStudentRepository;
+use App\Repositories\LevelRepository;
 use App\Repositories\MarkRepository;
+use App\Repositories\StudentRepository;
+use App\Repositories\SubjectRepository;
 use Flash;
 use App\Http\Controllers\AppBaseController;
+use Illuminate\Http\Request;
 use Response;
 
 class MarkController extends AppBaseController
 {
     /** @var MarkRepository $markRepository*/
     private $markRepository;
-
-    public function __construct(MarkRepository $markRepo)
+    /** @var CourseStudentRepository $courseStudentRepository */
+    private $courseStudentRepository;
+    /**
+     * @var LevelRepository
+     */
+    private $levelRepository;
+    /**
+     * @var CourseRepository
+     */
+    private $courseRepository;
+    /**
+     * @var SubjectRepository
+     */
+    private $subjectRepository;
+    /**
+     * @var StudentRepository
+     */
+    private $studentRepository;
+    /**
+     * @var CourseSessionRepository
+     */
+    private $courseSessionRepository;
+    /**
+     * @var CourseSessionStudentRepository
+     */
+    private $courseSessionStudentRepository;
+    public function __construct(MarkRepository $markRepo,CourseStudentRepository $courseStudentRepo, LevelRepository $levelRepository, CourseRepository $courseRepository, SubjectRepository $subjectRepository, StudentRepository $studentRepository,
+                                CourseSessionRepository $courseSessionRepository, CourseSessionStudentRepository $courseSessionStudentRepository)
     {
         $this->markRepository = $markRepo;
+        $this->courseStudentRepository = $courseStudentRepo;
+        $this->levelRepository = $levelRepository;
+        $this->courseRepository = $courseRepository;
+        $this->subjectRepository = $subjectRepository;
+        $this->studentRepository = $studentRepository;
+        $this->courseSessionRepository = $courseSessionRepository;
+        $this->courseSessionStudentRepository = $courseSessionStudentRepository;
     }
 
     /**
@@ -28,9 +69,28 @@ class MarkController extends AppBaseController
      *
      * @return Response
      */
-    public function index(MarkDataTable $markDataTable)
+    public function index($id= null)
     {
-        return $markDataTable->render('marks.index');
+        $levels = $this->levelRepository->all();
+        $subjects = $this->subjectRepository->all();
+        $courses = $this->courseRepository->all();
+        if (count($courses) === 0) {
+            Flash::error('Vui lòng tạo các lớp học trước.');
+            return redirect(route('courses.index'));
+        }
+
+        $selected_course = $id == null ? $courses[0] : $courses->find($id);
+        if ($selected_course === null) {
+            Flash::error('Lớp học không tồn tại.');
+            return redirect(route('courseStudents.index'));
+        }
+        $courseStudent = $this->courseStudentRepository->getByCourse($selected_course->id)->get();
+
+        $marks = $this->markRepository->all([
+            'course_student_id'
+        ])
+
+        return view('marks.index', compact('levels', 'courses', 'subjects', 'selected_course', 'courseStudent', 'courseSessions'));
     }
 
     /**

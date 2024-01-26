@@ -24,7 +24,7 @@ class Mark extends Model
 
 
     public $table = 'marks';
-    
+
 
     protected $dates = ['deleted_at'];
 
@@ -34,9 +34,17 @@ class Mark extends Model
         'course_student_id',
         'course_id',
         'student_id',
-        'score',
+        'score1',
+        'score2',
+        'score3',
+        'score4',
+        'score5',
+        'score6',
+        'score7',
+        'score8',
+        'score9',
+        'score10',
         'status',
-        'session_id'
     ];
 
     /**
@@ -60,8 +68,8 @@ class Mark extends Model
      * @var array
      */
     public static $rules = [
-        
+
     ];
 
-    
+
 }
