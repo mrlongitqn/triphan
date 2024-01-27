@@ -18,6 +18,27 @@
             user-select: none;
             -webkit-user-select: none;
         }
+        #tableStudent_Header_Freeze,#tableStudent_Content_Freeze{
+            background: #ffffff;
+        }
+        #tableStudent_Content_Fixed::-webkit-scrollbar {
+            -webkit-appearance: none;
+        }
+
+        #tableStudent_Content_Fixed::-webkit-scrollbar:vertical {
+            width: 11px;
+        }
+
+        #tableStudent_Content_Fixed::-webkit-scrollbar:horizontal {
+            height: 11px;
+        }
+
+        #tableStudent_Content_Fixed::-webkit-scrollbar-thumb {
+            border-radius: 8px;
+            border: 2px solid white; /* should match background, can't be transparent */
+            background-color: rgba(0, 0, 0, .5);
+        }
+
     </style>
 @endpush
 
@@ -26,14 +47,8 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Quản lý học</h1>
+                    <h1>Quản lý điểm</h1>
                 </div>
-                {{--                <div class="col-sm-6">--}}
-                {{--                    <a class="btn btn-primary float-right"--}}
-                {{--                       href="">--}}
-                {{--                        Add New--}}
-                {{--                    </a>--}}
-                {{--                </div>--}}
             </div>
         </div>
     </section>
@@ -75,7 +90,7 @@
                                                                                     @if($course->id == $selected_course->id)
                                                                                         class="jstree-clicked"
                                                                                     @endif
-                                                                                    href="{{route('courseStudents.index', $course->id)}}">{{$course->course}}</a>
+                                                                                    href="{{route('marks.index', $course->id)}}">{{$course->course}}</a>
                                                                             </li>
                                                                         @endforeach
                                                                     </ul>
@@ -108,134 +123,44 @@
                                             <a target="_blank" href="{{route('courseStudents.printList')}}/{{$selected_course->id}}" class="dropdown-item">In danh sách tổng</a>
                                         </div>
                                     </div>
-                                    @if($courseSessions->count()>0)
-                                        <div class="btn-group" style="margin-left: 20px">
-                                            <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" data-offset="-52" aria-expanded="false">
-                                                <i class="far fa-calendar-alt"></i> In theo ca
-                                            </button>
-                                            <div class="dropdown-menu" role="menu" style="">
-
-                                                @foreach($courseSessions as $ses)
-                                                    <a  target="_blank" href="{{route('courseStudents.printListBySession')}}/{{$selected_course->id}}/{{$ses->id}}" class="dropdown-item">{{$ses->day_of_week}} - {{$ses->session}}</a>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    <div class="input-group input-group-sm" style="width: 250px; float: right; margin-left: 40px">
-
-                                        {!! Form::open(['route' => 'courseStudents.store' , 'id'=>'formSave']) !!}
-                                        <input type="hidden" name="course_id" value="{{$selected_course->id}}">
-                                        <select name="student_id" style="width: 200px"
-                                                class="js-data-example-ajax"></select>
-                                        @if($courseSessions->count()>0)
-                                            <div class="modal fade show" id="modal-session" aria-modal="true"
-                                                 role="dialog">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">Vui lòng chọn ca học</h4>
-                                                            <button type="button" class="close" data-dismiss="modal"
-                                                                    aria-label="Close">
-                                                                <span aria-hidden="true">×</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            @foreach($courseSessions as $ses)
-                                                                <div class="form-group">
-                                                                    <div class="custom-control custom-checkbox">
-                                                                        <input class="custom-control-input"
-                                                                               type="checkbox" name="courseSession[]"
-                                                                               id="customCheckbox{{$ses->id}}"
-                                                                               value="{{$ses->id}}">
-                                                                        <label for="customCheckbox{{$ses->id}}"
-                                                                               class="custom-control-label">{{$ses->day_of_week}}
-                                                                            - {{$ses->session}}</label>
-                                                                    </div>
-                                                                </div>
-                                                            @endforeach
-
-                                                        </div>
-                                                        <div class="modal-footer justify-content-between">
-                                                            <button type="button" class="btn btn-default"
-                                                                    data-dismiss="modal">Đóng
-                                                            </button>
-                                                            <button type="submit" class="btn btn-primary">Thêm vào lớp
-                                                            </button>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        @endif
-
-                                        <button type="button" class="btn btn-default pull-right" id="btnSave">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-
-
-                                        {!! Form::close() !!}
-                                    </div>
                                 </div>
                             </div>
 
                             <div class="card-body table-responsive p-0">
-                                <table class="table table-hover text-nowrap">
+                                <table id="tableStudent" class="table table-hover text-nowrap">
                                     <thead>
                                     <tr>
-                                        <th>#</th>
                                         <th>Mã học viên</th>
                                         <th>Họ tên</th>
-                                        <th>Ngày sinh</th>
-                                        <th>Điện thoại</th>
-                                        <th>Ngày bắt đầu học</th>
-                                        <th>Người thêm</th>
+                                        <th>Cột 1</th>
+                                        <th>Cột 2</th>
+                                        <th>Cột 3</th>
+                                        <th>Cột 4</th>
+                                        <th>Cột 5</th>
+                                        <th>Cột 6</th>
+                                        <th>Cột 7</th>
+                                        <th>Cột 8</th>
+                                        <th>Cột 9</th>
+                                        <th>Cột 10</th>
                                         <th></th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     @foreach($courseStudent as $student)
-                                        <tr @if($student->status == 1)
-                                                class="bg-secondary"
-                                            @endif
-                                        >
-                                            <td><input type="checkbox"></td>
+                                        <tr>
                                             <td>{{$student->code}}</td>
                                             <td>{{$student->fullname}} {!! $student->fee_status==1?'':'<span class="badge bg-warning">Nợ học phí</span>' !!}</td>
-                                            <td>{{date('d-m-Y', strtotime($student->dob))}}</td>
-                                            <td>{{$student->phone}}</td>
-                                            <td>{{date('d-m-Y', strtotime($student->created_at))}}</td>
-                                            <td>{{$student->name}}</td>
-                                            <td>
-                                                <div class='btn-group'>
-                                                    @if($student->status == 0)
-                                                        <a href="{{ route('fees.collect', $student->student_id) }}"
-                                                           title="Thu học phí" class='btn btn-default btn-xs'>
-                                                            <i class="fas fa-money-check"></i>
-                                                        </a>
-                                                        @if($courseSessions->count()>0)
-                                                            <a href="javascript:"
-                                                               title="Xem ca học"
-                                                               data-id="{{$student->id}}"
-                                                               data-sessions="{{$student->sessions}}"
-                                                               class='btn btn-default btn-xs btnSession'>
-                                                                <i class="fas fa-calendar-alt"></i>
-                                                            </a>
-                                                        @endif
+                                           <td><input type="number" min="0" max="10" step="0.1" width="24" height="24" name="{{$student->id}}_score1" value="{{$marks[$student->id]->score1}}" /></td>
+                                           <td><input type="number" min="0" max="10" step="0.1" width="24" height="24" name="{{$student->id}}_score2" value="{{$marks[$student->id]->score2}}" /></td>
+                                           <td><input type="number" min="0" max="10" step="0.1" width="24" height="24" name="{{$student->id}}_score3" value="{{$marks[$student->id]->score3}}" /></td>
+                                           <td><input type="number" min="0" max="10" step="0.1" width="24" height="24" name="{{$student->id}}_score4" value="{{$marks[$student->id]->score4}}" /></td>
+                                           <td><input type="number" min="0" max="10" step="0.1" width="24" height="24" name="{{$student->id}}_score5" value="{{$marks[$student->id]->score5}}" /></td>
+                                           <td><input type="number" min="0" max="10" step="0.1" width="24" height="24" name="{{$student->id}}_score6" value="{{$marks[$student->id]->score6}}" /></td>
+                                           <td><input type="number" min="0" max="10" step="0.1" width="24" height="24" name="{{$student->id}}_score7" value="{{$marks[$student->id]->score7}}" /></td>
+                                           <td><input type="number" min="0" max="10" step="0.1" width="24" height="24" name="{{$student->id}}_score8" value="{{$marks[$student->id]->score8}}" /></td>
+                                           <td><input type="number" min="0" max="10" step="0.1" width="24" height="24" name="{{$student->id}}_score9" value="{{$marks[$student->id]->score9}}" /></td>
+                                           <td><input type="number" min="0" max="10" step="0.1" width="24" height="24" name="{{$student->id}}_score10" value="{{$marks[$student->id]->score10}}" /></td>
 
-                                                        <a data-id="{{$student->id}}" href="javascript:" title="Nghỉ học"
-                                                           class='btn btn-default btn-xs changeStatus'>
-                                                            <i class="fas fa-times"></i>
-                                                        </a>
-                                                    @else
-                                                        <a data-id="{{$student->id}}"  title="Mở lại" href="javascript:"
-                                                           class='btn btn-default btn-xs changeStatus'>
-                                                            <i class="fas fa-check"></i>
-                                                        </a>
-                                                    @endif
-
-                                                </div>
-                                            </td>
                                         </tr>
                                     @endforeach
                                     </tbody>
@@ -255,54 +180,10 @@
             </div>
         </div>
 
-        @if($courseSessions->count()>0)
-            <div class="modal fade show" id="modal-update-session" aria-modal="true"
-                 role="dialog">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Danh sách ca học</h4>
-                            <button type="button" class="close" data-dismiss="modal"
-                                    aria-label="Close">
-                                <span aria-hidden="true">×</span>
-                            </button>
-                        </div>
-                        <form action="{{route('courseStudents.updateSession')}}" method="post">
-
-                            <input name="_token" type="hidden" value="{{csrf_token()}}">
-                            <input type="hidden" name="studentCourseId" id="studentCourseId" value="0">
-                            <div class="modal-body">
-                                @foreach($courseSessions as $ses)
-                                    <div class="form-group">
-                                        <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input update-check"
-                                                   type="checkbox" name="courseSession[]"
-                                                   id="update_session_{{$ses->id}}"
-                                                   value="{{$ses->id}}">
-                                            <label for="update_session_{{$ses->id}}"
-                                                   class="custom-control-label">{{$ses->day_of_week}}
-                                                - {{$ses->session}}</label>
-                                        </div>
-                                    </div>
-                                @endforeach
-
-                            </div>
-                            <div class="modal-footer justify-content-between">
-                                <button type="button" class="btn btn-default"
-                                        data-dismiss="modal">Đóng
-                                </button>
-                                <button type="submit" class="btn btn-primary">Cập nhật ca
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                </div>
-            </div>
-        @endif
         @endsection
         @push('third_party_scripts')
             <script src="{{asset('vendor/jstree/jstree.min.js')}}"></script>
+            <script src="{{asset('vendor/gridviewscroll.js')}}"></script>
             <script>
                 $.jstree.defaults.core.themes.variant = "large";
                 $(function () {
@@ -319,45 +200,21 @@
                         }
                     });
                 });
-
-                $('.js-data-example-ajax').select2({
-                    ajax: {
-                        url: '{{route('student.search')}}',
-                        dataType: 'json'
-                        // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
-                    }
-                });
-                $(document).on('click', '.changeStatus', function () {
-                    if (confirm('Bạn chắn chắn đổi trạng thái đối với học viên này')) {
-                        $.get('{{ route('courseStudents.updateStatus') }}/' + $(this).data('id'), function (data) {
-                            if (data.success) {
-                                // Reload trang ngay lập tức
-                                location.reload();
-                            }
-                        });
-                    }
-
-                });
-                var hasSession = {{$courseSessions->count()}};
-                $('#btnSave').on('click', function () {
-                    if (hasSession > 0)
-                        $('#modal-session').modal('show');
-                    else {
-                        $('#formSave').submit();
-                    }
-                });
-                $('.btnSession').on('click', function () {
-                    let studentCourseId = $(this).data('id');
-                    $('#studentCourseId').val(studentCourseId);
-                    let sessions = $(this).data('sessions')+"";
-                    const array = sessions.split(',');
-                    $(".update-check").prop("checked", false);
-                    array.forEach(x=>{
-                        $('#update_session_'+x).prop('checked', 'checked');
-                    })
-
-                    $('#modal-update-session').modal('show');
-                });
+                window.onload = function () {
+                    var gridViewScroll = new GridViewScroll({
+                        elementID : "tableStudent", // Target element id
+                        width : '100%', // Integer or String(Percentage)
+                        //height : 800, // Integer or String(Percentage)
+                        freezeColumn : true, // Boolean
+                        freezeFooter : false, // Boolean
+                        freezeColumnCssClass : "", // String
+                        freezeFooterCssClass : "", // String
+                        freezeHeaderRowCount : 1, // Integer
+                        freezeColumnCount : 2, // Integer
+                       // onscroll: function (scrollTop, scrollLeft) // onscroll event callback
+                    });
+                    gridViewScroll.enhance();
+                }
 
             </script>
     @endpush

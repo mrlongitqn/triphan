@@ -11,6 +11,7 @@ use App\Repositories\CourseSessionRepository;
 use App\Repositories\CourseSessionStudentRepository;
 use App\Repositories\CourseStudentRepository;
 use App\Repositories\LevelRepository;
+use App\Repositories\MarkRepository;
 use App\Repositories\StudentRepository;
 use App\Repositories\SubjectRepository;
 use Flash;
@@ -45,9 +46,13 @@ class CourseStudentController extends AppBaseController
      * @var CourseSessionStudentRepository
      */
     private $courseSessionStudentRepository;
+    /**
+     * @var MarkRepository
+     */
+    private $markRepository;
 
     public function __construct(CourseStudentRepository $courseStudentRepo, LevelRepository $levelRepository, CourseRepository $courseRepository, SubjectRepository $subjectRepository, StudentRepository $studentRepository,
-                                CourseSessionRepository $courseSessionRepository, CourseSessionStudentRepository $courseSessionStudentRepository)
+                                CourseSessionRepository $courseSessionRepository, CourseSessionStudentRepository $courseSessionStudentRepository, MarkRepository  $markRepository)
     {
         $this->courseStudentRepository = $courseStudentRepo;
         $this->levelRepository = $levelRepository;
@@ -56,6 +61,7 @@ class CourseStudentController extends AppBaseController
         $this->studentRepository = $studentRepository;
         $this->courseSessionRepository = $courseSessionRepository;
         $this->courseSessionStudentRepository = $courseSessionStudentRepository;
+        $this->markRepository = $markRepository;
     }
 
     /**
@@ -67,7 +73,6 @@ class CourseStudentController extends AppBaseController
      */
     public function index($id = null)
     {
-
         $levels = $this->levelRepository->all();
         $subjects = $this->subjectRepository->all();
         $courses = $this->courseRepository->all();
@@ -130,6 +135,12 @@ class CourseStudentController extends AppBaseController
             return redirect(route('courseStudents.index', $request->course_id));
         }
         $courseStudent = $this->courseStudentRepository->create($input);
+        $this->markRepository->create([
+            'course_student_id' => $courseStudent->id,
+            'course_id'=>$request->course_id,
+            'student_id'=>$request->student_id,
+            'status'=>0
+        ]);
         if ($request->has('courseSession')) {
             $courseSessions = $request->courseSession;
             foreach ($courseSessions as $courseSession) {

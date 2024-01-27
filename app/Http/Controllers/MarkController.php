@@ -84,13 +84,14 @@ class MarkController extends AppBaseController
             Flash::error('Lớp học không tồn tại.');
             return redirect(route('courseStudents.index'));
         }
-        $courseStudent = $this->courseStudentRepository->getByCourse($selected_course->id)->get();
+        $courseStudent = $this->courseStudentRepository->getByCourse($selected_course->id, [0])->get();
 
         $marks = $this->markRepository->all([
             'course_student_id'
-        ])
+        ])->keyBy('course_student_id');
+        //dd($marks);
 
-        return view('marks.index', compact('levels', 'courses', 'subjects', 'selected_course', 'courseStudent', 'courseSessions'));
+        return view('marks.index', compact('marks','levels', 'courses', 'subjects', 'selected_course', 'courseStudent'));
     }
 
     /**

@@ -80,8 +80,10 @@ Route::prefix("")->middleware('auth')->group(function () {
         Route::get('report-collect-cancel', [\App\Http\Controllers\ReportController::class, 'ReportCollectCancel'])->name('reports.ReportCollectCancel');
 
     });
-
-    Route::resource('marks', App\Http\Controllers\MarkController::class);
+    Route::prefix('marks')->group(function () {
+        Route::get('/{id?}', [\App\Http\Controllers\MarkController::class, 'index'])->name('marks.index');
+    });
+    //Route::resource('marks', App\Http\Controllers\MarkController::class);
 
     Route::resource('sessionMarks', App\Http\Controllers\SessionMarkController::class);
     Route::resource('courseSessions', App\Http\Controllers\CourseSessionController::class);
