@@ -11,6 +11,7 @@ use App\Repositories\LevelRepository;
 use App\Repositories\SubjectRepository;
 use Flash;
 use App\Http\Controllers\AppBaseController;
+use Illuminate\Http\Request;
 use Response;
 
 class CourseController extends AppBaseController
@@ -181,5 +182,20 @@ class CourseController extends AppBaseController
         $this->courseRepository->delete($id);
 
         return redirect(route('courses.index'));
+    }
+
+    public function search(Request $request)
+    {
+        $keyword = $request->term;
+        $data = $this->courseRepository->allQuery()->where('course','like', '%'.$keyword.'%')
+            ->select('id', 'course as text')->limit(20)->get();
+        return response()->json(
+            [
+                "results" => $data,
+                "pagination" => [
+                    'more'=>false
+                ]
+            ]
+        );
     }
 }

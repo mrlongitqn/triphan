@@ -7,6 +7,7 @@ use App\Http\Requests;
 use App\Http\Requests\CreateSessionMarkRequest;
 use App\Http\Requests\UpdateSessionMarkRequest;
 use App\Repositories\SessionMarkRepository;
+use Carbon\Carbon;
 use Flash;
 use App\Http\Controllers\AppBaseController;
 use Response;
@@ -40,7 +41,9 @@ class SessionMarkController extends AppBaseController
      */
     public function create()
     {
-        return view('session_marks.create');
+        $date = Carbon::now();
+        $datetime = $date->format('d/m/Y') . ' - ' . $date->format('d/m/Y');
+        return view('session_marks.create', compact('datetime'));
     }
 
     /**

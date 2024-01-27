@@ -15,16 +15,16 @@ class AddScoreNumber extends Migration
     {
         Schema::table('marks', function (Blueprint $table) {
             $table->dropColumn('score','session_id');
-            $table->decimal('score1',2,2,true)->nullable();
-            $table->decimal('score2',2,2,true)->nullable();
-            $table->decimal('score3',2,2,true)->nullable();
-            $table->decimal('score4',2,2,true)->nullable();
-            $table->decimal('score5',2,2,true)->nullable();
-            $table->decimal('score6',2,2,true)->nullable();
-            $table->decimal('score7',2,2,true)->nullable();
-            $table->decimal('score8',2,2,true)->nullable();
-            $table->decimal('score9',2,2,true)->nullable();
-            $table->decimal('score10',2,2,true)->nullable();
+            $table->decimal('score1',4,2,true)->nullable();
+            $table->decimal('score2',4,2,true)->nullable();
+            $table->decimal('score3',4,2,true)->nullable();
+            $table->decimal('score4',4,2,true)->nullable();
+            $table->decimal('score5',4,2,true)->nullable();
+            $table->decimal('score6',4,2,true)->nullable();
+            $table->decimal('score7',4,2,true)->nullable();
+            $table->decimal('score8',4,2,true)->nullable();
+            $table->decimal('score9',4,2,true)->nullable();
+            $table->decimal('score10',4,2,true)->nullable();
             $table->timestamps();
         });
     }

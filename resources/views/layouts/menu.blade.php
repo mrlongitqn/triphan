@@ -58,7 +58,12 @@
         <p>Quản lý điểm</p>
     </a>
 </li>
-
+<li class="nav-item">
+    <a href="{{ route('sessionMarks.index') }}"
+       class="nav-link {{ Request::is('sessionMarks*') ? 'active' : '' }}">
+        <p>Đợt nhập điểm</p>
+    </a>
+</li>
 
 <li class="nav-item">
     <a href="javascript:"
@@ -132,5 +137,13 @@
 {{--</li>--}}
 
 
+
+
+<li class="nav-item">
+    <a href="{{ route('sessionMarkDetails.index') }}"
+       class="nav-link {{ Request::is('sessionMarkDetails*') ? 'active' : '' }}">
+        <p>Session Mark Details</p>
+    </a>
+</li>
 
 

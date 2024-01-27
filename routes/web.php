@@ -44,6 +44,7 @@ Route::prefix("")->middleware('auth')->group(function () {
 
 
     Route::resource('courses', App\Http\Controllers\CourseController::class);
+    Route::get('course/search', [App\Http\Controllers\CourseController::class, 'search'])->name('courses.search');
 
 
     Route::resource('students', App\Http\Controllers\StudentController::class);
@@ -101,3 +102,6 @@ Route::prefix("")->middleware('auth')->group(function () {
 
 
 
+
+
+Route::resource('sessionMarkDetails', App\Http\Controllers\SessionMarkDetailController::class);

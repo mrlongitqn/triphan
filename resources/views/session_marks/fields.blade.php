@@ -1,29 +1,35 @@
 <!-- Session Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('session', 'Session:') !!}
+    {!! Form::label('session', 'Tên đợt:') !!}
     {!! Form::text('session', null, ['class' => 'form-control']) !!}
 </div>
-
-<!-- Start Date Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('start_date', 'Start Date:') !!}
-    {!! Form::text('start_date', null, ['class' => 'form-control']) !!}
-</div>
-
-<!-- End Date Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('end_date', 'End Date:') !!}
-    {!! Form::text('end_date', null, ['class' => 'form-control']) !!}
+    <label for="datetime">Thời gian</label>
+    <div class="input-group">
+        <div class="input-group-prepend" id="datetimePick">
+                                        <span class="input-group-text">
+                                         <i class="fa fa-calendar"></i>
+                                        </span>
+        </div>
+        <input type="text" class="form-control float-right" name="datetime" id="datetime"
+               value="{{$datetime}}">
+    </div>
 </div>
 
 <!-- Desc Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('desc', 'Desc:') !!}
+<div class="form-group col-sm-12">
+    {!! Form::label('desc', 'Mô tả:') !!}
     {!! Form::text('desc', null, ['class' => 'form-control']) !!}
 </div>
 
-<!-- Course Ids Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('course_ids', 'Course Ids:') !!}
-    {!! Form::text('course_ids', null, ['class' => 'form-control']) !!}
+<div class="form-group col-sm-12">
+    {!! Form::label('courses', 'Lớp học:') !!}
+   <select id="courses" name="courses[]" multiple class="form-control">
+
+   </select>
 </div>
+<!-- Start Date Field -->
+
+
+
+

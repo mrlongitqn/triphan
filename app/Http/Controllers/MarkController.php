@@ -72,6 +72,16 @@ class MarkController extends AppBaseController
      */
     public function index($id= null)
     {
+//        $all = $this->courseStudentRepository->all();
+//        foreach ($all as $item){
+//            $this->markRepository->create([
+//                'course_student_id'=>$item->id,
+//                'course_id'=>$item->course_id,
+//                'student_id'=>$item->student_id,
+//                'status'=>0
+//            ]);
+//        }
+//        die();
         $levels = $this->levelRepository->all();
         $subjects = $this->subjectRepository->all();
         $courses = $this->courseRepository->all();
