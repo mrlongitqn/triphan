@@ -18,9 +18,11 @@
             user-select: none;
             -webkit-user-select: none;
         }
-        #tableStudent_Header_Freeze,#tableStudent_Content_Freeze{
+
+        #tableStudent_Header_Freeze, #tableStudent_Content_Freeze {
             background: #ffffff;
         }
+
         #tableStudent_Content_Fixed::-webkit-scrollbar {
             -webkit-appearance: none;
         }
@@ -113,14 +115,25 @@
                                 <h3 class="card-title">DANH SÁCH HỌC VIÊN</h3>
                                 <div class="card-tools">
                                     <div class="btn-group" style="margin-left: 20px">
-                                        <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" data-offset="-52" aria-expanded="false">
+                                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                                data-target="#modal-sm">
+                                            <i class="fas fa-file-export"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-success btn-sm dropdown-toggle"
+                                                data-toggle="dropdown" data-offset="-52" aria-expanded="false">
                                             <i class="fas fa-print"></i>
                                         </button>
                                         <div class="dropdown-menu" role="menu">
-                                            <a target="_blank" href="{{route('courseStudents.printList')}}/{{$selected_course->id}}/on" class="dropdown-item">In danh sách lớp</a>
-                                            <a target="_blank" href="{{route('fees.listFeeDebtByCourse')}}/{{$selected_course->id}}" class="dropdown-item">Danh sách nợ học phí</a>
+                                            <a target="_blank"
+                                               href="{{route('courseStudents.printList')}}/{{$selected_course->id}}/on"
+                                               class="dropdown-item">In danh sách lớp</a>
+                                            <a target="_blank"
+                                               href="{{route('fees.listFeeDebtByCourse')}}/{{$selected_course->id}}"
+                                               class="dropdown-item">Danh sách nợ học phí</a>
 
-                                            <a target="_blank" href="{{route('courseStudents.printList')}}/{{$selected_course->id}}" class="dropdown-item">In danh sách tổng</a>
+                                            <a target="_blank"
+                                               href="{{route('courseStudents.printList')}}/{{$selected_course->id}}"
+                                               class="dropdown-item">In danh sách tổng</a>
                                         </div>
                                     </div>
                                 </div>
@@ -150,21 +163,40 @@
                                         <tr>
                                             <td>{{$student->code}}</td>
                                             <td>{{$student->fullname}} {!! $student->fee_status==1?'':'<span class="badge bg-warning">Nợ học phí</span>' !!}</td>
-                                           <td><input type="number" min="0" max="10" step="0.1" width="24" height="24" name="{{$student->id}}_score1" value="{{$marks[$student->id]->score1}}" /></td>
-                                           <td><input type="number" min="0" max="10" step="0.1" width="24" height="24" name="{{$student->id}}_score2" value="{{$marks[$student->id]->score2}}" /></td>
-                                           <td><input type="number" min="0" max="10" step="0.1" width="24" height="24" name="{{$student->id}}_score3" value="{{$marks[$student->id]->score3}}" /></td>
-                                           <td><input type="number" min="0" max="10" step="0.1" width="24" height="24" name="{{$student->id}}_score4" value="{{$marks[$student->id]->score4}}" /></td>
-                                           <td><input type="number" min="0" max="10" step="0.1" width="24" height="24" name="{{$student->id}}_score5" value="{{$marks[$student->id]->score5}}" /></td>
-                                           <td><input type="number" min="0" max="10" step="0.1" width="24" height="24" name="{{$student->id}}_score6" value="{{$marks[$student->id]->score6}}" /></td>
-                                           <td><input type="number" min="0" max="10" step="0.1" width="24" height="24" name="{{$student->id}}_score7" value="{{$marks[$student->id]->score7}}" /></td>
-                                           <td><input type="number" min="0" max="10" step="0.1" width="24" height="24" name="{{$student->id}}_score8" value="{{$marks[$student->id]->score8}}" /></td>
-                                           <td><input type="number" min="0" max="10" step="0.1" width="24" height="24" name="{{$student->id}}_score9" value="{{$marks[$student->id]->score9}}" /></td>
-                                           <td><input type="number" min="0" max="10" step="0.1" width="24" height="24" name="{{$student->id}}_score10" value="{{$marks[$student->id]->score10}}" /></td>
+                                            <td><input type="number" min="0" max="10" step="0.1" width="24" height="24"
+                                                       name="{{$student->id}}_score1"
+                                                       value="{{$marks[$student->id]->score1}}"/></td>
+                                            <td><input type="number" min="0" max="10" step="0.1" width="24" height="24"
+                                                       name="{{$student->id}}_score2"
+                                                       value="{{$marks[$student->id]->score2}}"/></td>
+                                            <td><input type="number" min="0" max="10" step="0.1" width="24" height="24"
+                                                       name="{{$student->id}}_score3"
+                                                       value="{{$marks[$student->id]->score3}}"/></td>
+                                            <td><input type="number" min="0" max="10" step="0.1" width="24" height="24"
+                                                       name="{{$student->id}}_score4"
+                                                       value="{{$marks[$student->id]->score4}}"/></td>
+                                            <td><input type="number" min="0" max="10" step="0.1" width="24" height="24"
+                                                       name="{{$student->id}}_score5"
+                                                       value="{{$marks[$student->id]->score5}}"/></td>
+                                            <td><input type="number" min="0" max="10" step="0.1" width="24" height="24"
+                                                       name="{{$student->id}}_score6"
+                                                       value="{{$marks[$student->id]->score6}}"/></td>
+                                            <td><input type="number" min="0" max="10" step="0.1" width="24" height="24"
+                                                       name="{{$student->id}}_score7"
+                                                       value="{{$marks[$student->id]->score7}}"/></td>
+                                            <td><input type="number" min="0" max="10" step="0.1" width="24" height="24"
+                                                       name="{{$student->id}}_score8"
+                                                       value="{{$marks[$student->id]->score8}}"/></td>
+                                            <td><input type="number" min="0" max="10" step="0.1" width="24" height="24"
+                                                       name="{{$student->id}}_score9"
+                                                       value="{{$marks[$student->id]->score9}}"/></td>
+                                            <td><input type="number" min="0" max="10" step="0.1" width="24" height="24"
+                                                       name="{{$student->id}}_score10"
+                                                       value="{{$marks[$student->id]->score10}}"/></td>
 
                                         </tr>
                                     @endforeach
                                     </tbody>
-
 
 
                                 </table>
@@ -180,6 +212,58 @@
             </div>
         </div>
 
+        <div class="modal fade" id="modal-sm" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Xuất Excel</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h6>Vui lòng chọn côt điểm cần xuất</h6>
+                        <form id="formExport" action="{{route('marks.exportMarks', $selected_course->id)}}"
+                              method="get">
+                            <div class="row">
+
+                                <div class="col-6">
+                                    <input id="cb1" type="checkbox" name="cols[]" value="1"> <label for="cb1">Cột
+                                        1</label><br/>
+                                    <input id="cb2" type="checkbox" name="cols[]" value="2"> <label for="cb2">Cột
+                                        2</label><br/>
+                                    <input id="cb3" type="checkbox" name="cols[]" value="3"> <label for="cb3">Cột
+                                        3</label><br/>
+                                    <input id="cb4" type="checkbox" name="cols[]" value="4"> <label for="cb4">Cột
+                                        4</label><br/>
+                                    <input id="cb5" type="checkbox" name="cols[]" value="5"> <label for="cb5">Cột
+                                        5</label><br/>
+                                </div>
+                                <div class="col-6">
+                                    <input id="cb6" type="checkbox" name="cols[]" value="6"> <label for="cb6">Cột
+                                        6</label><br/>
+                                    <input id="cb7" type="checkbox" name="cols[]" value="7"> <label for="cb7">Cột
+                                        7</label><br/>
+                                    <input id="cb8" type="checkbox" name="cols[]" value="8"> <label for="cb8">Cột
+                                        8</label><br/>
+                                    <input id="cb9" type="checkbox" name="cols[]" value="9"> <label for="cb9">Cột
+                                        9</label><br/>
+                                    <input id="cb10" type="checkbox" name="cols[]" value="10"> <label for="cb10">Cột
+                                        10</label><br/>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal"> Đóng</button>
+                        <button type="button" id="btnExport" class="btn btn-primary">Xuất EXCEL</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
         @endsection
         @push('third_party_scripts')
             <script src="{{asset('vendor/jstree/jstree.min.js')}}"></script>
@@ -202,20 +286,27 @@
                 });
                 window.onload = function () {
                     var gridViewScroll = new GridViewScroll({
-                        elementID : "tableStudent", // Target element id
-                        width : '100%', // Integer or String(Percentage)
+                        elementID: "tableStudent", // Target element id
+                        width: '100%', // Integer or String(Percentage)
                         //height : 800, // Integer or String(Percentage)
-                        freezeColumn : true, // Boolean
-                        freezeFooter : false, // Boolean
-                        freezeColumnCssClass : "", // String
-                        freezeFooterCssClass : "", // String
-                        freezeHeaderRowCount : 1, // Integer
-                        freezeColumnCount : 2, // Integer
-                       // onscroll: function (scrollTop, scrollLeft) // onscroll event callback
+                        freezeColumn: true, // Boolean
+                        freezeFooter: false, // Boolean
+                        freezeColumnCssClass: "", // String
+                        freezeFooterCssClass: "", // String
+                        freezeHeaderRowCount: 1, // Integer
+                        freezeColumnCount: 2, // Integer
+                        // onscroll: function (scrollTop, scrollLeft) // onscroll event callback
                     });
                     gridViewScroll.enhance();
-                }
-
+                };
+                $('#btnExport').on('click', function () {
+                    if ($('input[name="cols[]"]:checked').length === 0) {
+                        alert('Vui lòng chọn cột điểm cần xuất');
+                        return;
+                    }
+                    $('#modal-sm').modal('hide');
+                    $('#formExport').submit();
+                })
             </script>
     @endpush
 

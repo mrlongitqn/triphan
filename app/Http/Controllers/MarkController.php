@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Exports\MarksExport;
+use Maatwebsite\Excel\Facades\Excel;
 use App\DataTables\MarkDataTable;
 use App\Http\Requests;
 use App\Http\Requests\CreateMarkRequest;
@@ -92,6 +93,16 @@ class MarkController extends AppBaseController
         //dd($marks);
 
         return view('marks.index', compact('marks','levels', 'courses', 'subjects', 'selected_course', 'courseStudent'));
+    }
+
+    public function exportMarks($id=0, Request $request)
+    {
+        $course  = $this->courseRepository->find($id);
+        if (!$course)
+            return abort('404');
+        $cols = $request->cols;
+        sort($cols);
+        return Excel::download(new MarksExport($id,$cols), 'marks.xlsx');
     }
 
     /**
