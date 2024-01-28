@@ -139,11 +139,11 @@
 
 
 
-<li class="nav-item">
-    <a href="{{ route('sessionMarkDetails.index') }}"
-       class="nav-link {{ Request::is('sessionMarkDetails*') ? 'active' : '' }}">
-        <p>Session Mark Details</p>
-    </a>
-</li>
+{{--<li class="nav-item">--}}
+{{--    <a href="{{ route('sessionMarkDetails.index') }}"--}}
+{{--       class="nav-link {{ Request::is('sessionMarkDetails*') ? 'active' : '' }}">--}}
+{{--        <p>Session Mark Details</p>--}}
+{{--    </a>--}}
+{{--</li>--}}
 
 

@@ -25,7 +25,11 @@
 <div class="form-group col-sm-12">
     {!! Form::label('courses', 'Lớp học:') !!}
    <select id="courses" name="courses[]" multiple class="form-control">
-
+        @if(isset($courses))
+            @foreach($courses as $course)
+                <option value="{{$course->id}}" selected>{{$course->course}}</option>
+            @endforeach
+        @endif
    </select>
 </div>
 <!-- Start Date Field -->

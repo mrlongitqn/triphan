@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 use App\Exports\MarksExport;
+use App\Repositories\SessionMarkDetailRepository;
+use App\Repositories\SessionMarkRepository;
+use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use App\DataTables\MarkDataTable;
 use App\Http\Requests;
@@ -50,8 +53,17 @@ class MarkController extends AppBaseController
      * @var CourseSessionStudentRepository
      */
     private $courseSessionStudentRepository;
+    /**
+     * @var SessionMarkRepository
+     */
+    private $sessionMarkRepository;
+    /**
+     * @var SessionMarkDetailRepository
+     */
+    private $markDetailRepository;
+
     public function __construct(MarkRepository $markRepo,CourseStudentRepository $courseStudentRepo, LevelRepository $levelRepository, CourseRepository $courseRepository, SubjectRepository $subjectRepository, StudentRepository $studentRepository,
-                                CourseSessionRepository $courseSessionRepository, CourseSessionStudentRepository $courseSessionStudentRepository)
+                                CourseSessionRepository $courseSessionRepository, CourseSessionStudentRepository $courseSessionStudentRepository, SessionMarkRepository  $sessionMarkRepository, SessionMarkDetailRepository  $markDetailRepository)
     {
         $this->markRepository = $markRepo;
         $this->courseStudentRepository = $courseStudentRepo;
@@ -61,6 +73,9 @@ class MarkController extends AppBaseController
         $this->studentRepository = $studentRepository;
         $this->courseSessionRepository = $courseSessionRepository;
         $this->courseSessionStudentRepository = $courseSessionStudentRepository;
+
+        $this->sessionMarkRepository = $sessionMarkRepository;
+        $this->markDetailRepository = $markDetailRepository;
     }
 
     /**
@@ -100,7 +115,16 @@ class MarkController extends AppBaseController
         $marks = $this->markRepository->all([
             'course_student_id'
         ])->keyBy('course_student_id');
-        //dd($marks);
+        $now = Carbon::now();
+        $session = $this->markDetailRepository->allQuery()
+            ->leftJoin('session_marks','session_marks.id','=','session_mark_details.session_mark_id')
+            ->where('session_mark_details.course_id','=', $selected_course->id)
+            ->where('start_date', '<=', $now)
+            ->where('end_date', '>=', $now)
+            ->get();
+        dd($session);
+
+
 
         return view('marks.index', compact('marks','levels', 'courses', 'subjects', 'selected_course', 'courseStudent'));
     }

@@ -19,8 +19,8 @@ class SessionMarkDetail extends Model
 
 
     public $table = 'session_mark_details';
-    
 
+    public $timestamps = false;
 
 
     public $fillable = [
@@ -45,8 +45,8 @@ class SessionMarkDetail extends Model
      * @var array
      */
     public static $rules = [
-        
+
     ];
 
-    
+
 }

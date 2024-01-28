@@ -23,7 +23,7 @@ class SessionMark extends Model
 
 
     public $table = 'session_marks';
-    
+
 
     protected $dates = ['deleted_at'];
 
@@ -34,7 +34,8 @@ class SessionMark extends Model
         'start_date',
         'end_date',
         'desc',
-        'course_ids'
+        'course_ids',
+        'user_id'
     ];
 
     /**
@@ -57,8 +58,8 @@ class SessionMark extends Model
      * @var array
      */
     public static $rules = [
-        
+        'session'=> 'required',
     ];
 
-    
+
 }

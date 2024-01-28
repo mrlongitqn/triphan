@@ -6,6 +6,8 @@ use App\DataTables\SessionMarkDataTable;
 use App\Http\Requests;
 use App\Http\Requests\CreateSessionMarkRequest;
 use App\Http\Requests\UpdateSessionMarkRequest;
+use App\Repositories\CourseRepository;
+use App\Repositories\SessionMarkDetailRepository;
 use App\Repositories\SessionMarkRepository;
 use Carbon\Carbon;
 use Flash;
@@ -14,12 +16,23 @@ use Response;
 
 class SessionMarkController extends AppBaseController
 {
-    /** @var SessionMarkRepository $sessionMarkRepository*/
+    /** @var SessionMarkRepository $sessionMarkRepository */
     private $sessionMarkRepository;
+    /**
+     * @var SessionMarkDetailRepository
+     */
+    private $markDetailRepository;
+    /**
+     * @var CourseRepository
+     */
+    private $courseRepository;
 
-    public function __construct(SessionMarkRepository $sessionMarkRepo)
+    public function __construct(SessionMarkRepository $sessionMarkRepo, SessionMarkDetailRepository $markDetailRepository,
+    CourseRepository  $courseRepository)
     {
         $this->sessionMarkRepository = $sessionMarkRepo;
+        $this->markDetailRepository = $markDetailRepository;
+        $this->courseRepository = $courseRepository;
     }
 
     /**
@@ -55,11 +68,27 @@ class SessionMarkController extends AppBaseController
      */
     public function store(CreateSessionMarkRequest $request)
     {
+        if ($request->courses == null || count($request->courses) == 0) {
+            Flash::error('Vui lòng chọn lớp học');
+            return redirect()->back()->withInput()->withErrors(['courses' => 'Vui lòng chọn lớp học.']);
+
+        }
         $input = $request->all();
-
+        $parseDate = explode(' - ', $request->datetime);
+        $startDate = Carbon::createFromFormat('d/m/Y', $parseDate[0])->setHour(0)->setMinute(0);
+        $endDate = Carbon::createFromFormat('d/m/Y', $parseDate[1])->setHour(23)->setMinute(59);
+        $input['course_ids'] = implode(',', $request->courses);
+        $input['start_date'] = $startDate;
+        $input['end_date'] = $endDate;
+        $input['user_id'] = $request->user()->id;
         $sessionMark = $this->sessionMarkRepository->create($input);
-
-        Flash::success('Session Mark saved successfully.');
+        foreach ($request->courses as $cours) {
+            $this->markDetailRepository->create([
+                'session_mark_id' => $sessionMark->id,
+                'course_id' => $cours
+            ]);
+        }
+        Flash::success('Tạo đợt thành công');
 
         return redirect(route('sessionMarks.index'));
     }
@@ -96,12 +125,14 @@ class SessionMarkController extends AppBaseController
         $sessionMark = $this->sessionMarkRepository->find($id);
 
         if (empty($sessionMark)) {
-            Flash::error('Session Mark not found');
+            Flash::error('Đợt nhập điểm không tồn tại');
 
             return redirect(route('sessionMarks.index'));
         }
+        $courses = $this->courseRepository->allQuery()->whereIn('id', explode(',', $sessionMark->course_ids))->get();
+        $datetime = $sessionMark->start_date->format('d/m/Y').' - '.$sessionMark->end_date->format('d/m/Y');
 
-        return view('session_marks.edit')->with('sessionMark', $sessionMark);
+        return view('session_marks.edit', compact('sessionMark', 'datetime', 'courses'));
     }
 
     /**
@@ -117,14 +148,26 @@ class SessionMarkController extends AppBaseController
         $sessionMark = $this->sessionMarkRepository->find($id);
 
         if (empty($sessionMark)) {
-            Flash::error('Session Mark not found');
+            Flash::error('Đợt nhập điểm không tồn tại');
 
             return redirect(route('sessionMarks.index'));
         }
+        if ($request->courses == null || count($request->courses) == 0) {
+            Flash::error('Vui lòng chọn lớp học');
+            return redirect()->back()->withInput()->withErrors(['courses' => 'Vui lòng chọn lớp học.']);
 
-        $sessionMark = $this->sessionMarkRepository->update($request->all(), $id);
+        }
+        $input = $request->all();
+        $parseDate = explode(' - ', $request->datetime);
+        $startDate = Carbon::createFromFormat('d/m/Y', $parseDate[0]);
+        $endDate = Carbon::createFromFormat('d/m/Y', $parseDate[1]);
+        $input['course_ids'] = implode(',', $request->courses);
+        $input['start_date'] = $startDate;
+        $input['end_date'] = $endDate;
+        $input['user_id'] = $request->user()->id;
+        $sessionMark = $this->sessionMarkRepository->update($input, $id);
 
-        Flash::success('Session Mark updated successfully.');
+        Flash::success('Cập nhật đợt nhập điểm thành công.');
 
         return redirect(route('sessionMarks.index'));
     }
@@ -141,14 +184,14 @@ class SessionMarkController extends AppBaseController
         $sessionMark = $this->sessionMarkRepository->find($id);
 
         if (empty($sessionMark)) {
-            Flash::error('Session Mark not found');
+            Flash::error('Đợt nhập điểm không tồn tại');
 
             return redirect(route('sessionMarks.index'));
         }
 
         $this->sessionMarkRepository->delete($id);
 
-        Flash::success('Session Mark deleted successfully.');
+        Flash::success('Xoá đợt nhập điểm thành công.');
 
         return redirect(route('sessionMarks.index'));
     }
