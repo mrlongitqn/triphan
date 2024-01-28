@@ -75,6 +75,7 @@ class SessionMarkDataTable extends DataTable
            Column::make( 'session')->title('Tên đợt'),
            Column::make( 'start_date')->title('Ngày bắt đầu'),
            Column::make( 'end_date')->title('Ngày kết thúc'),
+           Column::make( 'scores')->title('Cột điểm'),
            Column::make( 'desc')->title('Mô tả'),
         ];
     }

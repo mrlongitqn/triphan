@@ -35,7 +35,8 @@ class SessionMark extends Model
         'end_date',
         'desc',
         'course_ids',
-        'user_id'
+        'user_id',
+        'scores'
     ];
 
     /**

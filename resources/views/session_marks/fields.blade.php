@@ -32,6 +32,17 @@
         @endif
    </select>
 </div>
+<div class="form-group col-sm-12">
+    {!! Form::label('courses', 'Cột điểm:') !!}
+   @for($i =1; $i<=10; $i++)
+        <div class="icheck-primary d-inline mr-3">
+            <input type="checkbox" name="scores[]" id="cb{{$i}}" value="{{$i}}"  @if(in_array($i, $scores)) checked @endif />
+            <label for="cb{{$i}}">
+               Cột {{$i}}
+            </label>
+        </div>
+   @endfor
+</div>
 <!-- Start Date Field -->
 
 
