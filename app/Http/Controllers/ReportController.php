@@ -107,7 +107,7 @@ class ReportController extends AppBaseController
         $endDate = Carbon::createFromFormat('d/m/Y', $parseDate[1])->addDays(1);
         $selectedUsers = $request->selectedUsers ?? [];
 
-        $data = $this->feeRepository->allQuery()->whereBetween('fees.created_at', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])->where('fees.status','=',0);
+        $data = $this->feeRepository->allQuery()->whereBetween('fees.created_at', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])->whereIn('fees.status',[0,2]);
 
         if (count($selectedUsers) > 0) {
             $data = $data->whereIn('fees.user_id', $selectedUsers);
@@ -129,7 +129,7 @@ class ReportController extends AppBaseController
         $endDate = Carbon::createFromFormat('d/m/Y', $parseDate[1])->addDays(1);
         $selectedUsers = $request->selectedUsers ?? [];
 
-        $data = $this->feeRepository->allQuery()->whereBetween('fees.created_at', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])->where('fees.status','=',0);
+        $data = $this->feeRepository->allQuery()->whereBetween('fees.created_at', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])->whereIn('fees.status',[0,2]);
 
         $refunds = $this->refundRepository->allQuery()->whereBetween('refunds.created_at',  [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')]);
         if (count($selectedUsers) > 0) {

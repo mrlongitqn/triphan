@@ -140,72 +140,105 @@
                             </div>
 
                             <div class="card-body table-responsive p-0">
-                                <table id="tableStudent" class="table table-hover text-nowrap">
-                                    <thead>
-                                    <tr>
-                                        <th>Mã học viên</th>
-                                        <th>Họ tên</th>
-                                        <th>Cột 1</th>
-                                        <th>Cột 2</th>
-                                        <th>Cột 3</th>
-                                        <th>Cột 4</th>
-                                        <th>Cột 5</th>
-                                        <th>Cột 6</th>
-                                        <th>Cột 7</th>
-                                        <th>Cột 8</th>
-                                        <th>Cột 9</th>
-                                        <th>Cột 10</th>
-                                        <th></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach($courseStudent as $student)
+                                <form id="frmMark" method="post" action="{{route('marks.store')}}">
+                                    {{csrf_field()}}
+                                    <input type="hidden" name="course_id" value="{{$selected_course->id}}" />
+                                    <table id="tableStudent" class="table table-hover text-nowrap">
+                                        <thead>
                                         <tr>
-                                            <td>{{$student->code}}</td>
-                                            <td>{{$student->fullname}} {!! $student->fee_status==1?'':'<span class="badge bg-warning">Nợ học phí</span>' !!}</td>
-                                            <td><input type="number" min="0" max="10" step="0.1" width="24" height="24"
-                                                       name="{{$student->id}}_score1"
-                                                       value="{{$marks[$student->id]->score1}}"/></td>
-                                            <td><input type="number" min="0" max="10" step="0.1" width="24" height="24"
-                                                       name="{{$student->id}}_score2"
-                                                       value="{{$marks[$student->id]->score2}}"/></td>
-                                            <td><input type="number" min="0" max="10" step="0.1" width="24" height="24"
-                                                       name="{{$student->id}}_score3"
-                                                       value="{{$marks[$student->id]->score3}}"/></td>
-                                            <td><input type="number" min="0" max="10" step="0.1" width="24" height="24"
-                                                       name="{{$student->id}}_score4"
-                                                       value="{{$marks[$student->id]->score4}}"/></td>
-                                            <td><input type="number" min="0" max="10" step="0.1" width="24" height="24"
-                                                       name="{{$student->id}}_score5"
-                                                       value="{{$marks[$student->id]->score5}}"/></td>
-                                            <td><input type="number" min="0" max="10" step="0.1" width="24" height="24"
-                                                       name="{{$student->id}}_score6"
-                                                       value="{{$marks[$student->id]->score6}}"/></td>
-                                            <td><input type="number" min="0" max="10" step="0.1" width="24" height="24"
-                                                       name="{{$student->id}}_score7"
-                                                       value="{{$marks[$student->id]->score7}}"/></td>
-                                            <td><input type="number" min="0" max="10" step="0.1" width="24" height="24"
-                                                       name="{{$student->id}}_score8"
-                                                       value="{{$marks[$student->id]->score8}}"/></td>
-                                            <td><input type="number" min="0" max="10" step="0.1" width="24" height="24"
-                                                       name="{{$student->id}}_score9"
-                                                       value="{{$marks[$student->id]->score9}}"/></td>
-                                            <td><input type="number" min="0" max="10" step="0.1" width="24" height="24"
-                                                       name="{{$student->id}}_score10"
-                                                       value="{{$marks[$student->id]->score10}}"/></td>
-
+                                            <th>Mã học viên</th>
+                                            <th>Họ tên</th>
+                                            <th>Cột 1</th>
+                                            <th>Cột 2</th>
+                                            <th>Cột 3</th>
+                                            <th>Cột 4</th>
+                                            <th>Cột 5</th>
+                                            <th>Cột 6</th>
+                                            <th>Cột 7</th>
+                                            <th>Cột 8</th>
+                                            <th>Cột 9</th>
+                                            <th>Cột 10</th>
+                                            <th></th>
                                         </tr>
-                                    @endforeach
-                                    </tbody>
+                                        </thead>
+                                        <tbody>
 
+                                        @foreach($courseStudent as $student)
+                                            <tr>
+                                                <td>{{$student->code}}</td>
+                                                <td>{{$student->fullname}} {!! $student->fee_status==1?'':'<span class="badge bg-warning">Nợ học phí</span>' !!}</td>
+                                                <td><input {{!in_array(1, $scores)?'disabled':''}} type="number" min="0"
+                                                           max="10" step="0.1" width="24"
+                                                           height="24"
+                                                           name="{{$student->id}}_score1"
+                                                           value="{{$marks[$student->id]->score1}}"/></td>
+                                                <td><input {{!in_array(2, $scores)?'disabled':''}} type="number" min="0"
+                                                           max="10" step="0.1" width="24"
+                                                           height="24"
+                                                           name="{{$student->id}}_score2"
+                                                           value="{{$marks[$student->id]->score2}}"/></td>
+                                                <td><input {{!in_array(3, $scores)?'disabled':''}} type="number" min="0"
+                                                           max="10" step="0.1" width="24"
+                                                           height="24"
+                                                           name="{{$student->id}}_score3"
+                                                           value="{{$marks[$student->id]->score3}}"/></td>
+                                                <td><input {{!in_array(4 , $scores)?'disabled':''}} type="number"
+                                                           min="0" max="10" step="0.1" width="24"
+                                                           height="24"
+                                                           name="{{$student->id}}_score4"
+                                                           value="{{$marks[$student->id]->score4}}"/></td>
+                                                <td><input {{!in_array(5, $scores)?'disabled':''}} type="number" min="0"
+                                                           max="10" step="0.1" width="24"
+                                                           height="24"
+                                                           name="{{$student->id}}_score5"
+                                                           value="{{$marks[$student->id]->score5}}"/></td>
+                                                <td><input {{!in_array(6, $scores)?'disabled':''}} type="number" min="0"
+                                                           max="10" step="0.1" width="24"
+                                                           height="24"
+                                                           name="{{$student->id}}_score6"
+                                                           value="{{$marks[$student->id]->score6}}"/></td>
+                                                <td><input {{!in_array(7, $scores)?'disabled':''}} type="number" min="0"
+                                                           max="10" step="0.1" width="24"
+                                                           height="24"
+                                                           name="{{$student->id}}_score7"
+                                                           value="{{$marks[$student->id]->score7}}"/></td>
+                                                <td><input {{!in_array(8, $scores)?'disabled':''}} type="number" min="0"
+                                                           max="10" step="0.1" width="24"
+                                                           height="24"
+                                                           name="{{$student->id}}_score8"
+                                                           value="{{$marks[$student->id]->score8}}"/></td>
+                                                <td><input {{!in_array(9, $scores)?'disabled':''}} type="number" min="0"
+                                                           max="10" step="0.1" width="24"
+                                                           height="24"
+                                                           name="{{$student->id}}_score9"
+                                                           value="{{$marks[$student->id]->score9}}"/></td>
+                                                <td><input {{!in_array(10, $scores)?'disabled':''}} type="number"
+                                                           min="0" max="10" step="0.1" width="24"
+                                                           height="24"
+                                                           name="{{$student->id}}_score10"
+                                                           value="{{$marks[$student->id]->score10}}"/></td>
 
-                                </table>
+                                            </tr>
+                                        @endforeach
+
+                                        </tbody>
+                                    </table>
+                                </form>
                                 <p>
                                     Tổng số {{$courseStudent->count()}} học viên,
                                     có {{$courseStudent->where('status','=',1)->count()}} học viên nghỉ học
                                 </p>
                             </div>
+                            <div class="card-footer">
+                                @if(count($scores)>0)
+                                    <div class="float-right">
+                                        <button type="button" id="btnSave" class="btn btn-primary"><i
+                                                class="fas fa-save"></i> Nhập điểm
+                                        </button>
+                                    </div>
+                                @endif
 
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -270,6 +303,7 @@
             <script src="{{asset('vendor/gridviewscroll.js')}}"></script>
             <script>
                 $.jstree.defaults.core.themes.variant = "large";
+
                 $(function () {
 
                     $('#courses').jstree();
@@ -306,7 +340,29 @@
                     }
                     $('#modal-sm').modal('hide');
                     $('#formExport').submit();
-                })
+                });
+                $('#btnSave').on('click', function () {
+                    let scores = $('#frmMark :input[type="number"]:not(:disabled)');
+                    $('#frmMark').submit();
+                });
+                $('#frmMark :input[type="number"]:not(:disabled)').on('keydown', function(e) {
+                    if(e.key === 'F5')
+                        e.preventDefault();
+                });
+                $('#frmMark :input[type="number"]:not(:disabled)').on('input', function() {
+                    // Lấy giá trị nhập vào
+                    var inputValue = $(this).val();
+
+                    // Chuyển đổi giá trị thành số thực (decimal)
+                    var floatValue = parseFloat(inputValue);
+
+                    // Kiểm tra nếu giá trị không nằm trong khoảng từ 0 đến 10
+                    if (isNaN(floatValue) || floatValue < 0 || floatValue > 10) {
+                        // Nếu không hợp lệ, đặt giá trị về null
+                        $(this).val(0);
+
+                    }
+                });
             </script>
     @endpush
 

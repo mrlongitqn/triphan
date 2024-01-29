@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Exports\MarksExport;
 use App\Repositories\SessionMarkDetailRepository;
 use App\Repositories\SessionMarkRepository;
@@ -25,7 +26,7 @@ use Response;
 
 class MarkController extends AppBaseController
 {
-    /** @var MarkRepository $markRepository*/
+    /** @var MarkRepository $markRepository */
     private $markRepository;
     /** @var CourseStudentRepository $courseStudentRepository */
     private $courseStudentRepository;
@@ -62,8 +63,8 @@ class MarkController extends AppBaseController
      */
     private $markDetailRepository;
 
-    public function __construct(MarkRepository $markRepo,CourseStudentRepository $courseStudentRepo, LevelRepository $levelRepository, CourseRepository $courseRepository, SubjectRepository $subjectRepository, StudentRepository $studentRepository,
-                                CourseSessionRepository $courseSessionRepository, CourseSessionStudentRepository $courseSessionStudentRepository, SessionMarkRepository  $sessionMarkRepository, SessionMarkDetailRepository  $markDetailRepository)
+    public function __construct(MarkRepository          $markRepo, CourseStudentRepository $courseStudentRepo, LevelRepository $levelRepository, CourseRepository $courseRepository, SubjectRepository $subjectRepository, StudentRepository $studentRepository,
+                                CourseSessionRepository $courseSessionRepository, CourseSessionStudentRepository $courseSessionStudentRepository, SessionMarkRepository $sessionMarkRepository, SessionMarkDetailRepository $markDetailRepository)
     {
         $this->markRepository = $markRepo;
         $this->courseStudentRepository = $courseStudentRepo;
@@ -85,7 +86,7 @@ class MarkController extends AppBaseController
      *
      * @return Response
      */
-    public function index($id= null)
+    public function index($id = null)
     {
 //        $all = $this->courseStudentRepository->all();
 //        foreach ($all as $item){
@@ -112,27 +113,26 @@ class MarkController extends AppBaseController
         }
         $courseStudent = $this->courseStudentRepository->getByCourse($selected_course->id, [0])->get();
 
-        $marks = $this->markRepository->all([
-            'course_student_id'
-        ])->keyBy('course_student_id');
+        $marks = $this->markRepository->allQuery()->where('course_id', $selected_course->id)->get()->keyBy('course_student_id');
         $now = Carbon::now();
         $sessionMark = $this->markDetailRepository->allQuery()
-            ->leftJoin('session_marks','session_marks.id','=','session_mark_details.session_mark_id')
-            ->where('session_mark_details.course_id','=', $selected_course->id)
+            ->leftJoin('session_marks', 'session_marks.id', '=', 'session_mark_details.session_mark_id')
+            ->where('session_mark_details.course_id', '=', $selected_course->id)
             ->where('start_date', '<=', $now)
             ->where('end_date', '>=', $now)
             ->first();
-        return view('marks.index', compact('marks','levels', 'courses', 'subjects', 'selected_course', 'courseStudent', 'sessionMark'));
+        $scores = $sessionMark ? explode(',', $sessionMark->scores) : [];
+        return view('marks.index', compact('marks', 'levels', 'courses', 'subjects', 'selected_course', 'courseStudent', 'sessionMark', 'scores'));
     }
 
-    public function exportMarks($id=0, Request $request)
+    public function exportMarks($id = 0, Request $request)
     {
-        $course  = $this->courseRepository->find($id);
+        $course = $this->courseRepository->find($id);
         if (!$course)
             return abort('404');
         $cols = $request->cols;
         sort($cols);
-        return Excel::download(new MarksExport($id,$cols), 'marks.xlsx');
+        return Excel::download(new MarksExport($id, $cols), 'marks.xlsx');
     }
 
     /**
@@ -152,13 +152,42 @@ class MarkController extends AppBaseController
      *
      * @return Response
      */
-    public function store(CreateMarkRequest $request)
+    public function store(Request $request)
     {
-        $input = $request->all();
+        $input = $request->toArray();
+        $course_id = $input['course_id'];
+        $course = $this->courseRepository->find($course_id);
+        if (empty($course)) {
+            Flash::error('Lớp học không tồn tại');
 
-        $mark = $this->markRepository->create($input);
+            return redirect(route('marks.index'));
+        }
+        $now = Carbon::now();
+        $sessionMark = $this->markDetailRepository->allQuery()
+            ->leftJoin('session_marks', 'session_marks.id', '=', 'session_mark_details.session_mark_id')
+            ->where('session_mark_details.course_id', '=', $course_id)
+            ->where('start_date', '<=', $now)
+            ->where('end_date', '>=', $now)
+            ->first();
+        $scores = $sessionMark ? explode(',', $sessionMark->scores) : [];
+        if (count($scores) == 0) {
+            Flash::error('Lớp học không nằm trong đợt nhập điểm');
 
-        Flash::success('Mark saved successfully.');
+            return redirect(route('marks.index'));
+        }
+        $marks = $this->markRepository->allQuery()->where('course_id', $course_id)->get()->keyBy('course_student_id');
+
+        foreach ($marks as $mark) {
+            $markScore = [];
+            foreach ($scores as $score) {
+                if(!isset($input[$mark->course_student_id . '_score' . $score]))
+                    continue;
+                $markScore['score' . $score] = $input[$mark->course_student_id . '_score' . $score];
+            }
+            $mark->update($markScore);
+        }
+
+        Flash::success('Lưu điểm thành công.');
 
         return redirect(route('marks.index'));
     }
