@@ -116,17 +116,13 @@ class MarkController extends AppBaseController
             'course_student_id'
         ])->keyBy('course_student_id');
         $now = Carbon::now();
-        $session = $this->markDetailRepository->allQuery()
+        $sessionMark = $this->markDetailRepository->allQuery()
             ->leftJoin('session_marks','session_marks.id','=','session_mark_details.session_mark_id')
             ->where('session_mark_details.course_id','=', $selected_course->id)
             ->where('start_date', '<=', $now)
             ->where('end_date', '>=', $now)
-            ->get();
-        dd($session);
-
-
-
-        return view('marks.index', compact('marks','levels', 'courses', 'subjects', 'selected_course', 'courseStudent'));
+            ->first();
+        return view('marks.index', compact('marks','levels', 'courses', 'subjects', 'selected_course', 'courseStudent', 'sessionMark'));
     }
 
     public function exportMarks($id=0, Request $request)
