@@ -84,6 +84,7 @@ Route::prefix("")->middleware('auth')->group(function () {
     Route::prefix('marks')->group(function () {
         Route::get('/{id?}', [\App\Http\Controllers\MarkController::class, 'index'])->name('marks.index');
         Route::post('/save', [\App\Http\Controllers\MarkController::class, 'store'])->name('marks.store');
+        Route::post('/import', [\App\Http\Controllers\MarkController::class, 'import'])->name('marks.import');
         Route::get('/export/{id?}', [\App\Http\Controllers\MarkController::class, 'exportMarks'])->name('marks.exportMarks');
     });
     //Route::resource('marks', App\Http\Controllers\MarkController::class);

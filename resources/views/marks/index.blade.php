@@ -41,6 +41,9 @@
             background-color: rgba(0, 0, 0, .5);
         }
 
+        #btnImport {
+            cursor: pointer;
+        }
     </style>
 @endpush
 
@@ -68,7 +71,7 @@
                     <div class="col-sm-2">
                         <div class="card card-primary">
                             <div class="card-header">
-                                Danh sách lớp học
+                                Quản lý điểm
                             </div>
                             <div class="card-body p-0">
                                 <div id="courses">
@@ -114,12 +117,13 @@
                             <div class="card-header">
                                 <h3 class="card-title">DANH SÁCH HỌC VIÊN</h3>
                                 <div class="card-tools">
+
                                     <div class="btn-group" style="margin-left: 20px">
-                                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                        <button type="button" class="btn btn-primary" data-toggle="modal"
                                                 data-target="#modal-sm">
                                             <i class="fas fa-file-export"></i>
                                         </button>
-                                        <button type="button" class="btn btn-success btn-sm dropdown-toggle"
+                                        <button type="button" class="btn btn-success dropdown-toggle"
                                                 data-toggle="dropdown" data-offset="-52" aria-expanded="false">
                                             <i class="fas fa-print"></i>
                                         </button>
@@ -135,6 +139,27 @@
                                                href="{{route('courseStudents.printList')}}/{{$selected_course->id}}"
                                                class="dropdown-item">In danh sách tổng</a>
                                         </div>
+
+                                        <form id="frmImport" action="{{route('marks.import')}}" method="post"
+                                              enctype="multipart/form-data">
+                                            <input type="hidden" name="_token"
+                                                   value="6ypcOOXl70PeRqVQtE8bQySLVBxdtxz3CfybwzEN">
+                                            <input type="hidden" name="course_id" value="{{$selected_course->id}}"/>
+                                            <div class="input-group m-0 pl-5">
+                                                <div class="custom-file">
+                                                    <input type="file" class="custom-file-input custom-file-sm" name="fileImport"
+                                                           id="fileImport" accept=".xls, .xlsx">
+                                                    <label class="custom-file-label " for="exampleInputFile">Choose
+                                                        file</label>
+                                                </div>
+                                                <div class="input-group-append">
+                                                    <span id="btnImport" class="input-group-text">Import</span>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="float-right">
+
                                     </div>
                                 </div>
                             </div>
@@ -142,7 +167,7 @@
                             <div class="card-body table-responsive p-0">
                                 <form id="frmMark" method="post" action="{{route('marks.store')}}">
                                     {{csrf_field()}}
-                                    <input type="hidden" name="course_id" value="{{$selected_course->id}}" />
+                                    <input type="hidden" name="course_id" value="{{$selected_course->id}}"/>
                                     <table id="tableStudent" class="table table-hover text-nowrap">
                                         <thead>
                                         <tr>
@@ -345,11 +370,11 @@
                     let scores = $('#frmMark :input[type="number"]:not(:disabled)');
                     $('#frmMark').submit();
                 });
-                $('#frmMark :input[type="number"]:not(:disabled)').on('keydown', function(e) {
-                    if(e.key === 'F5')
+                $('#frmMark :input[type="number"]:not(:disabled)').on('keydown', function (e) {
+                    if (e.key === 'F5')
                         e.preventDefault();
                 });
-                $('#frmMark :input[type="number"]:not(:disabled)').on('input', function() {
+                $('#frmMark :input[type="number"]:not(:disabled)').on('input', function () {
                     // Lấy giá trị nhập vào
                     var inputValue = $(this).val();
 
@@ -361,6 +386,21 @@
                         // Nếu không hợp lệ, đặt giá trị về null
                         $(this).val(0);
 
+                    }
+                });
+
+                function isValidExcelFile(file) {
+                    const allowedExtensions = ['.xls', '.xlsx'];
+                    const fileName = file.name.toLowerCase();
+                    return allowedExtensions.some(ext => fileName.endsWith(ext));
+                }
+
+                $('#btnImport').on('click', function () {
+                    const selectedFile = $('#fileImport')[0].files[0];
+                    if (selectedFile && isValidExcelFile(selectedFile)) {
+                       $('#frmImport').submit();
+                    } else {
+                        alert('Vui lòng chọn một tệp Excel hợp lệ.');
                     }
                 });
             </script>

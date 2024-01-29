@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\MarksExport;
+use App\Imports\MarksImport;
 use App\Repositories\SessionMarkDetailRepository;
 use App\Repositories\SessionMarkRepository;
 use Carbon\Carbon;
@@ -109,7 +110,7 @@ class MarkController extends AppBaseController
         $selected_course = $id == null ? $courses[0] : $courses->find($id);
         if ($selected_course === null) {
             Flash::error('Lớp học không tồn tại.');
-            return redirect(route('courseStudents.index'));
+            return redirect(route('marks.index'));
         }
         $courseStudent = $this->courseStudentRepository->getByCourse($selected_course->id, [0])->get();
 
@@ -192,6 +193,32 @@ class MarkController extends AppBaseController
         return redirect(route('marks.index'));
     }
 
+
+    public function import(Request  $request){
+        $course = $this->courseRepository->find($request->course_id);
+        if (empty($course)) {
+            Flash::error('Lớp học không tồn tại');
+
+            return redirect(route('marks.index'));
+        }
+        $now = Carbon::now();
+        $sessionMark = $this->markDetailRepository->allQuery()
+            ->leftJoin('session_marks', 'session_marks.id', '=', 'session_mark_details.session_mark_id')
+            ->where('session_mark_details.course_id', '=', $request->course_id)
+            ->where('start_date', '<=', $now)
+            ->where('end_date', '>=', $now)
+            ->first();
+        $scores = $sessionMark ? explode(',', $sessionMark->scores) : [];
+        if (count($scores) == 0) {
+            Flash::error('Lớp học không nằm trong đợt nhập điểm');
+
+            return redirect(route('marks.index'));
+        }
+        Excel::import(new MarksImport($request->course_id, $scores), $request->fileImport);
+        Flash::success('Import điểm thành công.');
+
+        return redirect(route('marks.index'));
+    }
     /**
      * Display the specified Mark.
      *

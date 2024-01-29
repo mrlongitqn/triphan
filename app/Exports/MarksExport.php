@@ -25,6 +25,7 @@ class MarksExport implements FromView
     {
         $students = CourseStudent::where('course_id', $this->id)
             ->leftJoin('students', 'students.id', 'course_students.student_id')
+            ->where('course_students.status','=',0)
             ->select('course_students.*', 'fullname','code')->get();
 
         $ids = $students->pluck('id');
