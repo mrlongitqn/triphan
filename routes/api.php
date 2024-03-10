@@ -20,3 +20,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::resource('courses', App\Http\Controllers\API\CourseAPIController::class);
+
+
+Route::resource('mark_types', App\Http\Controllers\API\MarkTypeAPIController::class);

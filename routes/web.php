@@ -100,10 +100,21 @@ Route::prefix("")->middleware('auth')->group(function () {
 
     Route::resource('refunds', App\Http\Controllers\RefundController::class);
     Route::get('refunds/{id?}', [\App\Http\Controllers\RefundController::class, 'show'])->name('refunds.show');
+
+    Route::resource('markTypes', App\Http\Controllers\MarkTypeController::class);
+
+    Route::get('mark-type-detail/{id}', [\App\Http\Controllers\MarkTypeDetailController::class, 'index'])->name('markTypeDetails.index');
+    Route::get('mark-type-detail/create', [\App\Http\Controllers\MarkTypeDetailController::class, 'create'])->name('markTypeDetails.create');
 });
 
 
 
 
 
-Route::resource('sessionMarkDetails', App\Http\Controllers\SessionMarkDetailController::class);
+//Route::resource('sessionMarkDetails', App\Http\Controllers\SessionMarkDetailController::class);
+
+
+
+
+
+//Route::resource('markTypeDetails', App\Http\Controllers\MarkTypeDetailController::class);

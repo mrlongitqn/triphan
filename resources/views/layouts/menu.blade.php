@@ -147,3 +147,13 @@
 {{--</li>--}}
 
 
+<li class="nav-item">
+    <a href="{{ route('markTypes.index') }}"
+       class="nav-link {{ Request::is('markTypes*') ? 'active' : '' }}">
+        <p>Mark Types</p>
+    </a>
+</li>
+
+
+
+
