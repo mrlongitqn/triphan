@@ -17,7 +17,7 @@ class CreateMarkTypesTable extends Migration
         Schema::create('mark_types', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->string('desc');
+            $table->string('desc')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
