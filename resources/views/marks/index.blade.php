@@ -139,25 +139,26 @@
                                                href="{{route('courseStudents.printList')}}/{{$selected_course->id}}"
                                                class="dropdown-item">In danh sách tổng</a>
                                         </div>
-
-                                        <form id="frmImport" action="{{route('marks.import')}}" method="post"
-                                              enctype="multipart/form-data">
-                                            <input type="hidden" name="_token"
-                                                   value="6ypcOOXl70PeRqVQtE8bQySLVBxdtxz3CfybwzEN">
-                                            <input type="hidden" name="course_id" value="{{$selected_course->id}}"/>
-                                            <div class="input-group m-0 pl-5">
-                                                <div class="custom-file">
-                                                    <input type="file" class="custom-file-input custom-file-sm"
-                                                           name="fileImport"
-                                                           id="fileImport" accept=".xls, .xlsx">
-                                                    <label class="custom-file-label " for="exampleInputFile">Choose
-                                                        file</label>
+                                        @if($sessionMark !=null)
+                                            <form id="frmImport" action="{{route('marks.import')}}" method="post"
+                                                  enctype="multipart/form-data">
+                                                <input type="hidden" name="_token"
+                                                       value="6ypcOOXl70PeRqVQtE8bQySLVBxdtxz3CfybwzEN">
+                                                <input type="hidden" name="course_id" value="{{$selected_course->id}}"/>
+                                                <div class="input-group m-0 pl-5">
+                                                    <div class="custom-file">
+                                                        <input type="file" class="custom-file-input custom-file-sm"
+                                                               name="fileImport"
+                                                               id="fileImport" accept=".xls, .xlsx">
+                                                        <label class="custom-file-label " for="exampleInputFile">Choose
+                                                            file</label>
+                                                    </div>
+                                                    <div class="input-group-append">
+                                                        <span id="btnImport" class="input-group-text">Import</span>
+                                                    </div>
                                                 </div>
-                                                <div class="input-group-append">
-                                                    <span id="btnImport" class="input-group-text">Import</span>
-                                                </div>
-                                            </div>
-                                        </form>
+                                            </form>
+                                        @endif
                                     </div>
                                     <div class="float-right">
 
@@ -202,13 +203,13 @@
                                                 <td>{{$student->code}}</td>
                                                 <td>{{$student->fullname}} {!! $student->fee_status==1?'':'<span class="badge bg-warning">Nợ học phí</span>' !!}</td>
                                                 @if(count($markTypeDetail)==0)
-                                                    <td><input {{!in_array(1, $scores)?'disabled':''}} type="number"
+                                                    <td><input {{$sessionMark==null?'disabled':''}} type="number"
                                                                min="0"
                                                                max="10" step="0.1" width="24"
                                                                height="24"
                                                                name="{{$student->id}}_score1"
-                                                               value="{{$marks[$student->id]->score1}}"/></td>
-                                                    <td><input {{!in_array(2, $scores)?'disabled':''}} type="number"
+                                                               value="{{$marks[$student->id]->score1}}1"/></td>
+                                                    <td><input {{$sessionMark==null?'disabled':''}} type="number"
                                                                min="0"
                                                                max="10" step="0.1" width="24"
                                                                height="24"
@@ -267,7 +268,7 @@
                                                         @endphp
                                                         <td>
                                                             <input
-                                                                {{!in_array($val->column_number, $scores)?'disabled':''}} type="number"
+                                                                {{$sessionMark==null?'disabled':''}} type="number"
                                                                 min="0" max="10" step="0.1" width="24"
                                                                 height="24"
                                                                 name="{{$student->id}}_score{{$val->column_number}}"
@@ -287,7 +288,7 @@
                                 </p>
                             </div>
                             <div class="card-footer">
-                                @if(count($scores)>0)
+                                @if($sessionMark !=null)
                                     <div class="float-right">
                                         <button type="button" id="btnSave" class="btn btn-primary"><i
                                                 class="fas fa-save"></i> Nhập điểm
@@ -343,12 +344,15 @@
                                     </div>
                                 @else
                                     <div class="col-12">
-                                    @foreach($markTypeDetail as $key=>$val)
-                                        @php
-                                            $scoreField = 'score'.$val->column_number;
-                                        @endphp
-                                        <input id="cb{{$val->column_number}}" type="checkbox" name="cols[]" value="{{$val->column_number}}"> <label for="cb{{$val->column_number}}">({{$val->column_number}})        {{$val->column_name}}</label><br/>
-                                    @endforeach
+                                        @foreach($markTypeDetail as $key=>$val)
+                                            @php
+                                                $scoreField = 'score'.$val->column_number;
+                                            @endphp
+                                            <input id="cb{{$val->column_number}}" type="checkbox" name="cols[]"
+                                                   value="{{$val->column_number}}"> <label
+                                                for="cb{{$val->column_number}}">({{$val->column_number}}
+                                                ) {{$val->column_name}}</label><br/>
+                                        @endforeach
                                     </div>
                                 @endif
 

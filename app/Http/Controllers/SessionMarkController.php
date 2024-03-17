@@ -73,10 +73,10 @@ class SessionMarkController extends AppBaseController
             return redirect()->back()->withInput()->withErrors(['courses' => 'Vui lòng chọn lớp học.']);
 
         }
-        if ($request->scores == null || count($request->scores) == 0) {
-            return redirect()->back()->withInput()->withErrors(['scores' => 'Vui lòng chọn cột điểm.']);
-
-        }
+//        if ($request->scores == null || count($request->scores) == 0) {
+//            return redirect()->back()->withInput()->withErrors(['scores' => 'Vui lòng chọn cột điểm.']);
+//
+//        }
         $input = $request->all();
         $parseDate = explode(' - ', $request->datetime);
         $startDate = Carbon::createFromFormat('d/m/Y', $parseDate[0])->setHour(0)->setMinute(0);
@@ -85,7 +85,7 @@ class SessionMarkController extends AppBaseController
         $input['start_date'] = $startDate;
         $input['end_date'] = $endDate;
         $input['user_id'] = $request->user()->id;
-        $input['scores'] = implode(',', $request->scores);
+        $input['scores'] = '1,2,3,4,5,6,7,8,9,10';//implode(',', $request->scores);
         $sessionMark = $this->sessionMarkRepository->create($input);
         foreach ($request->courses as $cours) {
             $this->markDetailRepository->create([
@@ -161,10 +161,10 @@ class SessionMarkController extends AppBaseController
             return redirect()->back()->withInput()->withErrors(['courses' => 'Vui lòng chọn lớp học.']);
 
         }
-        if ($request->scores == null || count($request->scores) == 0) {
-            return redirect()->back()->withInput()->withErrors(['scores' => 'Vui lòng chọn cột điểm.']);
-
-        }
+//        if ($request->scores == null || count($request->scores) == 0) {
+//            return redirect()->back()->withInput()->withErrors(['scores' => 'Vui lòng chọn cột điểm.']);
+//
+//        }
         $input = $request->all();
         $parseDate = explode(' - ', $request->datetime);
         $startDate = Carbon::createFromFormat('d/m/Y', $parseDate[0]);
@@ -173,7 +173,7 @@ class SessionMarkController extends AppBaseController
         $input['start_date'] = $startDate;
         $input['end_date'] = $endDate;
         $input['user_id'] = $request->user()->id;
-        $input['scores'] = implode(',', $request->scores);
+        $input['scores'] =  $input['scores'] = '1,2,3,4,5,6,7,8,9,10';//implode(',', $request->scores);
         $sessionMark = $this->sessionMarkRepository->update($input, $id);
 
         Flash::success('Cập nhật đợt nhập điểm thành công.');

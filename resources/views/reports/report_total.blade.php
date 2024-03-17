@@ -207,3 +207,15 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+    <script type="text/javascript">
+        setTimeout(function () {
+            window.print();
+        }, 500);
+        window.onfocus = function () {
+            setTimeout(function () {
+                window.close();
+            }, 500);
+        }
+    </script>
+@endpush

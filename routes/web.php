@@ -71,7 +71,7 @@ Route::prefix("")->middleware('auth')->group(function () {
         Route::get('fee-by-student/{id?}', [\App\Http\Controllers\FeeController::class, 'feeByStudent'])->name('fees.feeByStudent');
         Route::get('cancel', [\App\Http\Controllers\FeeController::class, 'cancel'])->name('fees.cancel');
         Route::get('list-debt-by-course/{course?}', [\App\Http\Controllers\FeeController::class, 'listFeeDebtByCourse'])->name('fees.listFeeDebtByCourse');
-        Route::get('jobUpdateFeeList', [\App\Http\Controllers\FeeController::class, 'jobUpdateFeeList'])->name('fees.jobUpdateFeeList');
+
     });
 
     Route::prefix('reports')->group(function () {
@@ -114,7 +114,7 @@ Route::prefix("")->middleware('auth')->group(function () {
 });
 
 
-
+Route::get('jobUpdateFeeList', [\App\Http\Controllers\FeeController::class, 'jobUpdateFeeList'])->name('fees.jobUpdateFeeList');
 
 
 //Route::resource('sessionMarkDetails', App\Http\Controllers\SessionMarkDetailController::class);

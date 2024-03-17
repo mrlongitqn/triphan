@@ -64,7 +64,12 @@
         <p>Đợt nhập điểm</p>
     </a>
 </li>
-
+<li class="nav-item">
+    <a href="{{ route('markTypes.index') }}"
+       class="nav-link {{ Request::is('markTypes*') ? 'active' : '' }}">
+        <p>Loại cột điểm</p>
+    </a>
+</li>
 <li class="nav-item">
     <a href="javascript:"
        class="nav-link {{ Request::is('reports*') ? 'active' : '' }}">
@@ -147,12 +152,7 @@
 {{--</li>--}}
 
 
-<li class="nav-item">
-    <a href="{{ route('markTypes.index') }}"
-       class="nav-link {{ Request::is('markTypes*') ? 'active' : '' }}">
-        <p>Mark Types</p>
-    </a>
-</li>
+
 
 
 
