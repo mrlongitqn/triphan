@@ -11,18 +11,22 @@
 </div>
 
 <!-- Level Id Field -->
-<div class="form-group col-sm-6">
+<div class="form-group col-sm-4">
     {!! Form::label('level_id', 'Khối lớp:') !!}
     {!! Form::select('level_id', $levels, null, ['class' => 'form-control custom-select']) !!}
 </div>
 
 
 <!-- Subject Id Field -->
-<div class="form-group col-sm-6">
+<div class="form-group col-sm-4">
     {!! Form::label('subject_id', 'Môn học') !!}
     {!! Form::select('subject_id', $subjects, null, ['class' => 'form-control custom-select']) !!}
 </div>
 
+<div class="form-group col-sm-4">
+    {!! Form::label('mark_type_id', 'Cột điểm') !!}
+    {!! Form::select('mark_type_id', $markTypes, null, ['class' => 'form-control custom-select']) !!}
+</div>
 
 <!-- Teacher Field -->
 <div class="form-group col-sm-6">

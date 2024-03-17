@@ -6,6 +6,7 @@ use App\DataTables\MarkTypeDetailDataTable;
 use App\Http\Requests;
 use App\Http\Requests\CreateMarkTypeDetailRequest;
 use App\Http\Requests\UpdateMarkTypeDetailRequest;
+use App\Models\MarkTypeDetail;
 use App\Repositories\MarkTypeDetailRepository;
 use App\Repositories\MarkTypeRepository;
 use Flash;
@@ -46,7 +47,6 @@ class MarkTypeDetailController extends AppBaseController
            'mark_type_id'=>$id
         ]);
 
-
         return view('mark_type_details.index', compact('detail','markType'));
     }
 
@@ -55,9 +55,19 @@ class MarkTypeDetailController extends AppBaseController
      *
      * @return Response
      */
-    public function create()
+    public function create($id)
     {
-        return view('mark_type_details.create');
+        $markType = $this->markTypeRepository->find($id);
+        if (empty($markType)) {
+            Flash::error('Không tồn tại loại điểm');
+
+            return redirect(route('markTypes.index'));
+        }
+        $all = $this->markTypeDetailRepository->all(['mark_type_id' =>$markType->id]);
+        $markTypeDetail = new MarkTypeDetail();
+        $markTypeDetail->column_number = count($all)+1;
+
+        return view('mark_type_details.create', compact('markType', 'markTypeDetail'));
     }
 
     /**
@@ -67,15 +77,15 @@ class MarkTypeDetailController extends AppBaseController
      *
      * @return Response
      */
-    public function store(CreateMarkTypeDetailRequest $request)
+    public function store($id, CreateMarkTypeDetailRequest $request)
     {
         $input = $request->all();
 
         $markTypeDetail = $this->markTypeDetailRepository->create($input);
 
-        Flash::success('Mark Type Detail saved successfully.');
+        Flash::success('Đã tạo cột thành công.');
 
-        return redirect(route('markTypeDetails.index'));
+        return redirect(route('markTypeDetails.index', $id));
     }
 
     /**
@@ -114,8 +124,8 @@ class MarkTypeDetailController extends AppBaseController
 
             return redirect(route('markTypeDetails.index'));
         }
-
-        return view('mark_type_details.edit')->with('markTypeDetail', $markTypeDetail);
+        $markType = $this->markTypeRepository->find($markTypeDetail->mark_type_id);
+        return view('mark_type_details.edit', compact('markTypeDetail', 'markType'));
     }
 
     /**
@@ -138,9 +148,9 @@ class MarkTypeDetailController extends AppBaseController
 
         $markTypeDetail = $this->markTypeDetailRepository->update($request->all(), $id);
 
-        Flash::success('Mark Type Detail updated successfully.');
+        Flash::success(' Cập nhật cột điểm thành công.');
 
-        return redirect(route('markTypeDetails.index'));
+        return redirect(route('markTypeDetails.index', $markTypeDetail->mark_type_id));
     }
 
     /**
@@ -152,6 +162,7 @@ class MarkTypeDetailController extends AppBaseController
      */
     public function destroy($id)
     {
+
         $markTypeDetail = $this->markTypeDetailRepository->find($id);
 
         if (empty($markTypeDetail)) {
@@ -160,10 +171,10 @@ class MarkTypeDetailController extends AppBaseController
             return redirect(route('markTypeDetails.index'));
         }
 
+
         $this->markTypeDetailRepository->delete($id);
-
-        Flash::success('Mark Type Detail deleted successfully.');
-
-        return redirect(route('markTypeDetails.index'));
+        $id =$markTypeDetail->mark_type_id;
+        Flash::success('Xóa cột điểm thành công.');
+        return redirect(route('markTypeDetails.index', $id));
     }
 }

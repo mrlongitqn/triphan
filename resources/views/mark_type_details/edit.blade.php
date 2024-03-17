@@ -26,8 +26,8 @@
             </div>
 
             <div class="card-footer">
-                {!! Form::submit('Save', ['class' => 'btn btn-primary']) !!}
-                <a href="{{ route('markTypeDetails.index') }}" class="btn btn-default">Cancel</a>
+                {!! Form::submit('Lưu lại', ['class' => 'btn btn-primary']) !!}
+                <a href="{{ route('markTypeDetails.index',['id'=>$markType->id]) }}" class="btn btn-default">Hủy bỏ</a>
             </div>
 
             {!! Form::close() !!}

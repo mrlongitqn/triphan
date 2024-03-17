@@ -1,7 +1,7 @@
 {!! Form::open(['route' => ['markTypes.destroy', $id], 'method' => 'delete']) !!}
 <div class='btn-group'>
     <a href="{{ route('markTypeDetails.index', $id) }}" class='btn btn-default btn-xs'>
-        <i class="fa fa-show"></i>
+        <i class="fa fa-th"></i>
     </a>
     <a href="{{ route('markTypes.edit', $id) }}" class='btn btn-default btn-xs'>
         <i class="fa fa-edit"></i>

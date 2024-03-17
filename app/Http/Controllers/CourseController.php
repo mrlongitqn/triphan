@@ -8,6 +8,7 @@ use App\Http\Requests\CreateCourseRequest;
 use App\Http\Requests\UpdateCourseRequest;
 use App\Repositories\CourseRepository;
 use App\Repositories\LevelRepository;
+use App\Repositories\MarkTypeRepository;
 use App\Repositories\SubjectRepository;
 use Flash;
 use App\Http\Controllers\AppBaseController;
@@ -20,12 +21,17 @@ class CourseController extends AppBaseController
     private $courseRepository;
     private $subjectRepository;
     private $levelRepository;
+    /**
+     * @var MarkTypeRepository
+     */
+    private $markTypeRepository;
 
-    public function __construct(CourseRepository $courseRepo, SubjectRepository  $subjectRepo, LevelRepository $levelRepo)
+    public function __construct(CourseRepository $courseRepo, SubjectRepository  $subjectRepo, LevelRepository $levelRepo, MarkTypeRepository $markTypeRepository)
     {
         $this->courseRepository = $courseRepo;
         $this->subjectRepository = $subjectRepo;
         $this->levelRepository = $levelRepo;
+        $this->markTypeRepository = $markTypeRepository;
     }
 
     /**
@@ -49,7 +55,8 @@ class CourseController extends AppBaseController
     {
         $subjects = $this->subjectRepository->all()->pluck('subject', 'id');
         $levels = $this->levelRepository->all()->pluck('level', 'id');
-        return view('courses.create', compact('subjects', 'levels'));
+        $markTypes = $this->markTypeRepository->all()->pluck('name', 'id');
+        return view('courses.create', compact('subjects', 'levels', 'markTypes'));
     }
 
     /**
@@ -105,13 +112,14 @@ class CourseController extends AppBaseController
         $course = $this->courseRepository->find($id);
         $subjects = $this->subjectRepository->all()->pluck('subject', 'id');
         $levels = $this->levelRepository->all()->pluck('level', 'id');
+        $markTypes = $this->markTypeRepository->all()->pluck('name', 'id');
         if (empty($course)) {
             Flash::error('Khóa học không tồn tại');
 
             return redirect(route('courses.index'));
         }
 
-        return view('courses.edit', compact('course', 'subjects', 'levels' ));
+        return view('courses.edit', compact('course', 'subjects', 'levels','markTypes' ));
     }
 
     /**

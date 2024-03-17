@@ -104,7 +104,11 @@ Route::prefix("")->middleware('auth')->group(function () {
     Route::resource('markTypes', App\Http\Controllers\MarkTypeController::class);
 
     Route::get('mark-type-detail/{id}', [\App\Http\Controllers\MarkTypeDetailController::class, 'index'])->name('markTypeDetails.index');
-    Route::get('mark-type-detail/create', [\App\Http\Controllers\MarkTypeDetailController::class, 'create'])->name('markTypeDetails.create');
+    Route::get('mark-type-detail/{id}/create', [\App\Http\Controllers\MarkTypeDetailController::class, 'create'])->name('markTypeDetails.create');
+    Route::post('mark-type-detail/{id}/store', [\App\Http\Controllers\MarkTypeDetailController::class, 'store'])->name('markTypeDetails.store');
+    Route::delete('mark-type-detail/{id}/destroy', [\App\Http\Controllers\MarkTypeDetailController::class, 'destroy'])->name('markTypeDetails.destroy');
+    Route::get('mark-type-detail/{id}/edit', [\App\Http\Controllers\MarkTypeDetailController::class, 'edit'])->name('markTypeDetails.edit');
+    Route::patch('mark-type-detail/{id}/update', [\App\Http\Controllers\MarkTypeDetailController::class, 'update'])->name('markTypeDetails.update');
 });
 
 

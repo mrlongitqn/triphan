@@ -45,7 +45,8 @@ class Course extends Model
         'user_id',
         'schedules',
         'open',
-        'close'
+        'close',
+        'mark_type_id'
     ];
 
     /**

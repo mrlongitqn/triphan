@@ -9,7 +9,7 @@
                 </div>
                 <div class="col-sm-6">
                     <a class="btn btn-primary float-right"
-                       href="{{ route('markTypeDetails.create') }}">
+                       href="{{ route('markTypeDetails.create', ['id'=>$markType->id]) }}">
                        Thêm mới
                     </a>
                 </div>
@@ -32,10 +32,44 @@
                         <td>Tên cột</td>
                         <td></td>
                     </tr>
+                    @if(!$detail)
+                        <tr><td colspan="4">Chưa có cột điểm nào</td></tr>
+                    @else
+                        @php
+                        $i = 1;
+                         @endphp
+                        @foreach($detail as $key => $val)
+                            <tr>
+                                <td>{{$i++}}</td>
+                                <td>{{$val->column_number}}</td>
+                                <td>{{$val->column_name}}</td>
+                                <td>
+                                    <a href="{{ route('markTypeDetails.edit',['id' =>$val->id]) }}" class='btn btn-default btn-xs'>
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                    @if($i === count($detail)+1)
+                                        {!! Form::open(['route' => ['markTypeDetails.destroy',$val->id], 'method' => 'delete', 'class'=>'form-inline']) !!}
+                                        <div class='btn-group'>
+
+
+                                            {!! Form::button('<i class="fa fa-trash"></i>', [
+                                                'type' => 'submit',
+                                                'class' => 'btn btn-danger btn-xs',
+                                                'onclick' => "return confirm('Are you sure?')"
+                                            ]) !!}
+                                        </div>
+                                        {!! Form::close() !!}
+                                    @endif
+
+
+                                </td>
+                            </tr>
+                        @endforeach
+                    @endif
+
                 </table>
                 <div class="card-footer clearfix">
                     <div class="float-right">
-
                     </div>
                 </div>
             </div>
