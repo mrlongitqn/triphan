@@ -45,7 +45,7 @@ class StudentDataTable extends DataTable
         return $this->builder()
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->addAction(['width' => '120px', 'printable' => false])
+            ->addAction(['width' => '120px', 'printable' => false, 'title'=>'Hành động'])
             ->parameters([
                 'dom'       => 'Bfrtip',
                 'stateSave' => true,

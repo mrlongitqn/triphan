@@ -426,5 +426,6 @@ class FeeController extends AppBaseController
                 [
                     'fee_status' => 0
                 ]);
+        echo 'Successfully';
     }
 }
