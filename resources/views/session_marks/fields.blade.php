@@ -17,10 +17,7 @@
 </div>
 
 <!-- Desc Field -->
-<div class="form-group col-sm-12">
-    {!! Form::label('desc', 'Mô tả:') !!}
-    {!! Form::text('desc', null, ['class' => 'form-control']) !!}
-</div>
+
 
 <div class="form-group col-sm-12">
     {!! Form::label('courses', 'Lớp học:') !!}

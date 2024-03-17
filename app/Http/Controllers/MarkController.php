@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Exports\MarksExport;
 use App\Imports\MarksImport;
+use App\Repositories\MarkTypeDetailRepository;
+use App\Repositories\MarkTypeRepository;
 use App\Repositories\SessionMarkDetailRepository;
 use App\Repositories\SessionMarkRepository;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use App\DataTables\MarkDataTable;
 use App\Http\Requests;
@@ -63,9 +66,18 @@ class MarkController extends AppBaseController
      * @var SessionMarkDetailRepository
      */
     private $markDetailRepository;
+    /**
+     * @var MarkTypeRepository
+     */
+    private $markTypeRepository;
+    /**
+     * @var MarkTypeDetailRepository
+     */
+    private $markTypeDetailRepository;
 
     public function __construct(MarkRepository          $markRepo, CourseStudentRepository $courseStudentRepo, LevelRepository $levelRepository, CourseRepository $courseRepository, SubjectRepository $subjectRepository, StudentRepository $studentRepository,
-                                CourseSessionRepository $courseSessionRepository, CourseSessionStudentRepository $courseSessionStudentRepository, SessionMarkRepository $sessionMarkRepository, SessionMarkDetailRepository $markDetailRepository)
+                                CourseSessionRepository $courseSessionRepository, CourseSessionStudentRepository $courseSessionStudentRepository, SessionMarkRepository $sessionMarkRepository, SessionMarkDetailRepository $markDetailRepository,
+                                MarkTypeRepository      $markTypeRepository, MarkTypeDetailRepository $markTypeDetailRepository)
     {
         $this->markRepository = $markRepo;
         $this->courseStudentRepository = $courseStudentRepo;
@@ -78,6 +90,8 @@ class MarkController extends AppBaseController
 
         $this->sessionMarkRepository = $sessionMarkRepository;
         $this->markDetailRepository = $markDetailRepository;
+        $this->markTypeRepository = $markTypeRepository;
+        $this->markTypeDetailRepository = $markTypeDetailRepository;
     }
 
     /**
@@ -112,8 +126,9 @@ class MarkController extends AppBaseController
             Flash::error('Lớp học không tồn tại.');
             return redirect(route('marks.index'));
         }
-        $courseStudent = $this->courseStudentRepository->getByCourse($selected_course->id, [0])->get();
 
+        $courseStudent = $this->courseStudentRepository->getByCourse($selected_course->id, [0])->get();
+        $markTypeDetail = $this->markTypeDetailRepository->all(['mark_type_id' => $selected_course->mark_type_id])->sortBy('column_number');
         $marks = $this->markRepository->allQuery()->where('course_id', $selected_course->id)->get()->keyBy('course_student_id');
         $now = Carbon::now();
         $sessionMark = $this->markDetailRepository->allQuery()
@@ -122,8 +137,8 @@ class MarkController extends AppBaseController
             ->where('start_date', '<=', $now)
             ->where('end_date', '>=', $now)
             ->first();
-        $scores = $sessionMark ? explode(',', $sessionMark->scores) : [];
-        return view('marks.index', compact('marks', 'levels', 'courses', 'subjects', 'selected_course', 'courseStudent', 'sessionMark', 'scores'));
+        $scores = [1,2,3,4,5,6,7,8,9,10];// $sessionMark ? explode(',', $sessionMark->scores) : [];
+        return view('marks.index', compact('marks', 'levels', 'courses', 'subjects', 'selected_course', 'courseStudent', 'sessionMark', 'scores', 'markTypeDetail'));
     }
 
     public function exportMarks($id = 0, Request $request)
@@ -133,7 +148,7 @@ class MarkController extends AppBaseController
             return abort('404');
         $cols = $request->cols;
         sort($cols);
-        return Excel::download(new MarksExport($id, $cols), 'marks.xlsx');
+        return Excel::download(new MarksExport($id, $cols), 'Diem-'. Str::slug($course->course).'.xlsx');
     }
 
     /**
@@ -170,7 +185,7 @@ class MarkController extends AppBaseController
             ->where('start_date', '<=', $now)
             ->where('end_date', '>=', $now)
             ->first();
-        $scores = $sessionMark ? explode(',', $sessionMark->scores) : [];
+        $scores = [1,2,3,4,5,6,7,8,9,10];// $sessionMark ? explode(',', $sessionMark->scores) : [];
         if (count($scores) == 0) {
             Flash::error('Lớp học không nằm trong đợt nhập điểm');
 
@@ -181,7 +196,7 @@ class MarkController extends AppBaseController
         foreach ($marks as $mark) {
             $markScore = [];
             foreach ($scores as $score) {
-                if(!isset($input[$mark->course_student_id . '_score' . $score]))
+                if (!isset($input[$mark->course_student_id . '_score' . $score]))
                     continue;
                 $markScore['score' . $score] = $input[$mark->course_student_id . '_score' . $score];
             }
@@ -190,11 +205,12 @@ class MarkController extends AppBaseController
 
         Flash::success('Lưu điểm thành công.');
 
-        return redirect(route('marks.index'));
+        return redirect(route('marks.index', $course_id));
     }
 
 
-    public function import(Request  $request){
+    public function import(Request $request)
+    {
         $course = $this->courseRepository->find($request->course_id);
         if (empty($course)) {
             Flash::error('Lớp học không tồn tại');
@@ -219,6 +235,7 @@ class MarkController extends AppBaseController
 
         return redirect(route('marks.index'));
     }
+
     /**
      * Display the specified Mark.
      *

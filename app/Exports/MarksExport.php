@@ -2,8 +2,10 @@
 
 namespace App\Exports;
 
+use App\Models\Course;
 use App\Models\CourseStudent;
 use App\Models\Mark;
+use App\Models\MarkTypeDetail;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\FromView;
@@ -30,10 +32,13 @@ class MarksExport implements FromView
 
         $ids = $students->pluck('id');
         $marks = Mark::whereIn('course_student_id', $ids)->get()->keyBy('student_id')->toArray();
+        $course = Course::find($this->id);
+        $markTypeDetail = MarkTypeDetail::where('mark_type_id','=',$course->mark_type_id)->get()->sortBy('column_number')->keyBy('column_number');
         return view('exports.marks', [
             'students' => $students,
             'marks' => $marks,
-            'scores'=>$this->scores
+            'scores'=>$this->scores,
+            'markTypeDetail'=>$markTypeDetail
         ]);
     }
 }

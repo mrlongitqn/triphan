@@ -79,6 +79,8 @@ Route::prefix("")->middleware('auth')->group(function () {
         Route::get('report-collect', [\App\Http\Controllers\ReportController::class, 'ReportCollect'])->name('reports.ReportCollect');
         Route::get('report-collect-refund', [\App\Http\Controllers\ReportController::class, 'ReportCollectRefund'])->name('reports.ReportCollectRefund');
         Route::get('report-collect-cancel', [\App\Http\Controllers\ReportController::class, 'ReportCollectCancel'])->name('reports.ReportCollectCancel');
+        Route::get('report-total/{id}', [\App\Http\Controllers\ReportController::class, 'ReportTotal'])->name('reports.ReportTotal');
+
 
     });
     Route::prefix('marks')->group(function () {

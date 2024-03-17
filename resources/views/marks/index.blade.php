@@ -147,7 +147,8 @@
                                             <input type="hidden" name="course_id" value="{{$selected_course->id}}"/>
                                             <div class="input-group m-0 pl-5">
                                                 <div class="custom-file">
-                                                    <input type="file" class="custom-file-input custom-file-sm" name="fileImport"
+                                                    <input type="file" class="custom-file-input custom-file-sm"
+                                                           name="fileImport"
                                                            id="fileImport" accept=".xls, .xlsx">
                                                     <label class="custom-file-label " for="exampleInputFile">Choose
                                                         file</label>
@@ -173,16 +174,24 @@
                                         <tr>
                                             <th>Mã học viên</th>
                                             <th>Họ tên</th>
-                                            <th>Cột 1</th>
-                                            <th>Cột 2</th>
-                                            <th>Cột 3</th>
-                                            <th>Cột 4</th>
-                                            <th>Cột 5</th>
-                                            <th>Cột 6</th>
-                                            <th>Cột 7</th>
-                                            <th>Cột 8</th>
-                                            <th>Cột 9</th>
-                                            <th>Cột 10</th>
+                                            @if(count($markTypeDetail)==0)
+                                                <th>Cột 1</th>
+                                                <th>Cột 2</th>
+                                                <th>Cột 3</th>
+                                                <th>Cột 4</th>
+                                                <th>Cột 5</th>
+                                                <th>Cột 6</th>
+                                                <th>Cột 7</th>
+                                                <th>Cột 8</th>
+                                                <th>Cột 9</th>
+                                                <th>Cột 10</th>
+                                            @else
+                                                @foreach($markTypeDetail as $key=>$val)
+                                                    <th>
+                                                        {{$val->column_name}}
+                                                    </th>
+                                                @endforeach
+                                            @endif
                                             <th></th>
                                         </tr>
                                         </thead>
@@ -192,56 +201,79 @@
                                             <tr>
                                                 <td>{{$student->code}}</td>
                                                 <td>{{$student->fullname}} {!! $student->fee_status==1?'':'<span class="badge bg-warning">Nợ học phí</span>' !!}</td>
-                                                <td><input {{!in_array(1, $scores)?'disabled':''}} type="number" min="0"
-                                                           max="10" step="0.1" width="24"
-                                                           height="24"
-                                                           name="{{$student->id}}_score1"
-                                                           value="{{$marks[$student->id]->score1}}"/></td>
-                                                <td><input {{!in_array(2, $scores)?'disabled':''}} type="number" min="0"
-                                                           max="10" step="0.1" width="24"
-                                                           height="24"
-                                                           name="{{$student->id}}_score2"
-                                                           value="{{$marks[$student->id]->score2}}"/></td>
-                                                <td><input {{!in_array(3, $scores)?'disabled':''}} type="number" min="0"
-                                                           max="10" step="0.1" width="24"
-                                                           height="24"
-                                                           name="{{$student->id}}_score3"
-                                                           value="{{$marks[$student->id]->score3}}"/></td>
-                                                <td><input {{!in_array(4 , $scores)?'disabled':''}} type="number"
-                                                           min="0" max="10" step="0.1" width="24"
-                                                           height="24"
-                                                           name="{{$student->id}}_score4"
-                                                           value="{{$marks[$student->id]->score4}}"/></td>
-                                                <td><input {{!in_array(5, $scores)?'disabled':''}} type="number" min="0"
-                                                           max="10" step="0.1" width="24"
-                                                           height="24"
-                                                           name="{{$student->id}}_score5"
-                                                           value="{{$marks[$student->id]->score5}}"/></td>
-                                                <td><input {{!in_array(6, $scores)?'disabled':''}} type="number" min="0"
-                                                           max="10" step="0.1" width="24"
-                                                           height="24"
-                                                           name="{{$student->id}}_score6"
-                                                           value="{{$marks[$student->id]->score6}}"/></td>
-                                                <td><input {{!in_array(7, $scores)?'disabled':''}} type="number" min="0"
-                                                           max="10" step="0.1" width="24"
-                                                           height="24"
-                                                           name="{{$student->id}}_score7"
-                                                           value="{{$marks[$student->id]->score7}}"/></td>
-                                                <td><input {{!in_array(8, $scores)?'disabled':''}} type="number" min="0"
-                                                           max="10" step="0.1" width="24"
-                                                           height="24"
-                                                           name="{{$student->id}}_score8"
-                                                           value="{{$marks[$student->id]->score8}}"/></td>
-                                                <td><input {{!in_array(9, $scores)?'disabled':''}} type="number" min="0"
-                                                           max="10" step="0.1" width="24"
-                                                           height="24"
-                                                           name="{{$student->id}}_score9"
-                                                           value="{{$marks[$student->id]->score9}}"/></td>
-                                                <td><input {{!in_array(10, $scores)?'disabled':''}} type="number"
-                                                           min="0" max="10" step="0.1" width="24"
-                                                           height="24"
-                                                           name="{{$student->id}}_score10"
-                                                           value="{{$marks[$student->id]->score10}}"/></td>
+                                                @if(count($markTypeDetail)==0)
+                                                    <td><input {{!in_array(1, $scores)?'disabled':''}} type="number"
+                                                               min="0"
+                                                               max="10" step="0.1" width="24"
+                                                               height="24"
+                                                               name="{{$student->id}}_score1"
+                                                               value="{{$marks[$student->id]->score1}}"/></td>
+                                                    <td><input {{!in_array(2, $scores)?'disabled':''}} type="number"
+                                                               min="0"
+                                                               max="10" step="0.1" width="24"
+                                                               height="24"
+                                                               name="{{$student->id}}_score2"
+                                                               value="{{$marks[$student->id]->score2}}"/></td>
+                                                    <td><input {{!in_array(3, $scores)?'disabled':''}} type="number"
+                                                               min="0"
+                                                               max="10" step="0.1" width="24"
+                                                               height="24"
+                                                               name="{{$student->id}}_score3"
+                                                               value="{{$marks[$student->id]->score3}}"/></td>
+                                                    <td><input {{!in_array(4 , $scores)?'disabled':''}} type="number"
+                                                               min="0" max="10" step="0.1" width="24"
+                                                               height="24"
+                                                               name="{{$student->id}}_score4"
+                                                               value="{{$marks[$student->id]->score4}}"/></td>
+                                                    <td><input {{!in_array(5, $scores)?'disabled':''}} type="number"
+                                                               min="0"
+                                                               max="10" step="0.1" width="24"
+                                                               height="24"
+                                                               name="{{$student->id}}_score5"
+                                                               value="{{$marks[$student->id]->score5}}"/></td>
+                                                    <td><input {{!in_array(6, $scores)?'disabled':''}} type="number"
+                                                               min="0"
+                                                               max="10" step="0.1" width="24"
+                                                               height="24"
+                                                               name="{{$student->id}}_score6"
+                                                               value="{{$marks[$student->id]->score6}}"/></td>
+                                                    <td><input {{!in_array(7, $scores)?'disabled':''}} type="number"
+                                                               min="0"
+                                                               max="10" step="0.1" width="24"
+                                                               height="24"
+                                                               name="{{$student->id}}_score7"
+                                                               value="{{$marks[$student->id]->score7}}"/></td>
+                                                    <td><input {{!in_array(8, $scores)?'disabled':''}} type="number"
+                                                               min="0"
+                                                               max="10" step="0.1" width="24"
+                                                               height="24"
+                                                               name="{{$student->id}}_score8"
+                                                               value="{{$marks[$student->id]->score8}}"/></td>
+                                                    <td><input {{!in_array(9, $scores)?'disabled':''}} type="number"
+                                                               min="0"
+                                                               max="10" step="0.1" width="24"
+                                                               height="24"
+                                                               name="{{$student->id}}_score9"
+                                                               value="{{$marks[$student->id]->score9}}"/></td>
+                                                    <td><input {{!in_array(10, $scores)?'disabled':''}} type="number"
+                                                               min="0" max="10" step="0.1" width="24"
+                                                               height="24"
+                                                               name="{{$student->id}}_score10"
+                                                               value="{{$marks[$student->id]->score10}}"/></td>
+                                                @else
+                                                    @foreach($markTypeDetail as $key=>$val)
+                                                        @php
+                                                            $scoreField = 'score'.$val->column_number;
+                                                        @endphp
+                                                        <td>
+                                                            <input
+                                                                {{!in_array($val->column_number, $scores)?'disabled':''}} type="number"
+                                                                min="0" max="10" step="0.1" width="24"
+                                                                height="24"
+                                                                name="{{$student->id}}_score{{$val->column_number}}"
+                                                                value="{{$marks[$student->id]->$scoreField}}"/></td>
+                                                    @endforeach
+                                                @endif
 
                                             </tr>
                                         @endforeach
@@ -284,31 +316,42 @@
                         <form id="formExport" action="{{route('marks.exportMarks', $selected_course->id)}}"
                               method="get">
                             <div class="row">
+                                @if(count($markTypeDetail)==0)
+                                    <div class="col-6">
+                                        <input id="cb1" type="checkbox" name="cols[]" value="1"> <label for="cb1">Cột
+                                            1</label><br/>
+                                        <input id="cb2" type="checkbox" name="cols[]" value="2"> <label for="cb2">Cột
+                                            2</label><br/>
+                                        <input id="cb3" type="checkbox" name="cols[]" value="3"> <label for="cb3">Cột
+                                            3</label><br/>
+                                        <input id="cb4" type="checkbox" name="cols[]" value="4"> <label for="cb4">Cột
+                                            4</label><br/>
+                                        <input id="cb5" type="checkbox" name="cols[]" value="5"> <label for="cb5">Cột
+                                            5</label><br/>
+                                    </div>
+                                    <div class="col-6">
+                                        <input id="cb6" type="checkbox" name="cols[]" value="6"> <label for="cb6">Cột
+                                            6</label><br/>
+                                        <input id="cb7" type="checkbox" name="cols[]" value="7"> <label for="cb7">Cột
+                                            7</label><br/>
+                                        <input id="cb8" type="checkbox" name="cols[]" value="8"> <label for="cb8">Cột
+                                            8</label><br/>
+                                        <input id="cb9" type="checkbox" name="cols[]" value="9"> <label for="cb9">Cột
+                                            9</label><br/>
+                                        <input id="cb10" type="checkbox" name="cols[]" value="10"> <label for="cb10">Cột
+                                            10</label><br/>
+                                    </div>
+                                @else
+                                    <div class="col-12">
+                                    @foreach($markTypeDetail as $key=>$val)
+                                        @php
+                                            $scoreField = 'score'.$val->column_number;
+                                        @endphp
+                                        <input id="cb{{$val->column_number}}" type="checkbox" name="cols[]" value="{{$val->column_number}}"> <label for="cb{{$val->column_number}}">({{$val->column_number}})        {{$val->column_name}}</label><br/>
+                                    @endforeach
+                                    </div>
+                                @endif
 
-                                <div class="col-6">
-                                    <input id="cb1" type="checkbox" name="cols[]" value="1"> <label for="cb1">Cột
-                                        1</label><br/>
-                                    <input id="cb2" type="checkbox" name="cols[]" value="2"> <label for="cb2">Cột
-                                        2</label><br/>
-                                    <input id="cb3" type="checkbox" name="cols[]" value="3"> <label for="cb3">Cột
-                                        3</label><br/>
-                                    <input id="cb4" type="checkbox" name="cols[]" value="4"> <label for="cb4">Cột
-                                        4</label><br/>
-                                    <input id="cb5" type="checkbox" name="cols[]" value="5"> <label for="cb5">Cột
-                                        5</label><br/>
-                                </div>
-                                <div class="col-6">
-                                    <input id="cb6" type="checkbox" name="cols[]" value="6"> <label for="cb6">Cột
-                                        6</label><br/>
-                                    <input id="cb7" type="checkbox" name="cols[]" value="7"> <label for="cb7">Cột
-                                        7</label><br/>
-                                    <input id="cb8" type="checkbox" name="cols[]" value="8"> <label for="cb8">Cột
-                                        8</label><br/>
-                                    <input id="cb9" type="checkbox" name="cols[]" value="9"> <label for="cb9">Cột
-                                        9</label><br/>
-                                    <input id="cb10" type="checkbox" name="cols[]" value="10"> <label for="cb10">Cột
-                                        10</label><br/>
-                                </div>
 
                             </div>
                         </form>
@@ -398,7 +441,7 @@
                 $('#btnImport').on('click', function () {
                     const selectedFile = $('#fileImport')[0].files[0];
                     if (selectedFile && isValidExcelFile(selectedFile)) {
-                       $('#frmImport').submit();
+                        $('#frmImport').submit();
                     } else {
                         alert('Vui lòng chọn một tệp Excel hợp lệ.');
                     }
