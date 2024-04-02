@@ -135,12 +135,12 @@ class CourseStudentController extends AppBaseController
             return redirect(route('courseStudents.index', $request->course_id));
         }
         $courseStudent = $this->courseStudentRepository->create($input);
-        $this->markRepository->create([
-            'course_student_id' => $courseStudent->id,
-            'course_id'=>$request->course_id,
-            'student_id'=>$request->student_id,
-            'status'=>0
-        ]);
+//        $this->markRepository->create([
+//            'course_student_id' => $courseStudent->id,
+//            'course_id'=>$request->course_id,
+//            'student_id'=>$request->student_id,
+//            'status'=>0
+//        ]);
         if ($request->has('courseSession')) {
             $courseSessions = $request->courseSession;
             foreach ($courseSessions as $courseSession) {

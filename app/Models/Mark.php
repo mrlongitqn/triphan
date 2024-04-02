@@ -20,14 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Mark extends Model
 {
-    use SoftDeletes;
-
-
     public $table = 'marks';
-
-
-    protected $dates = ['deleted_at'];
-
 
 
     public $fillable = [
@@ -44,7 +37,7 @@ class Mark extends Model
         'score8',
         'score9',
         'score10',
-        'status',
+        'note',
     ];
 
     /**
@@ -58,8 +51,6 @@ class Mark extends Model
         'course_id' => 'integer',
         'student_id' => 'integer',
         'score' => 'decimal:2',
-        'status' => 'integer',
-        'session_id' => 'integer'
     ];
 
     /**

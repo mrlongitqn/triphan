@@ -202,80 +202,103 @@
                                             <tr>
                                                 <td>{{$student->code}}</td>
                                                 <td>{{$student->fullname}} {!! $student->fee_status==1?'':'<span class="badge bg-warning">Nợ học phí</span>' !!}</td>
-                                                @if(count($markTypeDetail)==0)
-                                                    <td><input {{$sessionMark==null?'disabled':''}} type="number"
-                                                               min="0"
-                                                               max="10" step="0.1" width="24"
-                                                               height="24"
-                                                               name="{{$student->id}}_score1"
-                                                               value="{{$marks[$student->id]->score1}}1"/></td>
-                                                    <td><input {{$sessionMark==null?'disabled':''}} type="number"
-                                                               min="0"
-                                                               max="10" step="0.1" width="24"
-                                                               height="24"
-                                                               name="{{$student->id}}_score2"
-                                                               value="{{$marks[$student->id]->score2}}"/></td>
-                                                    <td><input {{!in_array(3, $scores)?'disabled':''}} type="number"
-                                                               min="0"
-                                                               max="10" step="0.1" width="24"
-                                                               height="24"
-                                                               name="{{$student->id}}_score3"
-                                                               value="{{$marks[$student->id]->score3}}"/></td>
-                                                    <td><input {{!in_array(4 , $scores)?'disabled':''}} type="number"
-                                                               min="0" max="10" step="0.1" width="24"
-                                                               height="24"
-                                                               name="{{$student->id}}_score4"
-                                                               value="{{$marks[$student->id]->score4}}"/></td>
-                                                    <td><input {{!in_array(5, $scores)?'disabled':''}} type="number"
-                                                               min="0"
-                                                               max="10" step="0.1" width="24"
-                                                               height="24"
-                                                               name="{{$student->id}}_score5"
-                                                               value="{{$marks[$student->id]->score5}}"/></td>
-                                                    <td><input {{!in_array(6, $scores)?'disabled':''}} type="number"
-                                                               min="0"
-                                                               max="10" step="0.1" width="24"
-                                                               height="24"
-                                                               name="{{$student->id}}_score6"
-                                                               value="{{$marks[$student->id]->score6}}"/></td>
-                                                    <td><input {{!in_array(7, $scores)?'disabled':''}} type="number"
-                                                               min="0"
-                                                               max="10" step="0.1" width="24"
-                                                               height="24"
-                                                               name="{{$student->id}}_score7"
-                                                               value="{{$marks[$student->id]->score7}}"/></td>
-                                                    <td><input {{!in_array(8, $scores)?'disabled':''}} type="number"
-                                                               min="0"
-                                                               max="10" step="0.1" width="24"
-                                                               height="24"
-                                                               name="{{$student->id}}_score8"
-                                                               value="{{$marks[$student->id]->score8}}"/></td>
-                                                    <td><input {{!in_array(9, $scores)?'disabled':''}} type="number"
-                                                               min="0"
-                                                               max="10" step="0.1" width="24"
-                                                               height="24"
-                                                               name="{{$student->id}}_score9"
-                                                               value="{{$marks[$student->id]->score9}}"/></td>
-                                                    <td><input {{!in_array(10, $scores)?'disabled':''}} type="number"
-                                                               min="0" max="10" step="0.1" width="24"
-                                                               height="24"
-                                                               name="{{$student->id}}_score10"
-                                                               value="{{$marks[$student->id]->score10}}"/></td>
-                                                @else
-                                                    @foreach($markTypeDetail as $key=>$val)
-                                                        @php
-                                                            $scoreField = 'score'.$val->column_number;
-                                                        @endphp
-                                                        <td>
-                                                            <input
-                                                                {{$sessionMark==null?'disabled':''}} type="number"
+                                                @if(isset($marks[$student->id]))
+
+                                                    @if(count($markTypeDetail)==0)
+                                                        <td><input {{$sessionMark==null?'disabled':''}} type="number"
+                                                                   min="0"
+                                                                   max="10" step="0.1" width="24"
+                                                                   height="24"
+                                                                   name="{{$student->id}}_score1"
+                                                                   value="{{$marks[$student->id]->score1}}1"/></td>
+                                                        <td><input {{$sessionMark==null?'disabled':''}} type="number"
+                                                                   min="0"
+                                                                   max="10" step="0.1" width="24"
+                                                                   height="24"
+                                                                   name="{{$student->id}}_score2"
+                                                                   value="{{$marks[$student->id]->score2}}"/></td>
+                                                        <td><input {{!in_array(3, $scores)?'disabled':''}} type="number"
+                                                                   min="0"
+                                                                   max="10" step="0.1" width="24"
+                                                                   height="24"
+                                                                   name="{{$student->id}}_score3"
+                                                                   value="{{$marks[$student->id]->score3}}"/></td>
+                                                        <td><input
+                                                                {{!in_array(4 , $scores)?'disabled':''}} type="number"
                                                                 min="0" max="10" step="0.1" width="24"
                                                                 height="24"
-                                                                name="{{$student->id}}_score{{$val->column_number}}"
-                                                                value="{{$marks[$student->id]->$scoreField}}"/></td>
-                                                    @endforeach
+                                                                name="{{$student->id}}_score4"
+                                                                value="{{$marks[$student->id]->score4}}"/></td>
+                                                        <td><input {{!in_array(5, $scores)?'disabled':''}} type="number"
+                                                                   min="0"
+                                                                   max="10" step="0.1" width="24"
+                                                                   height="24"
+                                                                   name="{{$student->id}}_score5"
+                                                                   value="{{$marks[$student->id]->score5}}"/></td>
+                                                        <td><input {{!in_array(6, $scores)?'disabled':''}} type="number"
+                                                                   min="0"
+                                                                   max="10" step="0.1" width="24"
+                                                                   height="24"
+                                                                   name="{{$student->id}}_score6"
+                                                                   value="{{$marks[$student->id]->score6}}"/></td>
+                                                        <td><input {{!in_array(7, $scores)?'disabled':''}} type="number"
+                                                                   min="0"
+                                                                   max="10" step="0.1" width="24"
+                                                                   height="24"
+                                                                   name="{{$student->id}}_score7"
+                                                                   value="{{$marks[$student->id]->score7}}"/></td>
+                                                        <td><input {{!in_array(8, $scores)?'disabled':''}} type="number"
+                                                                   min="0"
+                                                                   max="10" step="0.1" width="24"
+                                                                   height="24"
+                                                                   name="{{$student->id}}_score8"
+                                                                   value="{{$marks[$student->id]->score8}}"/></td>
+                                                        <td><input {{!in_array(9, $scores)?'disabled':''}} type="number"
+                                                                   min="0"
+                                                                   max="10" step="0.1" width="24"
+                                                                   height="24"
+                                                                   name="{{$student->id}}_score9"
+                                                                   value="{{$marks[$student->id]->score9}}"/></td>
+                                                        <td><input
+                                                                {{!in_array(10, $scores)?'disabled':''}} type="number"
+                                                                min="0" max="10" step="0.1" width="24"
+                                                                height="24"
+                                                                name="{{$student->id}}_score10"
+                                                                value="{{$marks[$student->id]->score10}}"/></td>
+                                                    @else
+                                                        @foreach($markTypeDetail as $key=>$val)
+                                                            @php
+                                                                $scoreField = 'score'.$val->column_number;
+                                                            @endphp
+                                                            <td>
+                                                                <input
+                                                                    {{$sessionMark==null?'disabled':''}} type="number"
+                                                                    min="0" max="10" step="0.1" width="24"
+                                                                    height="24"
+                                                                    name="{{$student->id}}_score{{$val->column_number}}"
+                                                                    value="{{$marks[$student->id]->$scoreField}}"/></td>
+                                                        @endforeach
+                                                    @endif
+                                                @else
+                                                    @if(count($markTypeDetail)==0)
+                                                        <td><input disabled width="24" height="24" /></td>
+                                                        <td><input disabled width="24" height="24" /></td>
+                                                        <td><input disabled width="24" height="24" /></td>
+                                                        <td><input disabled width="24" height="24" /></td>
+                                                        <td><input disabled width="24" height="24" /></td>
+                                                        <td><input disabled width="24" height="24" /></td>
+                                                        <td><input disabled width="24" height="24" /></td>
+                                                        <td><input disabled width="24" height="24" /></td>
+                                                        <td><input disabled width="24" height="24" /></td>
+                                                        <td><input disabled width="24" height="24" /></td>
+                                                    @else
+                                                        @foreach($markTypeDetail as $key=>$val)
+                                                            <td>
+                                                                <input disabled type="number" width="24" height="24" />
+                                                            </td>
+                                                        @endforeach
+                                                    @endif
                                                 @endif
-
                                             </tr>
                                         @endforeach
 

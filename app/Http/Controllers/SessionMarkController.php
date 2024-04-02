@@ -12,6 +12,7 @@ use App\Repositories\SessionMarkRepository;
 use Carbon\Carbon;
 use Flash;
 use App\Http\Controllers\AppBaseController;
+use Illuminate\Support\Facades\DB;
 use Response;
 
 class SessionMarkController extends AppBaseController
@@ -73,10 +74,7 @@ class SessionMarkController extends AppBaseController
             return redirect()->back()->withInput()->withErrors(['courses' => 'Vui lòng chọn lớp học.']);
 
         }
-//        if ($request->scores == null || count($request->scores) == 0) {
-//            return redirect()->back()->withInput()->withErrors(['scores' => 'Vui lòng chọn cột điểm.']);
-//
-//        }
+
         $input = $request->all();
         $parseDate = explode(' - ', $request->datetime);
         $startDate = Carbon::createFromFormat('d/m/Y', $parseDate[0])->setHour(0)->setMinute(0);
@@ -92,6 +90,8 @@ class SessionMarkController extends AppBaseController
                 'session_mark_id' => $sessionMark->id,
                 'course_id' => $cours
             ]);
+            DB::insert('INSERT INTO marks (course_student_id, course_id, student_id,session_mark_id)
+SELECT id as course_student_id, course_id, student_id, ? FROM course_students WHERE course_id = ?', [$sessionMark->id, $cours]);
         }
         Flash::success('Tạo đợt thành công');
 

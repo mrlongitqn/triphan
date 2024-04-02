@@ -101,18 +101,8 @@ class MarkController extends AppBaseController
      *
      * @return Response
      */
-    public function index($id = null)
+    public function index(Request  $request, $id = null)
     {
-//        $all = $this->courseStudentRepository->all();
-//        foreach ($all as $item){
-//            $this->markRepository->create([
-//                'course_student_id'=>$item->id,
-//                'course_id'=>$item->course_id,
-//                'student_id'=>$item->student_id,
-//                'status'=>0
-//            ]);
-//        }
-//        die();
         $levels = $this->levelRepository->all();
         $subjects = $this->subjectRepository->all();
         $courses = $this->courseRepository->all();
@@ -129,16 +119,38 @@ class MarkController extends AppBaseController
 
         $courseStudent = $this->courseStudentRepository->getByCourse($selected_course->id, [0])->get();
         $markTypeDetail = $this->markTypeDetailRepository->all(['mark_type_id' => $selected_course->mark_type_id])->sortBy('column_number');
-        $marks = $this->markRepository->allQuery()->where('course_id', $selected_course->id)->get()->keyBy('course_student_id');
+
         $now = Carbon::now();
-        $sessionMark = $this->markDetailRepository->allQuery()
+        $sessionMarks = $this->markDetailRepository->allQuery()
             ->leftJoin('session_marks', 'session_marks.id', '=', 'session_mark_details.session_mark_id')
             ->where('session_mark_details.course_id', '=', $selected_course->id)
-            ->where('start_date', '<=', $now)
-            ->where('end_date', '>=', $now)
-            ->first();
+            ->orderByDesc('end_date')->get();
+        if($request->has('session_mark')){
+            $sessionMark = $sessionMarks->firstWhere('id','=', $request->session_mark);
+            if(!$sessionMark){
+                Flash::error('Không tìm thấy đợt nhập điểm');
+                return redirect(route('marks.index', $id));
+            }
+
+            $marks = $this->markRepository->allQuery()->where([
+                ['course_id', $selected_course->id],
+                ['session_mark_id',$sessionMark->id]
+            ])->get()->keyBy('course_student_id');
+        }else{
+            $sessionMark = $sessionMarks->first();
+            $marks = $this->markRepository->allQuery()->where([
+                ['course_id', $selected_course->id],
+                ['session_mark_id',$sessionMark?$sessionMark->id:0]
+            ])->get()->keyBy('course_student_id');
+        }
+
+
+       // dd($sessionMark);
+//            ->where('start_date', '<=', $now)
+//            ->where('end_date', '>=', $now)
+//            ->first();
         $scores = [1,2,3,4,5,6,7,8,9,10];// $sessionMark ? explode(',', $sessionMark->scores) : [];
-        return view('marks.index', compact('marks', 'levels', 'courses', 'subjects', 'selected_course', 'courseStudent', 'sessionMark', 'scores', 'markTypeDetail'));
+        return view('marks.index', compact('marks', 'levels', 'courses', 'subjects', 'selected_course', 'courseStudent', 'sessionMarks','sessionMark', 'scores', 'markTypeDetail'));
     }
 
     public function exportMarks($id = 0, Request $request)
