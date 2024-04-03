@@ -144,8 +144,6 @@ class MarkController extends AppBaseController
             ])->get()->keyBy('course_student_id');
         }
 
-
-       // dd($sessionMark);
 //            ->where('start_date', '<=', $now)
 //            ->where('end_date', '>=', $now)
 //            ->first();
@@ -191,33 +189,39 @@ class MarkController extends AppBaseController
             return redirect(route('marks.index'));
         }
         $now = Carbon::now();
-        $sessionMark = $this->markDetailRepository->allQuery()
-            ->leftJoin('session_marks', 'session_marks.id', '=', 'session_mark_details.session_mark_id')
-            ->where('session_mark_details.course_id', '=', $course_id)
-            ->where('start_date', '<=', $now)
-            ->where('end_date', '>=', $now)
-            ->first();
+        $sessionMark = $this->markDetailRepository->find($request->session_mark_id);
+        if (empty($sessionMark)) {
+            Flash::error('Đợt nhập điểm không tồn tại');
+
+            return redirect(route('marks.index', $course_id));
+        }
         $scores = [1,2,3,4,5,6,7,8,9,10];// $sessionMark ? explode(',', $sessionMark->scores) : [];
         if (count($scores) == 0) {
             Flash::error('Lớp học không nằm trong đợt nhập điểm');
 
             return redirect(route('marks.index'));
         }
-        $marks = $this->markRepository->allQuery()->where('course_id', $course_id)->get()->keyBy('course_student_id');
+        $marks = $this->markRepository->allQuery()->where([
+            ['course_id', $course->id],
+            ['session_mark_id',$sessionMark->id]
+        ])->get()->keyBy('course_student_id');
 
         foreach ($marks as $mark) {
+            if (!isset($input[$mark->course_student_id . '_note']))
+                continue;
             $markScore = [];
             foreach ($scores as $score) {
                 if (!isset($input[$mark->course_student_id . '_score' . $score]))
                     continue;
                 $markScore['score' . $score] = $input[$mark->course_student_id . '_score' . $score];
             }
+            $markScore['note'] = $input[$mark->course_student_id . '_note'];
             $mark->update($markScore);
         }
 
         Flash::success('Lưu điểm thành công.');
 
-        return redirect(route('marks.index', $course_id));
+        return redirect(route('marks.index', $course_id).'?session_mark='.$sessionMark->id);
     }
 
 
@@ -230,22 +234,18 @@ class MarkController extends AppBaseController
             return redirect(route('marks.index'));
         }
         $now = Carbon::now();
-        $sessionMark = $this->markDetailRepository->allQuery()
-            ->leftJoin('session_marks', 'session_marks.id', '=', 'session_mark_details.session_mark_id')
-            ->where('session_mark_details.course_id', '=', $request->course_id)
-            ->where('start_date', '<=', $now)
-            ->where('end_date', '>=', $now)
-            ->first();
-        $scores = $sessionMark ? explode(',', $sessionMark->scores) : [];
-        if (count($scores) == 0) {
-            Flash::error('Lớp học không nằm trong đợt nhập điểm');
+        $sessionMark = $this->markDetailRepository->find($request->session_id);
+        if (empty($sessionMark)) {
+            Flash::error('Đợt nhập điểm không tồn tại');
 
-            return redirect(route('marks.index'));
+            return redirect(route('marks.index', $course->id));
         }
-        Excel::import(new MarksImport($request->course_id, $scores), $request->fileImport);
+
+        $markTypeDetail = $this->markTypeDetailRepository->all(['mark_type_id' => $course->mark_type_id])->sortBy('column_number')->keyBy('column_name');
+        Excel::import(new MarksImport($request->course_id,$sessionMark, $markTypeDetail), $request->fileImport);
         Flash::success('Import điểm thành công.');
 
-        return redirect(route('marks.index'));
+        return redirect(route('marks.index', $course->id).'?session_mark='.$sessionMark->id);
     }
 
     /**

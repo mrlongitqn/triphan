@@ -10,11 +10,13 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 class MarksImport implements ToCollection
 {
     private $course_id;
+    private $sessionMark;
     private $scores;
 
-    public function __construct($course_id, $scores)
+    public function __construct($course_id, $sessionMark, $scores)
     {
         $this->course_id = $course_id;
+        $this->sessionMark = $sessionMark;
         $this->scores = $scores;
     }
 
@@ -23,22 +25,30 @@ class MarksImport implements ToCollection
      */
     public function collection(Collection $collection)
     {
-        $head = $collection[0];
+        $head = $collection[0]->toArray();
         $mappingCols = [];
-        for ($i = 2; $i < count($head); $i++) {
-            $col = explode(' ', $head[$i]);
-            if (isset($col[1])) {
-                if (in_array($col[1], $this->scores))
-                    $mappingCols[$col[1]] = $i;
-            }
-
+        foreach ($this->scores as $k => $v)
+        {
+            $col = array_search($k, $head);
+            if ($col)
+                $mappingCols[$col] = $v->column_number;
         }
 
-        $marks = Mark::where('course_id', $this->course_id)->get();
+
+        $note = array_search("Đánh giá", $head);
+        if ($note)
+            $mappingCols[$note] = 'note';
+
+        $marks = Mark::where([
+            ['course_id', $this->course_id],
+            ['session_mark_id', $this->sessionMark->id]
+        ])->get()->keyBy('student_id');
 
         $studentIds = $marks->pluck('student_id');
 
         $students = Student::whereIn('id', $studentIds)->select('id', 'code')->get()->keyBy('code');
+
+
         foreach ($collection as $index => $item) {
 
             if ($index == 0)
@@ -48,13 +58,22 @@ class MarksImport implements ToCollection
             if (!isset($students[$item[0]]))
                 continue;
             $student = $students[$item[0]];
-            $mark = $marks->find($student->id);
-            if ($mark == null)
+            if (!isset($marks[$student->id]))
                 continue;
+
+            $mark = $marks[$student->id];
+
             $update = [];
             foreach ($mappingCols as $i => $v) {
-                $update['score' . $i] = $item[$v];
+                if($v == 'note')
+                {
+                    $update['note'] = $item[$i];
+                }
+                else{
+                    $update['score' . $v] = $item[$i];
+                }
             }
+
             $mark->update($update);
         }
     }

@@ -22,7 +22,7 @@ class Mark extends Model
 {
     public $table = 'marks';
 
-
+    public $timestamps = false;
     public $fillable = [
         'course_student_id',
         'course_id',

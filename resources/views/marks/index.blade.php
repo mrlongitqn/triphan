@@ -115,10 +115,43 @@
                     <div class="col-sm-10">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">DANH SÁCH HỌC VIÊN</h3>
+                                <div class="card-title">
+                                    <select style="width: 250px" class="form-control" id="sessionMarkList">
+
+                                        @foreach($sessionMarks as $ssMark)
+                                            <option @if($ssMark->id === $sessionMark->id) selected @endif value="{{$ssMark->id}}">{{$ssMark->session}}</option>
+                                        @endforeach
+                                    </select></div>
                                 <div class="card-tools">
 
+
                                     <div class="btn-group" style="margin-left: 20px">
+
+
+
+                                        @if($sessionMark !=null)
+                                            <form id="frmImport" action="{{route('marks.import')}}" method="post"
+                                                  enctype="multipart/form-data">
+                                                <input type="hidden" name="_token"
+                                                       value="{{csrf_token()}}">
+                                                <input type="hidden" name="course_id" value="{{$selected_course->id}}"/>
+                                                @if(isset($sessionMark))
+                                                    <input type="hidden" name="session_id" value="{{$sessionMark->id}}"/>
+                                                @endif
+                                                <div class="input-group m-0 pr-5">
+                                                    <div class="custom-file">
+                                                        <input type="file" class="custom-file-input custom-file-sm"
+                                                               name="fileImport"
+                                                               id="fileImport" accept=".xls, .xlsx">
+                                                        <label class="custom-file-label " for="exampleInputFile">Choose
+                                                            file</label>
+                                                    </div>
+                                                    <div class="input-group-append">
+                                                        <span id="btnImport" class="input-group-text">Import</span>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        @endif
                                         <button type="button" class="btn btn-primary" data-toggle="modal"
                                                 data-target="#modal-sm">
                                             <i class="fas fa-file-export"></i>
@@ -139,26 +172,7 @@
                                                href="{{route('courseStudents.printList')}}/{{$selected_course->id}}"
                                                class="dropdown-item">In danh sách tổng</a>
                                         </div>
-                                        @if($sessionMark !=null)
-                                            <form id="frmImport" action="{{route('marks.import')}}" method="post"
-                                                  enctype="multipart/form-data">
-                                                <input type="hidden" name="_token"
-                                                       value="6ypcOOXl70PeRqVQtE8bQySLVBxdtxz3CfybwzEN">
-                                                <input type="hidden" name="course_id" value="{{$selected_course->id}}"/>
-                                                <div class="input-group m-0 pl-5">
-                                                    <div class="custom-file">
-                                                        <input type="file" class="custom-file-input custom-file-sm"
-                                                               name="fileImport"
-                                                               id="fileImport" accept=".xls, .xlsx">
-                                                        <label class="custom-file-label " for="exampleInputFile">Choose
-                                                            file</label>
-                                                    </div>
-                                                    <div class="input-group-append">
-                                                        <span id="btnImport" class="input-group-text">Import</span>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        @endif
+
                                     </div>
                                     <div class="float-right">
 
@@ -170,6 +184,10 @@
                                 <form id="frmMark" method="post" action="{{route('marks.store')}}">
                                     {{csrf_field()}}
                                     <input type="hidden" name="course_id" value="{{$selected_course->id}}"/>
+                                    @if(isset($sessionMark))
+                                        <input type="hidden" name="session_mark_id" value="{{$sessionMark->id}}"/>
+                                    @endif
+
                                     <table id="tableStudent" class="table table-hover text-nowrap">
                                         <thead>
                                         <tr>
@@ -193,7 +211,7 @@
                                                     </th>
                                                 @endforeach
                                             @endif
-                                            <th></th>
+                                            <th>Đánh giá</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -210,7 +228,7 @@
                                                                    max="10" step="0.1" width="24"
                                                                    height="24"
                                                                    name="{{$student->id}}_score1"
-                                                                   value="{{$marks[$student->id]->score1}}1"/></td>
+                                                                   value="{{$marks[$student->id]->score1}}"/></td>
                                                         <td><input {{$sessionMark==null?'disabled':''}} type="number"
                                                                    min="0"
                                                                    max="10" step="0.1" width="24"
@@ -279,6 +297,8 @@
                                                                     value="{{$marks[$student->id]->$scoreField}}"/></td>
                                                         @endforeach
                                                     @endif
+                                                        <td><input type="text"  name="{{$student->id}}_note"
+                                                                   value="{{$marks[$student->id]->note}}"></td>
                                                 @else
                                                     @if(count($markTypeDetail)==0)
                                                         <td><input disabled width="24" height="24" /></td>
@@ -298,7 +318,9 @@
                                                             </td>
                                                         @endforeach
                                                     @endif
+                                                        <td><input type="text" disabled  /></td>
                                                 @endif
+
                                             </tr>
                                         @endforeach
 
@@ -371,7 +393,7 @@
                                             @php
                                                 $scoreField = 'score'.$val->column_number;
                                             @endphp
-                                            <input id="cb{{$val->column_number}}" type="checkbox" name="cols[]"
+                                            <input id="cb{{$val->column_number}}" type="checkbox" checked name="cols[]"
                                                    value="{{$val->column_number}}"> <label
                                                 for="cb{{$val->column_number}}">({{$val->column_number}}
                                                 ) {{$val->column_name}}</label><br/>
@@ -464,7 +486,11 @@
                     const fileName = file.name.toLowerCase();
                     return allowedExtensions.some(ext => fileName.endsWith(ext));
                 }
-
+                $('#sessionMarkList').on('change', function (){
+                    let sessionMark =$(this).val();
+                    console.log(window.location.href)
+                    window.location.href = window.location.origin + window.location.pathname + '?session_mark='+sessionMark;
+                })
                 $('#btnImport').on('click', function () {
                     const selectedFile = $('#fileImport')[0].files[0];
                     if (selectedFile && isValidExcelFile(selectedFile)) {
@@ -473,6 +499,7 @@
                         alert('Vui lòng chọn một tệp Excel hợp lệ.');
                     }
                 });
+
             </script>
     @endpush
 
