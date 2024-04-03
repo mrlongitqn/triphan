@@ -20,8 +20,8 @@
 
 
 <div class="form-group col-sm-12">
-    {!! Form::label('courses', 'Lớp học:') !!}
-   <select id="courses" name="courses[]" multiple class="form-control">
+    {!! Form::label('courses', 'Lớp học: *** Lưu Ý: Sau khi đã tạo đợt nhập điểm, không thể thay đổi danh sách các lớp học của đợt, nếu bổ sung vui lòng tạo đợt mới ***') !!}
+   <select @if(isset($sessionMark)) disabled  @endif id="courses" name="courses[]" multiple class="form-control">
         @if(isset($courses))
             @foreach($courses as $course)
                 <option value="{{$course->id}}" selected>{{$course->course}}</option>

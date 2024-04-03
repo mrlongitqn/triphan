@@ -39,28 +39,31 @@
 @endsection
 @push('third_party_scripts')
     <script>
+        $(function() {
 
-        $('#datetime').daterangepicker(
-            {
-                minDate: moment(),
-                locale: {
-                    applyLabel: "Đồng ý",
-                    cancelLabel: 'Hủy',
-                    customRangeLabel: 'Tùy chỉnh',
-                    format: 'DD/MM/Y'
+            $('#datetime').daterangepicker(
+                {
+                    startDate: moment(),
+                    endDate: moment().add(2 ,'weeks'),
+                    minDate: moment(),
+                    locale: {
+                        applyLabel: "Đồng ý",
+                        cancelLabel: 'Hủy',
+                        customRangeLabel: 'Tùy chỉnh',
+                        format: 'DD/MM/Y'
+                    },
+
+
+                },
+            );
+            $('#courses').select2({
+                ajax: {
+                    url: '{{route('courses.search')}}',
+                    dataType: 'json'
+                    // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
                 }
-            },
-            // function (start, end) {
-            //
-            //     $('#datetime').val(start.format('DD/MM/Y') + ' - ' + end.format('DD/MM/Y'));
-            // }
-        );
-        $('#courses').select2({
-            ajax: {
-                url: '{{route('courses.search')}}',
-                dataType: 'json'
-                // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
-            }
-        });
+            });
+        }
+        )
     </script>
 @endpush

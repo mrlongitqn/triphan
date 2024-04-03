@@ -7,6 +7,7 @@ use App\Http\Requests;
 use App\Http\Requests\CreateStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use App\Repositories\StudentRepository;
+use DateTime;
 use Flash;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
@@ -56,6 +57,17 @@ class StudentController extends AppBaseController
         $input = $request->all();
         $input['user_id'] = $request->user()->id;
         $input['status'] = 0;
+        $d = str_replace('/', '-', $input['dob']);
+        $date = DateTime::createFromFormat('d-m-Y', $d);
+
+        if ($date) {
+            $formattedDate = $date->format('Y-m-d');
+            $input['dob'] = $formattedDate;  // Kết quả sẽ là: 2024-04-15
+        } else {
+            Flash::error('Ngày sinh không hợp lệ.');
+            return redirect()->back();
+        }
+
         $student = $this->studentRepository->create($input);
         $student->code = $this->generateStudentID($student->id);
         $student->update();
@@ -106,7 +118,6 @@ class StudentController extends AppBaseController
     public function edit($id)
     {
         $student = $this->studentRepository->find($id);
-
         if (empty($student)) {
             Flash::error('Học viên không tồn tại');
 
@@ -127,14 +138,24 @@ class StudentController extends AppBaseController
     public function update($id, UpdateStudentRequest $request)
     {
         $student = $this->studentRepository->find($id);
+        $input = $request->all();
+        $d = str_replace('/', '-', $input['dob']);
 
         if (empty($student)) {
             Flash::error('Học viên không tồn tại');
 
             return redirect(route('students.index'));
         }
+        $date = DateTime::createFromFormat('d-m-Y', $d);
 
-        $student = $this->studentRepository->update($request->all(), $id);
+        if ($date) {
+            $formattedDate = $date->format('Y-m-d');
+            $input['dob'] = $formattedDate;  // Kết quả sẽ là: 2024-04-15
+        } else {
+            Flash::error('Ngày sinh không hợp lệ.');
+            return redirect()->back();
+        }
+        $student = $this->studentRepository->update($input, $id);
 
         Flash::success('Cập nhật học viên thành công.');
 
@@ -168,14 +189,14 @@ class StudentController extends AppBaseController
     public function search(Request $request)
     {
         $keyword = $request->term;
-        $data = $this->studentRepository->search('%'.$keyword.'%')->selectRaw("id, CONCAT (code, '-',fullname) as text")->get();
+        $data = $this->studentRepository->search('%' . $keyword . '%')->selectRaw("id, CONCAT (code, '-',fullname) as text")->get();
 
 
         return response()->json(
             [
                 "results" => $data,
                 "pagination" => [
-                    'more'=>false
+                    'more' => false
                 ]
             ]
         );

@@ -7,6 +7,7 @@ use App\Http\Requests;
 use App\Http\Requests\CreateSessionMarkRequest;
 use App\Http\Requests\UpdateSessionMarkRequest;
 use App\Repositories\CourseRepository;
+use App\Repositories\MarkRepository;
 use App\Repositories\SessionMarkDetailRepository;
 use App\Repositories\SessionMarkRepository;
 use Carbon\Carbon;
@@ -27,13 +28,18 @@ class SessionMarkController extends AppBaseController
      * @var CourseRepository
      */
     private $courseRepository;
+    /**
+     * @var MarkRepository
+     */
+    private $markRepository;
 
-    public function __construct(SessionMarkRepository $sessionMarkRepo, SessionMarkDetailRepository $markDetailRepository,
+    public function __construct(SessionMarkRepository $sessionMarkRepo, SessionMarkDetailRepository $markDetailRepository, MarkRepository $markRepository,
     CourseRepository  $courseRepository)
     {
         $this->sessionMarkRepository = $sessionMarkRepo;
         $this->markDetailRepository = $markDetailRepository;
         $this->courseRepository = $courseRepository;
+        $this->markRepository = $markRepository;
     }
 
     /**
@@ -197,8 +203,10 @@ SELECT id as course_student_id, course_id, student_id, ? FROM course_students WH
 
             return redirect(route('sessionMarks.index'));
         }
-
+        $this->markDetailRepository->allQuery()->where('session_mark_id',$id)->delete();
+        $this->markRepository->allQuery()->where('session_mark_id',$id)->delete();
         $this->sessionMarkRepository->delete($id);
+
 
         Flash::success('Xoá đợt nhập điểm thành công.');
 

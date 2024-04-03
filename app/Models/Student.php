@@ -83,7 +83,7 @@ class Student extends Model
      * @var array
      */
     public static $rules = [
-
+        'fullname' => 'required'
     ];
 
 

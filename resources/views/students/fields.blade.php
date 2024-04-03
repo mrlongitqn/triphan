@@ -7,15 +7,15 @@
 <!-- Dob Field -->
 <div class="form-group col-sm-6">
     {!! Form::label('dob', 'Ngày sinh:') !!}
-    {!! Form::text('dob', null, ['class' => 'form-control','id'=>'dob']) !!}
+    {!! Form::text('dob',isset($student)?$student->dob->format('d/m/Y'):null, ['class' => 'form-control','id'=>'dob']) !!}
 </div>
-
 @push('page_scripts')
     <script type="text/javascript">
         $('#dob').datetimepicker({
-            format: 'YYYY-MM-DD',
+            format: 'DD/MM/YYYY',
             useCurrent: true,
-            sideBySide: true
+            sideBySide: true,
+            defaultDate: new Date(),
         })
     </script>
 @endpush
