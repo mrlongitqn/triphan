@@ -88,32 +88,18 @@
                     <tr>
                         <th width="40px">STT</th>
                         <th width="250px">Môn học</th>
-                        <th width="250px">Điểm trung bình</th>
+                        <th width="250px">Đợt</th>
+                        <th width="250px">Điểm</th>
                         <th>Nhận xét từ giáo viên</th>
                     </tr>
-                    @foreach($courses as $key => $course)
+
+
+                    @foreach($marks as $key => $mark)
                         <tr>
                             <td class="text-center">{{$key+1}}</td>
-                            <td>{{$course->course}}</td>
+                            <td>{{$courses[$mark->course_id]->course}}</td>
                             <td>
-                                @php
-                                    $sum = 0;
-                                    $c = 0;
-                                    for($i = 1; $i<=10; $i++){
-                                        if($marks[$course->id]['score'.$i]==null)
-                                            break;
-                                        $sum = $sum + $marks[$course->id]['score'.$i];
-                                        $c = $i;
-                                    }
 
-                                @endphp
-                                {{$c!=0?round($sum/$c,2):0}} (@for($i = 1; $i<=10; $i++)
-                                    @if($marks[$course->id]['score'.$i]==null)
-                                        @break;
-                                    @endif
-                                    {{round($marks[$course->id]['score'.$i],1,1)}};
-                                @endfor
-                                    )
                             </td>
                             <td></td>
                         </tr>

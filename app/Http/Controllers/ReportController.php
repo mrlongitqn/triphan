@@ -8,6 +8,7 @@ use App\Repositories\FeeDetailRepository;
 use App\Repositories\FeeRepository;
 use App\Repositories\MarkRepository;
 use App\Repositories\RefundRepository;
+use App\Repositories\SessionMarkRepository;
 use App\Repositories\StudentRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -39,10 +40,14 @@ class ReportController extends AppBaseController
      * @var MarkRepository
      */
     private $markRepository;
+    /**
+     * @var SessionMarkRepository
+     */
+    private $sessionMarkRepository;
 
     public function __construct(CourseStudentRepository $courseStudentRepository, FeeDetailRepository $feeDetailRepository,
                                 StudentRepository       $studentRepository, FeeRepository $feeRepository, RefundRepository $refundRepository,
-                                MarkRepository          $markRepository
+                                MarkRepository          $markRepository, SessionMarkRepository $sessionMarkRepository
     )
     {
 
@@ -52,6 +57,7 @@ class ReportController extends AppBaseController
         $this->feeRepository = $feeRepository;
         $this->refundRepository = $refundRepository;
         $this->markRepository = $markRepository;
+        $this->sessionMarkRepository = $sessionMarkRepository;
     }
 
     public function ExportDebtList()
@@ -183,12 +189,18 @@ class ReportController extends AppBaseController
             return abort(404);
 
         //StudentCourese
-        $courses = $this->courseStudentRepository->getCoursesByStudent($id, [0]);
-
-        //Mark
+        $courses = $this->courseStudentRepository->getCoursesByStudent($id, [0])->keyBy('course_id');
+//Mark
         $marks = $this->markRepository->all([
             'student_id' => $id
         ])->keyBy('course_student_id');
+
+        //SesssionMark
+        $sessionMarks = $this->sessionMarkRepository->allQuery()->whereIn('id', $marks->pluck('session_mark_id')->toArray())->get()->keyBy('id');
+
+        //MarkTypeDetail
+
+
         //Fee
         $listIds = $courses->where('fee_status', '=', 0)->pluck('id')->toArray();
         $date = Carbon::now()->firstOfMonth();
