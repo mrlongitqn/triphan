@@ -7,6 +7,7 @@ use App\Repositories\CourseStudentRepository;
 use App\Repositories\FeeDetailRepository;
 use App\Repositories\FeeRepository;
 use App\Repositories\MarkRepository;
+use App\Repositories\MarkTypeDetailRepository;
 use App\Repositories\RefundRepository;
 use App\Repositories\SessionMarkRepository;
 use App\Repositories\StudentRepository;
@@ -44,10 +45,15 @@ class ReportController extends AppBaseController
      * @var SessionMarkRepository
      */
     private $sessionMarkRepository;
+    /**
+     * @var MarkTypeDetailRepository
+     */
+    private $markTypeDetailRepository;
 
-    public function __construct(CourseStudentRepository $courseStudentRepository, FeeDetailRepository $feeDetailRepository,
-                                StudentRepository       $studentRepository, FeeRepository $feeRepository, RefundRepository $refundRepository,
-                                MarkRepository          $markRepository, SessionMarkRepository $sessionMarkRepository
+    public function __construct(CourseStudentRepository  $courseStudentRepository, FeeDetailRepository $feeDetailRepository,
+                                StudentRepository        $studentRepository, FeeRepository $feeRepository, RefundRepository $refundRepository,
+                                MarkRepository           $markRepository, SessionMarkRepository $sessionMarkRepository,
+                                MarkTypeDetailRepository $markTypeDetailRepository
     )
     {
 
@@ -58,6 +64,7 @@ class ReportController extends AppBaseController
         $this->refundRepository = $refundRepository;
         $this->markRepository = $markRepository;
         $this->sessionMarkRepository = $sessionMarkRepository;
+        $this->markTypeDetailRepository = $markTypeDetailRepository;
     }
 
     public function ExportDebtList()
@@ -193,13 +200,15 @@ class ReportController extends AppBaseController
 //Mark
         $marks = $this->markRepository->all([
             'student_id' => $id
-        ])->keyBy('course_student_id');
+        ])->sortByDesc('course_id')->sortByDesc('session_mark_id');
 
         //SesssionMark
         $sessionMarks = $this->sessionMarkRepository->allQuery()->whereIn('id', $marks->pluck('session_mark_id')->toArray())->get()->keyBy('id');
 
         //MarkTypeDetail
+        $markTypeIds = $courses->pluck('mark_type_id')->toArray();
 
+        $markTypeDetails = $this->markTypeDetailRepository->allQuery()->whereIn('mark_type_id', array_unique($markTypeIds))->get();
 
         //Fee
         $listIds = $courses->where('fee_status', '=', 0)->pluck('id')->toArray();
@@ -234,6 +243,6 @@ class ReportController extends AppBaseController
             }
 
         }
-        return view('reports.report_total', compact('student', 'courses', 'marks', 'date'));
+        return view('reports.report_total', compact('markTypeDetails', 'sessionMarks', 'student', 'courses', 'marks', 'date'));
     }
 }

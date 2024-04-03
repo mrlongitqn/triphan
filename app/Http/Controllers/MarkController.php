@@ -124,7 +124,7 @@ class MarkController extends AppBaseController
         $sessionMarks = $this->markDetailRepository->allQuery()
             ->leftJoin('session_marks', 'session_marks.id', '=', 'session_mark_details.session_mark_id')
             ->where('session_mark_details.course_id', '=', $selected_course->id)
-            ->orderByDesc('end_date')->get();
+            ->orderByDesc('session_marks.id')->get();
         if($request->has('session_mark')){
             $sessionMark = $sessionMarks->firstWhere('id','=', $request->session_mark);
             if(!$sessionMark){
@@ -189,7 +189,7 @@ class MarkController extends AppBaseController
             return redirect(route('marks.index'));
         }
         $now = Carbon::now();
-        $sessionMark = $this->markDetailRepository->find($request->session_mark_id);
+        $sessionMark = $this->sessionMarkRepository->find($request->session_mark_id);
         if (empty($sessionMark)) {
             Flash::error('Đợt nhập điểm không tồn tại');
 

@@ -52,7 +52,7 @@ class CourseStudentRepository extends BaseRepository
         return $this->model->newQuery()->leftJoin('courses', 'courses.id', '=', 'course_id')
             ->where('student_id', $student_id)
            ->whereIn('course_students.status',$status)
-            ->select(['course_students.id', 'course_id','course', 'fee', 'course_students.created_at', 'fee_status','student_id'])->get();
+            ->select(['course_students.id', 'course_id','course', 'fee', 'course_students.created_at', 'fee_status','student_id', 'mark_type_id'])->get();
     }
 
 }

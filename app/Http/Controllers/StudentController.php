@@ -11,6 +11,7 @@ use DateTime;
 use Flash;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Response;
 
 class StudentController extends AppBaseController
@@ -32,6 +33,7 @@ class StudentController extends AppBaseController
      */
     public function index(StudentDataTable $studentDataTable)
     {
+        Mail::se
         return $studentDataTable->render('students.index');
     }
 

@@ -93,15 +93,26 @@
                         <th>Nhận xét từ giáo viên</th>
                     </tr>
 
-
+    <?php $i = 1; ?>
                     @foreach($marks as $key => $mark)
                         <tr>
-                            <td class="text-center">{{$key+1}}</td>
+                            <td class="text-center">{{$i++}}</td>
                             <td>{{$courses[$mark->course_id]->course}}</td>
                             <td>
-
+                                {{$sessionMarks[$mark->session_mark_id]->session}}
                             </td>
-                            <td></td>
+                            <td>
+                                @php
+                                $markTypeDetail = $markTypeDetails->where('mark_type_id',$courses[$mark->course_id]->mark_type_id);
+
+                                @endphp
+                                @foreach ($markTypeDetail as $mType)
+                                {{$mType->column_name}}: {{$mark['score'.$mType->column_number]}};
+                                @endforeach
+                            </td>
+                            <td>
+                                {{$mark['note']}}
+                            </td>
                         </tr>
                     @endforeach
 
