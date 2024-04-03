@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ReportTotalEmail;
 use App\Models\User;
 use App\Repositories\CourseStudentRepository;
 use App\Repositories\FeeDetailRepository;
@@ -13,6 +14,7 @@ use App\Repositories\SessionMarkRepository;
 use App\Repositories\StudentRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class ReportController extends AppBaseController
 {
@@ -191,6 +193,7 @@ class ReportController extends AppBaseController
 
     public function ReportTotal($id)
     {
+
         $student = $this->studentRepository->find($id);
         if (empty($student))
             return abort(404);
@@ -243,6 +246,7 @@ class ReportController extends AppBaseController
             }
 
         }
-        return view('reports.report_total', compact('markTypeDetails', 'sessionMarks', 'student', 'courses', 'marks', 'date'));
+        Mail::to('ndlong@gmail.com')->send(new ReportTotalEmail($markTypeDetails, $sessionMarks, $student,$courses, $marks));
+       /// return view('reports.report_total', compact('markTypeDetails', 'sessionMarks', 'student', 'courses', 'marks', 'date'));
     }
 }

@@ -6,6 +6,7 @@ use App\DataTables\StudentDataTable;
 use App\Http\Requests;
 use App\Http\Requests\CreateStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
+use App\Mail\ReportTotalEmail;
 use App\Repositories\StudentRepository;
 use DateTime;
 use Flash;
@@ -33,7 +34,6 @@ class StudentController extends AppBaseController
      */
     public function index(StudentDataTable $studentDataTable)
     {
-        Mail::se
         return $studentDataTable->render('students.index');
     }
 
