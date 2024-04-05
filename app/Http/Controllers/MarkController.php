@@ -206,18 +206,22 @@ class MarkController extends AppBaseController
             ['session_mark_id',$sessionMark->id]
         ])->get()->keyBy('course_student_id');
 
-        foreach ($marks as $mark) {
-            if (!isset($input[$mark->course_student_id . '_note']))
-                continue;
+        foreach ($marks as $k => $mark) {
             $markScore = [];
+            if (isset($input[$mark->course_student_id . '_note']))
+                $markScore['note'] = $input[$mark->course_student_id . '_note'];
             foreach ($scores as $score) {
                 if (!isset($input[$mark->course_student_id . '_score' . $score]))
                     continue;
                 $markScore['score' . $score] = $input[$mark->course_student_id . '_score' . $score];
             }
-            $markScore['note'] = $input[$mark->course_student_id . '_note'];
+
+
             $mark->update($markScore);
+            if($k == 3)
+                dd($mark, $markScore);
         }
+
 
         Flash::success('Lưu điểm thành công.');
 
