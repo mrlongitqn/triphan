@@ -176,7 +176,7 @@
 
                 <p>
                 <h4>Thông tin chuyển khoản</h4>
-                <img src="{{url('/qr.jpg')}}" style="width: 200px; float: left; margin-right: 30px"/>
+                <img src="https://triphan.lova.dev/qr.jpg" style="width: 200px; float: left; margin-right: 30px"/>
                 <p>
 
                     Ngân hàng TMCP Công thương Việt Nam Vietinbank<br/>

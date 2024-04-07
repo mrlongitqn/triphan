@@ -87,7 +87,7 @@ class ReportTotalEmail extends Mailable
                 'student'=>$this->student,
                 'courses'=>$this->courses,
                 'marks'=>$this->marks
-            ])
+            ])->subject('Thông báo kết quả học tập và học phí')
             ;
     }
 }

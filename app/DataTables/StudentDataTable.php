@@ -72,15 +72,15 @@ class StudentDataTable extends DataTable
            Column::make('fullname')->title('Tên học viên'),
            Column::make('dob','dob')->title('Ngày sinh'),
            Column::make('level_id','level_id')->title('Lớp'),
-            Column::make('phone_number','phone_number')->title('Điện thoại'),
+            Column::make('school','school')->title('Truờng'),
 
 //            'phone_number',
 //            'email',
 //            'level_id',
 //            'school',
-            Column::make('parent_name','parent_name')->title('Phụ huynh'),
-            Column::make('parent_phone1','parent_phone1')->title('Điện thoại 1'),
-            Column::make('parent_phone2','parent_phone2')->title('Điện thoại 1'),
+            Column::make('parent_name','parent_name')->title('Tên phụ huynh'),
+            Column::make('parent_phone1','parent_phone1')->title('Điện thoại'),
+            Column::make('parent_mail','parent_mail')->title('Email'),
         ];
     }
 

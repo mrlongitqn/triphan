@@ -15,6 +15,7 @@ use App\Repositories\StudentRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Laracasts\Flash\Flash;
 
 class ReportController extends AppBaseController
 {
@@ -191,7 +192,7 @@ class ReportController extends AppBaseController
     }
 
 
-    public function ReportTotal($id)
+    public function ReportTotal($id, Request $request)
     {
 
         $student = $this->studentRepository->find($id);
@@ -244,9 +245,17 @@ class ReportController extends AppBaseController
                     $item->debt_amount = $item->debt_amount + $lastMonth->remain;
                 }
             }
-
         }
-        Mail::to('ndlong@gmail.com')->send(new ReportTotalEmail($markTypeDetails, $sessionMarks, $student,$courses, $marks));
-       /// return view('reports.report_total', compact('markTypeDetails', 'sessionMarks', 'student', 'courses', 'marks', 'date'));
+        if ($request->has('sendEmail')) {
+            if (!$student->parent_mail || $student->parent_mail === '')
+                Flash::error('Chưa thiết lập email cho phụ huynh');
+            else {
+                Mail::to($student->parent_mail)->send(new ReportTotalEmail($markTypeDetails, $sessionMarks, $student, $courses, $marks));
+                Flash::success('Đã gửi email thành công');
+            }
+            return redirect()->back();
+        }
+
+        return view('reports.report_total', compact('markTypeDetails', 'sessionMarks', 'student', 'courses', 'marks', 'date'));
     }
 }
