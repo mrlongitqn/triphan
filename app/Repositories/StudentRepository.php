@@ -26,6 +26,7 @@ class StudentRepository extends BaseRepository
         'parent_phone1',
         'parent_phone2',
         'parent_mail',
+        'level_id'
     ];
 
     /**

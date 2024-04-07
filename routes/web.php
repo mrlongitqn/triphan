@@ -43,6 +43,7 @@ Route::prefix("")->middleware('auth')->group(function () {
     Route::resource('levels', App\Http\Controllers\LevelController::class);
 
 
+
     Route::resource('courses', App\Http\Controllers\CourseController::class);
     Route::get('courses/change-status/{id}', [App\Http\Controllers\CourseController::class, 'changeStatus'])->name('courses.changeStatus');
     Route::get('course/search', [App\Http\Controllers\CourseController::class, 'search'])->name('courses.search');
@@ -81,7 +82,7 @@ Route::prefix("")->middleware('auth')->group(function () {
         Route::get('report-collect-refund', [\App\Http\Controllers\ReportController::class, 'ReportCollectRefund'])->name('reports.ReportCollectRefund');
         Route::get('report-collect-cancel', [\App\Http\Controllers\ReportController::class, 'ReportCollectCancel'])->name('reports.ReportCollectCancel');
         Route::get('report-total/{id}', [\App\Http\Controllers\ReportController::class, 'ReportTotal'])->name('reports.ReportTotal');
-
+        Route::get('export-total/{id?}', [App\Http\Controllers\ReportController::class,'exportTotalByLevel'])->name('report.exportTotal');
 
     });
     Route::prefix('marks')->group(function () {

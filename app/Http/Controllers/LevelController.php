@@ -7,6 +7,7 @@ use App\Http\Requests;
 use App\Http\Requests\CreateLevelRequest;
 use App\Http\Requests\UpdateLevelRequest;
 use App\Repositories\LevelRepository;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Flash;
 use App\Http\Controllers\AppBaseController;
 use Response;

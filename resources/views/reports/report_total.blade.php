@@ -2,7 +2,7 @@
 @push('page_css')
     <style>
         body {
-            font-family: Roboto, serif;
+            font-family: "Times-Roman", serif;
             font-size: 1.2rem;
         }
 

@@ -7,15 +7,22 @@ use App\Models\User;
 use App\Repositories\CourseStudentRepository;
 use App\Repositories\FeeDetailRepository;
 use App\Repositories\FeeRepository;
+use App\Repositories\LevelRepository;
 use App\Repositories\MarkRepository;
 use App\Repositories\MarkTypeDetailRepository;
 use App\Repositories\RefundRepository;
 use App\Repositories\SessionMarkRepository;
 use App\Repositories\StudentRepository;
+use Barryvdh\DomPDF\PDF;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Laracasts\Flash\Flash;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use Transliterator;
+use ZipArchive;
 
 class ReportController extends AppBaseController
 {
@@ -52,11 +59,16 @@ class ReportController extends AppBaseController
      * @var MarkTypeDetailRepository
      */
     private $markTypeDetailRepository;
+    /**
+     * @var LevelRepository
+     */
+    private $levelRepository;
+
 
     public function __construct(CourseStudentRepository  $courseStudentRepository, FeeDetailRepository $feeDetailRepository,
                                 StudentRepository        $studentRepository, FeeRepository $feeRepository, RefundRepository $refundRepository,
                                 MarkRepository           $markRepository, SessionMarkRepository $sessionMarkRepository,
-                                MarkTypeDetailRepository $markTypeDetailRepository
+                                MarkTypeDetailRepository $markTypeDetailRepository, LevelRepository $levelRepository
     )
     {
 
@@ -68,6 +80,7 @@ class ReportController extends AppBaseController
         $this->markRepository = $markRepository;
         $this->sessionMarkRepository = $sessionMarkRepository;
         $this->markTypeDetailRepository = $markTypeDetailRepository;
+        $this->levelRepository = $levelRepository;
     }
 
     public function ExportDebtList()
@@ -194,14 +207,44 @@ class ReportController extends AppBaseController
 
     public function ReportTotal($id, Request $request)
     {
+        $data = $this->getReportStudent($id);
+        $student = $data['student'];
+        $markTypeDetails = $data['markTypeDetails'];
+        $sessionMarks = $data['sessionMarks'];
+        $courses = $data['courses'];
+        $marks = $data['marks'];
+        $date = $data['date'];
 
+        if ($request->has('sendEmail')) {
+            $mail = [];
+            if ($student->parent_mail)
+                $mail[] = $student->parent_mail;
+            if ($student->email)
+                $mail[] = $student->email;
+
+            if (count($mail) == 0) {
+                Flash::error('Chưa thiết lập email cho học viên/phụ huynh');
+            } else {
+
+
+                Mail::to($mail)->send(new ReportTotalEmail($markTypeDetails, $sessionMarks, $student, $courses, $marks));
+                Flash::success('Đã gửi email thành công');
+            }
+            return redirect()->back();
+        }
+
+        return view('reports.report_total', compact('markTypeDetails', 'sessionMarks', 'student', 'courses', 'marks', 'date'));
+    }
+
+    function getReportStudent($id)
+    {
         $student = $this->studentRepository->find($id);
         if (empty($student))
             return abort(404);
 
         //StudentCourese
         $courses = $this->courseStudentRepository->getCoursesByStudent($id, [0])->keyBy('course_id');
-//Mark
+
         $marks = $this->markRepository->all([
             'student_id' => $id
         ])->sortByDesc('course_id')->sortByDesc('session_mark_id');
@@ -246,24 +289,68 @@ class ReportController extends AppBaseController
                 }
             }
         }
-        if ($request->has('sendEmail')) {
-            $mail = [];
-            if ($student->parent_mail)
-                $mail[] = $student->parent_mail;
-            if ($student->email)
-                $mail[] = $student->email;
+        return [
+            'student' => $student,
+            'courses' => $courses,
+            'markTypeDetails' => $markTypeDetails,
+            'sessionMarks' => $sessionMarks,
+            'marks' => $marks,
+            'date' => $date
+        ];;
+    }
 
-            if (count($mail) == 0) {
-                Flash::error('Chưa thiết lập email cho học viên/phụ huynh');
-            } else {
+    function exportTotalByLevel($id = 0)
+    {
+        $level = $this->levelRepository->find($id);
+        if (!$level)
+            abort(404);
 
+        $students = $this->studentRepository->all([
+            'level_id' => $id,
+            'status'=>0
+        ]);
 
-                Mail::to($mail)->send(new ReportTotalEmail($markTypeDetails, $sessionMarks, $student, $courses, $marks));
-                Flash::success('Đã gửi email thành công');
-            }
+        if ($students->count()==0)
             return redirect()->back();
+
+        $name = 'level' . $id;
+        Storage::makeDirectory('public/'.$name);
+        foreach ($students as $student) {
+            $data = $this->getReportStudent($student->id);
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.export_total', $data);
+            $pdf->save(storage_path('app/public/' . $name . '/' . $student->fullname . '.pdf'));
+        }
+        $folderPath = storage_path('app/public/'.$name); // Thay 'your-folder-name' bằng tên thư mục bạn muốn nén và tải về
+        $transliterator = Transliterator::createFromRules(
+            ':: NFD; :: [:Nonspacing Mark:] Remove; :: NFC;',
+            Transliterator::FORWARD
+        );
+
+        $asciiString = $transliterator->transliterate( $level->level);
+        $zipFileName = $asciiString.'.zip';
+
+        // Tạo file zip mới
+        $zip = new ZipArchive;
+        if ($zip->open(storage_path($zipFileName), ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+            $files = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($folderPath),
+                RecursiveIteratorIterator::LEAVES_ONLY
+            );
+
+            foreach ($files as $name => $file) {
+                // Bỏ qua các thư mục
+                if (!$file->isDir()) {
+                    $filePath = $file->getRealPath();
+                    $relativePath = substr($filePath, strlen($folderPath) + 1);
+
+                    $zip->addFile($filePath, $relativePath);
+                }
+            }
+
+            $zip->close();
         }
 
-        return view('reports.report_total', compact('markTypeDetails', 'sessionMarks', 'student', 'courses', 'marks', 'date'));
+        // Tải file zip đã tạo
+        return response()->download(storage_path($zipFileName))->deleteFileAfterSend(true);
     }
 }
