@@ -75,7 +75,7 @@ class CourseStudentController extends AppBaseController
     {
         $levels = $this->levelRepository->all();
         $subjects = $this->subjectRepository->all();
-        $courses = $this->courseRepository->all();
+        $courses = $this->courseRepository->all(['status'=>0]);
         if (count($courses) === 0) {
             Flash::error('Vui lòng tạo các lớp học trước.');
             return redirect(route('courses.index'));

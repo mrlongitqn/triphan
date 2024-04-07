@@ -18,9 +18,14 @@ class CourseDataTable extends DataTable
     public function dataTable($query)
     {
         $dataTable = new EloquentDataTable($query);
-        return $dataTable->addColumn('action', 'courses.datatables_actions')->editColumn('start_date', function ($course){
-            return date('d/m/Y', strtotime($course->start_date) );
-        });
+        return $dataTable
+            ->addColumn('action', 'courses.datatables_actions')
+            ->editColumn('start_date', function ($course) {
+                return date('d/m/Y', strtotime($course->start_date));
+            })
+            ->editColumn('status', function ($course) {
+                return $course->status?'Đã kết thúc':'Đang học';
+            });
     }
 
     /**
@@ -31,7 +36,7 @@ class CourseDataTable extends DataTable
      */
     public function query(Course $model)
     {
-        return $model->newQuery()->leftJoin('levels','levels.id','=','courses.level_id')->leftJoin('subjects', 'subjects.id', '=', 'courses.subject_id')
+        return $model->newQuery()->leftJoin('levels', 'levels.id', '=', 'courses.level_id')->leftJoin('subjects', 'subjects.id', '=', 'courses.subject_id')
             ->select('courses.*', 'level', 'subject')->orderBy('id', 'desc');
     }
 
@@ -45,12 +50,12 @@ class CourseDataTable extends DataTable
         return $this->builder()
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->addAction(['width' => '120px', 'printable' => false, 'title'=>'Hành động'])
+            ->addAction(['width' => '120px', 'printable' => false, 'title' => 'Hành động'])
             ->parameters([
-                'dom'       => 'Bfrtip',
+                'dom' => 'Bfrtip',
                 'stateSave' => true,
-                'order'     => [[0, 'desc']],
-                'buttons'   => [
+                'order' => [[0, 'desc']],
+                'buttons' => [
 //                    ['extend' => 'create', 'className' => 'btn btn-default btn-sm no-corner',],
 //                    ['extend' => 'export', 'className' => 'btn btn-default btn-sm no-corner',],
 //                    ['extend' => 'print', 'className' => 'btn btn-default btn-sm no-corner',],
@@ -69,13 +74,14 @@ class CourseDataTable extends DataTable
     {
         return [
             Column::make('course')->title('Lớp học'),
-            Column::make('subject','subjects.subject')->title('Môn học'),
-            Column::make('level','levels.level')->title('Khối lớp'),
-            Column::make('fee')->title('Học phí')->renderJs('number', ',','.'),
+            Column::make('subject', 'subjects.subject')->title('Môn học'),
+            Column::make('level', 'levels.level')->title('Khối lớp'),
+            Column::make('fee')->title('Học phí')->renderJs('number', ',', '.'),
             Column::make('start_date')->title('Ngày mở'),
             Column::make('open')->title('Giờ bắt đầu'),
             Column::make('close')->title('Giờ kết thúc'),
             Column::make('schedules')->title('Lịch học'),
+            Column::make('status')->title('Trạng thái'),
         ];
     }
 

@@ -39,3 +39,17 @@
 
 @endsection
 
+
+@push('page_scripts')
+    <script>
+        $(document).on('click','.btn-status', function(event) {
+            let staus = $(this).data('status')?'mở lại':'kết thúc';
+            let href = $(this).data('href');
+            if (!confirm('Bạn có chắc chắn muốn '+ staus + ' khóa học này không?')) {
+                event.preventDefault(); // Ngăn chặn hành động mặc định của thẻ <a>
+            }else{
+                window.location.href = href;
+            }
+        });
+    </script>
+@endpush

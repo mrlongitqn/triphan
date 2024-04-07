@@ -247,10 +247,18 @@ class ReportController extends AppBaseController
             }
         }
         if ($request->has('sendEmail')) {
-            if (!$student->parent_mail || $student->parent_mail === '')
-                Flash::error('Chưa thiết lập email cho phụ huynh');
-            else {
-                Mail::to($student->parent_mail)->send(new ReportTotalEmail($markTypeDetails, $sessionMarks, $student, $courses, $marks));
+            $mail = [];
+            if ($student->parent_mail)
+                $mail[] = $student->parent_mail;
+            if ($student->email)
+                $mail[] = $student->email;
+
+            if (count($mail) == 0) {
+                Flash::error('Chưa thiết lập email cho học viên/phụ huynh');
+            } else {
+
+
+                Mail::to($mail)->send(new ReportTotalEmail($markTypeDetails, $sessionMarks, $student, $courses, $marks));
                 Flash::success('Đã gửi email thành công');
             }
             return redirect()->back();

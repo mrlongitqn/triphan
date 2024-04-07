@@ -17,7 +17,7 @@ use Response;
 
 class CourseController extends AppBaseController
 {
-    /** @var CourseRepository $courseRepository*/
+    /** @var CourseRepository $courseRepository */
     private $courseRepository;
     private $subjectRepository;
     private $levelRepository;
@@ -26,7 +26,7 @@ class CourseController extends AppBaseController
      */
     private $markTypeRepository;
 
-    public function __construct(CourseRepository $courseRepo, SubjectRepository  $subjectRepo, LevelRepository $levelRepo, MarkTypeRepository $markTypeRepository)
+    public function __construct(CourseRepository $courseRepo, SubjectRepository $subjectRepo, LevelRepository $levelRepo, MarkTypeRepository $markTypeRepository)
     {
         $this->courseRepository = $courseRepo;
         $this->subjectRepository = $subjectRepo;
@@ -70,9 +70,9 @@ class CourseController extends AppBaseController
     {
         $input = $request->all();
         $input['status'] = 0;
-        $input['open'] =  substr($input['open'], -4);
-        $input['close'] =  substr($input['close'], -4);
-        $input['user_id'] =  $request->user()->id;
+        $input['open'] = substr($input['open'], -4);
+        $input['close'] = substr($input['close'], -4);
+        $input['user_id'] = $request->user()->id;
         $course = $this->courseRepository->create($input);
 
         Flash::success('Đã thêm khóa học thành công.');
@@ -119,7 +119,7 @@ class CourseController extends AppBaseController
             return redirect(route('courses.index'));
         }
 
-        return view('courses.edit', compact('course', 'subjects', 'levels','markTypes' ));
+        return view('courses.edit', compact('course', 'subjects', 'levels', 'markTypes'));
     }
 
     /**
@@ -170,6 +170,7 @@ class CourseController extends AppBaseController
 
         return redirect(route('courses.index'));
     }
+
     /**
      * Show the form for editing the specified Course.
      *
@@ -177,7 +178,7 @@ class CourseController extends AppBaseController
      *
      * @return Response
      */
-    public function changeStatus($id)
+    public function changeStatus($id = null)
     {
         $course = $this->courseRepository->find($id);
 
@@ -186,8 +187,9 @@ class CourseController extends AppBaseController
 
             return redirect(route('courses.index'));
         }
-        $course->status = 0;
-        $this->courseRepository->delete($id);
+        $course->update(['status' => !$course->status]);
+
+        Flash::success(!$course->status?'Đã mở khóa học thành công.':'Đã kết thúc khóa học thành công');
 
         return redirect(route('courses.index'));
     }
@@ -195,13 +197,13 @@ class CourseController extends AppBaseController
     public function search(Request $request)
     {
         $keyword = $request->term;
-        $data = $this->courseRepository->allQuery()->where('course','like', '%'.$keyword.'%')
+        $data = $this->courseRepository->allQuery()->where('course', 'like', '%' . $keyword . '%')->where('status',0)
             ->select('id', 'course as text')->limit(20)->get();
         return response()->json(
             [
                 "results" => $data,
                 "pagination" => [
-                    'more'=>false
+                    'more' => false
                 ]
             ]
         );

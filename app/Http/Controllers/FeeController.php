@@ -420,7 +420,12 @@ class FeeController extends AppBaseController
             ->where('month', '=', $currentMonth->month)
             ->where('status', '=', 1)
             ->pluck('course_student_id')->toArray();
-        $this->courseStudentRepository->allQuery()->where('status', '=', 0)
+        $this->courseStudentRepository->allQuery()->leftJoin('courses', 'courses.id', '=', 'course_students.course_id')
+            ->where([
+                    ['course_students.status', '=', 0],
+                    ['courses.status', '=', 0]
+                ]
+            )
             ->where('fee_status', '!=', 2)
             ->whereNotIn('id', $listFee)->update(
                 [

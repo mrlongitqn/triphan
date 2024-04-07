@@ -17,6 +17,16 @@
     <a href="{{ route('courses.edit', $id) }}" class='btn btn-default btn-xs'>
         <i class="fa fa-edit"></i>
     </a>
+    <a href="{{ route('courses.edit', $id) }}" class='btn btn-default btn-xs'>
+        <i class="fa fa-edit"></i>
+    </a>
+    <a href="javascript:;" data-status="{{$status}}" data-href="{{ route('courses.changeStatus', $id) }}" class='btn btn-default btn-xs btn-status'>
+        @if($status)
+            <i class="fas fa-ban"></i>
+        @else
+            <i class="fas fa-check"></i>
+        @endif
+    </a>
     {!! Form::button('<i class="fa fa-trash"></i>', [
         'type' => 'submit',
         'class' => 'btn btn-danger btn-xs',

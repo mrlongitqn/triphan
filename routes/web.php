@@ -44,6 +44,7 @@ Route::prefix("")->middleware('auth')->group(function () {
 
 
     Route::resource('courses', App\Http\Controllers\CourseController::class);
+    Route::get('courses/change-status/{id}', [App\Http\Controllers\CourseController::class, 'changeStatus'])->name('courses.changeStatus');
     Route::get('course/search', [App\Http\Controllers\CourseController::class, 'search'])->name('courses.search');
 
 

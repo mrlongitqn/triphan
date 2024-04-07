@@ -20,6 +20,7 @@ class CourseRepository extends BaseRepository
         'course',
         'subjects.subject',
         'levels.level',
+        'status'
     ];
 
     /**
