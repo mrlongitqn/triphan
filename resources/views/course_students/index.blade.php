@@ -106,6 +106,7 @@
                                             <a target="_blank" href="{{route('fees.listFeeDebtByCourse')}}/{{$selected_course->id}}" class="dropdown-item">Danh sách nợ học phí</a>
 
                                             <a target="_blank" href="{{route('courseStudents.printList')}}/{{$selected_course->id}}" class="dropdown-item">In danh sách tổng</a>
+                                            <a target="_blank" href="{{route('fees.exportFeeByCourse')}}/{{$selected_course->id}}" class="dropdown-item">Xuất danh sách đã nộp tiền</a>
                                         </div>
                                     </div>
                                     @if($courseSessions->count()>0)

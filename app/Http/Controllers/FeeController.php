@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\FeeDataTable;
+use App\Exports\FeeByCourseExport;
 use App\Http\Requests;
 use App\Http\Requests\CreateFeeRequest;
 use App\Http\Requests\UpdateFeeRequest;
@@ -17,6 +18,8 @@ use Flash;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 use PHPViet\Laravel\NumberToWords\N2WFacade;
 use Response;
 use N2W;
@@ -410,6 +413,22 @@ class FeeController extends AppBaseController
                 'data' => $this->feeRepository->byStudent($id)
             ]
         );
+    }
+
+    function exportFeeByCourse($course_id){
+        $course = $this->courseRepository->find($course_id);
+        if (!$course)
+            return abort(404);
+        $students = $this->courseStudentRepository->getByCourse($course->id)->get();
+        $course_student = $students->pluck('id')->toArray();
+        $feesCollect = $this->feeDetailRepository->allQuery()->whereIn('fee_details.course_student_id', $course_student)
+            ->leftJoin('fees','fee_details.fee_id','=','fees.id')
+            ->where('fees.status','=',0);
+        $fees = $feesCollect->select('fee_details.*')
+            ->get();
+        $mY = $feesCollect->select('month','year')->distinct()->orderBy('year')->orderBy('month')->get();
+        $fileName = Str::slug($course->course).'.xlsx';
+        return Excel::download(new FeeByCourseExport($course,$students, $fees, $mY),$fileName);
     }
 
     function jobUpdateFeeList()

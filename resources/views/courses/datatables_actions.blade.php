@@ -1,11 +1,18 @@
 {!! Form::open(['route' => ['courses.destroy', $id], 'method' => 'delete', 'class'=>'text-center']) !!}
-<div class='btn-group'>
-    <a href="{{ route('courseStudents.index', $id) }}" title="Xem danh sách học viên" class='btn btn-default btn-xs'>
-        <i class="fas fa-user-friends"></i>
-    </a>
+<div class='btn-group float-right'>
+    @if(!$status)
+        <a href="{{ route('courseStudents.index', $id) }}" title="Xem danh sách học viên" class='btn btn-default btn-xs'>
+            <i class="fas fa-user-friends"></i>
+        </a>
+    @endif
+
     <a target="_blank" href="{{route('courseStudents.printList')}}/{{$id}}/on" title="In danh sách học viên"
        class='btn btn-default btn-xs'>
         <i class="fa fa-print"></i>
+    </a>
+    <a target="_blank" href="{{route('fees.exportFeeByCourse')}}/{{$id}}" title="Xuất học phí đã nộp"
+       class='btn btn-default btn-xs'>
+        <i class="fas fa-file-excel"></i>
     </a>
     <a target="_blank" href="{{route('fees.listFeeDebtByCourse')}}/{{$id}}" title="In Danh sách nợ học phí"
        class='btn btn-default btn-xs'>
@@ -13,9 +20,6 @@
     </a>
     <a href="{{ route('courseSessions.index',['course'=>$id]) }}" title="Xem ca học" class='btn btn-default btn-xs'>
         <i class="fas fa-calendar-alt"></i>
-    </a>
-    <a href="{{ route('courses.edit', $id) }}" class='btn btn-default btn-xs'>
-        <i class="fa fa-edit"></i>
     </a>
     <a href="{{ route('courses.edit', $id) }}" class='btn btn-default btn-xs'>
         <i class="fa fa-edit"></i>
