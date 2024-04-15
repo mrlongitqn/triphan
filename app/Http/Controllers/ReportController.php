@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ExportTotal;
 use App\Mail\ReportTotalEmail;
 use App\Models\User;
 use App\Repositories\CourseStudentRepository;
@@ -240,7 +241,7 @@ class ReportController extends AppBaseController
     {
         $student = $this->studentRepository->find($id);
         if (empty($student))
-            return abort(404);
+            return ;
 
         //StudentCourese
         $courses = $this->courseStudentRepository->getCoursesByStudent($id, [0])->keyBy('course_id');
@@ -299,9 +300,21 @@ class ReportController extends AppBaseController
         ];;
     }
 
+    function downloadTotalByLevel($id = 0){
+        $level = $this->levelRepository->find($id);
+
+        if (!$level)
+            abort(404);
+        if (!str_contains($level->file_download, 'done'))
+            abort(404);
+        $fileDownload = json_decode($level->file_download);
+        return response()->download(storage_path($fileDownload->file))->deleteFileAfterSend(true);
+    }
     function exportTotalByLevel($id = 0)
     {
+
         $level = $this->levelRepository->find($id);
+
         if (!$level)
             abort(404);
 
@@ -312,7 +325,19 @@ class ReportController extends AppBaseController
 
         if ($students->count()==0)
             return redirect()->back();
+        $this->levelRepository->update([
+            'file_download'=> json_encode([
+                'status'=>'wait',
+                'file'=>null
+            ]),
+            'last_gen'=>Carbon::now()
+        ], $id);
+        ExportTotal::dispatch($level, $students);
 
+        Flash::success('File download đang trong quá trình tạo. Vui lòng quay lại sau ít phút');
+        return redirect()->back();
+        //ExportTotal::dispatch($this->studentRepository, $level, $students, $this->courseStudentRepository, $this->markRepository, $this->sessionMarkRepository, $this->markTypeDetailRepository, $this->feeDetailRepository);
+        /*
         $name = 'level' . $id;
         Storage::makeDirectory('public/'.$name);
         foreach ($students as $student) {
@@ -352,5 +377,6 @@ class ReportController extends AppBaseController
 
         // Tải file zip đã tạo
         return response()->download(storage_path($zipFileName))->deleteFileAfterSend(true);
+           */
     }
 }

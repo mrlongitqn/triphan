@@ -28,7 +28,9 @@ class Level extends Model
 
     public $fillable = [
         'level',
-        'desc'
+        'desc',
+        'file_download',
+        'last_gen'
     ];
 
     /**

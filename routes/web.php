@@ -83,6 +83,7 @@ Route::prefix("")->middleware('auth')->group(function () {
         Route::get('report-collect-cancel', [\App\Http\Controllers\ReportController::class, 'ReportCollectCancel'])->name('reports.ReportCollectCancel');
         Route::get('report-total/{id}', [\App\Http\Controllers\ReportController::class, 'ReportTotal'])->name('reports.ReportTotal');
         Route::get('export-total/{id?}', [App\Http\Controllers\ReportController::class,'exportTotalByLevel'])->name('report.exportTotal');
+        Route::get('download-total/{id?}', [App\Http\Controllers\ReportController::class,'downloadTotalByLevel'])->name('report.downloadTotal');
 
     });
     Route::prefix('marks')->group(function () {
