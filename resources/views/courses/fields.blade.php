@@ -29,33 +29,39 @@
 </div>
 
 <!-- Teacher Field -->
-<div class="form-group col-sm-6">
+<div class="form-group col-sm-4">
     {!! Form::label('teacher', 'Giáo viên:') !!}
     {!! Form::text('teacher', null, ['class' => 'form-control']) !!}
 </div>
-<div class="form-group col-sm-6">
+<!-- Teacher Field -->
+<div class="form-group col-sm-4">
+    {!! Form::label('benchmark', 'Điểm chuẩn:') !!}
+    {!! Form::number('benchmark', null, ['class' => 'form-control', 'max'=>10, 'min'=>0]) !!}
+</div>
+<div class="form-group col-sm-4">
     {!! Form::label('schedules', 'Lịch học:') !!}
     {!! Form::text('schedules', null, ['class' => 'form-control', 'placeholder'=>'2,4,6']) !!}
 </div>
-<div class="form-group col-sm-6">
+<!-- Start Date Field -->
+<div class="form-group col-sm-3">
+    {!! Form::label('start_date', 'Ngày bắt đầu:') !!}
+    {!! Form::text('start_date', null, ['class' => 'form-control','id'=>'start_date']) !!}
+</div>
+<!-- End Date Field -->
+<div class="form-group col-sm-3">
+    {!! Form::label('end_date', 'Ngày kết thúc:') !!}
+    {!! Form::text('end_date', null, ['class' => 'form-control','id'=>'end_date']) !!}
+</div>
+<div class="form-group col-sm-3">
     {!! Form::label('open', 'Giờ bắt đầu:') !!}
     {!! Form::text('open', null, ['class' => 'form-control']) !!}
-</div><div class="form-group col-sm-6">
+</div><div class="form-group col-sm-3">
     {!! Form::label('close', 'Giờ kết thúc:') !!}
     {!! Form::text('close', null, ['class' => 'form-control']) !!}
 </div>
 
 
-<!-- Start Date Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('start_date', 'Ngày bắt đầu:') !!}
-    {!! Form::text('start_date', null, ['class' => 'form-control','id'=>'start_date']) !!}
-</div>
-<!-- End Date Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('end_date', 'Ngày kết thúc:') !!}
-    {!! Form::text('end_date', null, ['class' => 'form-control','id'=>'end_date']) !!}
-</div>
+
 @push('page_scripts')
     <script type="text/javascript">
         $('#start_date').datetimepicker({

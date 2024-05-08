@@ -101,11 +101,11 @@ class MarkController extends AppBaseController
      *
      * @return Response
      */
-    public function index(Request  $request, $id = null)
+    public function index(Request $request, $id = null)
     {
         $levels = $this->levelRepository->all();
         $subjects = $this->subjectRepository->all();
-        $courses = $this->courseRepository->all(['status'=>0]);
+        $courses = $this->courseRepository->all(['status' => 0]);
         if (count($courses) === 0) {
             Flash::error('Vui lòng tạo các lớp học trước.');
             return redirect(route('courses.index'));
@@ -125,30 +125,30 @@ class MarkController extends AppBaseController
             ->leftJoin('session_marks', 'session_marks.id', '=', 'session_mark_details.session_mark_id')
             ->where('session_mark_details.course_id', '=', $selected_course->id)
             ->orderByDesc('session_marks.id')->get();
-        if($request->has('session_mark')){
-            $sessionMark = $sessionMarks->firstWhere('id','=', $request->session_mark);
-            if(!$sessionMark){
+        if ($request->has('session_mark')) {
+            $sessionMark = $sessionMarks->firstWhere('id', '=', $request->session_mark);
+            if (!$sessionMark) {
                 Flash::error('Không tìm thấy đợt nhập điểm');
                 return redirect(route('marks.index', $id));
             }
 
             $marks = $this->markRepository->allQuery()->where([
                 ['course_id', $selected_course->id],
-                ['session_mark_id',$sessionMark->id]
+                ['session_mark_id', $sessionMark->id]
             ])->get()->keyBy('course_student_id');
-        }else{
+        } else {
             $sessionMark = $sessionMarks->first();
             $marks = $this->markRepository->allQuery()->where([
                 ['course_id', $selected_course->id],
-                ['session_mark_id',$sessionMark?$sessionMark->id:0]
+                ['session_mark_id', $sessionMark ? $sessionMark->id : 0]
             ])->get()->keyBy('course_student_id');
         }
 
 //            ->where('start_date', '<=', $now)
 //            ->where('end_date', '>=', $now)
 //            ->first();
-        $scores = [1,2,3,4,5,6,7,8,9,10];// $sessionMark ? explode(',', $sessionMark->scores) : [];
-        return view('marks.index', compact('marks', 'levels', 'courses', 'subjects', 'selected_course', 'courseStudent', 'sessionMarks','sessionMark', 'scores', 'markTypeDetail'));
+        $scores = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];// $sessionMark ? explode(',', $sessionMark->scores) : [];
+        return view('marks.index', compact('marks', 'levels', 'courses', 'subjects', 'selected_course', 'courseStudent', 'sessionMarks', 'sessionMark', 'scores', 'markTypeDetail'));
     }
 
     public function exportMarks($id = 0, Request $request)
@@ -158,17 +158,33 @@ class MarkController extends AppBaseController
             return abort('404');
         $cols = $request->cols;
         sort($cols);
-        return Excel::download(new MarksExport($id, $cols), 'Diem-'. Str::slug($course->course).'.xlsx');
+        return Excel::download(new MarksExport($id, $cols), 'Diem-' . Str::slug($course->course) . '.xlsx');
     }
 
-    /**
-     * Show the form for creating a new Mark.
-     *
-     * @return Response
-     */
-    public function create()
+
+    public function averageMark(Request $request, $id = null)
     {
-        return view('marks.create');
+        $levels = $this->levelRepository->all();
+        $subjects = $this->subjectRepository->all();
+        $courses = $this->courseRepository->all(['status' => 0]);
+        if (count($courses) === 0) {
+            Flash::error('Vui lòng tạo các lớp học trước.');
+            return redirect(route('courses.index'));
+        }
+
+        $selected_course = $id == null ? $courses[0] : $courses->find($id);
+        if ($selected_course === null) {
+            Flash::error('Lớp học không tồn tại.');
+            return redirect(route('marks.index'));
+        }
+
+        $courseStudent = $this->courseStudentRepository->getByCourse($selected_course->id, [0])->get();
+        $markTypeDetail = $this->markTypeDetailRepository->all(['mark_type_id' => $selected_course->mark_type_id])->sortBy('column_number');
+        $marks = $this->markRepository->allQuery()->where('course_id', '=', $id)
+            ->selectRaw('student_id, AVG(score1) as avg_score1, AVG(score2) as avg_score2, AVG(score3) as avg_score3, AVG(score4) as avg_score4, AVG(score5) as avg_score5, AVG(score6) as avg_score6, AVG(score7) as avg_score7, AVG(score8) as avg_score8, AVG(score9) as avg_score9, AVG(score10) as avg_score10')
+            ->groupByRaw('student_id')
+            ->get()->keyBy('student_id');
+        return view('marks.averageMark', compact('marks', 'levels', 'courses', 'subjects', 'selected_course', 'courseStudent', 'markTypeDetail'));
     }
 
     /**
@@ -195,7 +211,7 @@ class MarkController extends AppBaseController
 
             return redirect(route('marks.index', $course_id));
         }
-        $scores = [1,2,3,4,5,6,7,8,9,10];// $sessionMark ? explode(',', $sessionMark->scores) : [];
+        $scores = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];// $sessionMark ? explode(',', $sessionMark->scores) : [];
         if (count($scores) == 0) {
             Flash::error('Lớp học không nằm trong đợt nhập điểm');
 
@@ -203,7 +219,7 @@ class MarkController extends AppBaseController
         }
         $marks = $this->markRepository->allQuery()->where([
             ['course_id', $course->id],
-            ['session_mark_id',$sessionMark->id]
+            ['session_mark_id', $sessionMark->id]
         ])->get()->keyBy('course_student_id');
 
         foreach ($marks as $k => $mark) {
@@ -218,14 +234,14 @@ class MarkController extends AppBaseController
 
 
             $mark->update($markScore);
-            if($k == 3)
+            if ($k == 3)
                 dd($mark, $markScore);
         }
 
 
         Flash::success('Lưu điểm thành công.');
 
-        return redirect(route('marks.index', $course_id).'?session_mark='.$sessionMark->id);
+        return redirect(route('marks.index', $course_id) . '?session_mark=' . $sessionMark->id);
     }
 
 
@@ -246,10 +262,10 @@ class MarkController extends AppBaseController
         }
 
         $markTypeDetail = $this->markTypeDetailRepository->all(['mark_type_id' => $course->mark_type_id])->sortBy('column_number')->keyBy('column_name');
-        Excel::import(new MarksImport($request->course_id,$sessionMark, $markTypeDetail), $request->fileImport);
+        Excel::import(new MarksImport($request->course_id, $sessionMark, $markTypeDetail), $request->fileImport);
         Flash::success('Import điểm thành công.');
 
-        return redirect(route('marks.index', $course->id).'?session_mark='.$sessionMark->id);
+        return redirect(route('marks.index', $course->id) . '?session_mark=' . $sessionMark->id);
     }
 
     /**

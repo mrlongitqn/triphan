@@ -46,7 +46,8 @@ class Course extends Model
         'schedules',
         'open',
         'close',
-        'mark_type_id'
+        'mark_type_id',
+        'benchmark'
     ];
 
     /**
@@ -67,7 +68,8 @@ class Course extends Model
         'user_id' => 'integer',
         'schedules'=>'string',
         'open'=>'string',
-        'close'=>'string'
+        'close'=>'string',
+        'benchmark'=>'float'
     ];
 
     /**
