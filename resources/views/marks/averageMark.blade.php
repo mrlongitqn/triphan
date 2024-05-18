@@ -52,7 +52,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Quản lý điểm</h1>
+                    <h1>Điểm trung bình</h1>
                 </div>
             </div>
         </div>
@@ -95,7 +95,7 @@
                                                                                     @if($course->id == $selected_course->id)
                                                                                         class="jstree-clicked"
                                                                                     @endif
-                                                                                    href="{{route('marks.index', $course->id)}}">{{$course->course}}</a>
+                                                                                    href="{{route('marks.avg', $course->id)}}">{{$course->course}}</a>
                                                                             </li>
                                                                         @endforeach
                                                                     </ul>
@@ -116,7 +116,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="card-title">
-
+                                    Điểm chuẩn: {{number_format($selected_course->benchmark,1)}}
                                 </div>
                                 <div class="card-tools">
 
@@ -152,9 +152,8 @@
                             </div>
 
                             <div class="card-body table-responsive p-0">
-
-
-                                    <table id="tableStudent" class="table table-hover text-nowrap">
+                                <form action="{{route('courseStudent.upLevel')}}" method="post">
+                                    <table id="modalCourses" class="table table-hover text-nowrap">
                                         <thead>
                                         <tr>
                                             <th>Mã học viên</th>
@@ -177,7 +176,7 @@
                                                     </th>
                                                 @endforeach
                                             @endif
-                                            <th>Đánh giá</th>
+                                            <th></th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -193,62 +192,69 @@
                                                                    min="0"
                                                                    max="10" step="0.1" width="24"
                                                                    height="24"
-                                                                   name="{{$student->id}}_score1"
-                                                                   value="{{$marks[$student->id]->avg_score1}}"/></td>
+                                                                   value="{{number_format($marks[$student->id]->avg_score1,1)}}"/>
+                                                        </td>
                                                         <td><input readonly type="number"
                                                                    min="0"
                                                                    max="10" step="0.1" width="24"
                                                                    height="24"
-                                                                   name="{{$student->id}}_score2"
-                                                                   value="{{$marks[$student->id]->avg_score2}}"/></td>
-                                                        <td><input {{!in_array(3, $scores)?'readonly':''}} type="number"
+                                                                   value="{{number_format($marks[$student->id]->avg_score2,1)}}"/>
+                                                        </td>
+                                                        <td><input readonly type="number"
                                                                    min="0"
                                                                    max="10" step="0.1" width="24"
                                                                    height="24"
-                                                                   name="{{$student->id}}_score3"
-                                                                   value="{{$marks[$student->id]->avg_score3}}"/></td>
+                                                                   value="{{number_format($marks[$student->id]->avg_score3,1)}}"/>
+                                                        </td>
+                                                        <td><input readonly
+                                                                   type="number"
+                                                                   min="0" max="10" step="0.1" width="24"
+                                                                   height="24"
+
+                                                                   value="{{number_format($marks[$student->id]->avg_score4,1)}}"/>
+                                                        </td>
+                                                        <td><input readonly type="number"
+                                                                   min="0"
+                                                                   max="10" step="0.1" width="24"
+                                                                   height="24"
+
+                                                                   value="{{number_format($marks[$student->id]->avg_score5,1)}}"/>
+                                                        </td>
+                                                        <td><input readonly type="number"
+                                                                   min="0"
+                                                                   max="10" step="0.1" width="24"
+                                                                   height="24"
+
+                                                                   value="{{number_format($marks[$student->id]->avg_score6,1)}}"/>
+                                                        </td>
+                                                        <td><input readonly type="number"
+                                                                   min="0"
+                                                                   max="10" step="0.1" width="24"
+                                                                   height="24"
+
+                                                                   value="{{number_format($marks[$student->id]->avg_score7,1)}}"/>
+                                                        </td>
+                                                        <td><input readonly type="number"
+                                                                   min="0"
+                                                                   max="10" step="0.1" width="24"
+                                                                   height="24"
+
+                                                                   value="{{number_format($marks[$student->id]->avg_score8,1)}}"/>
+                                                        </td>
+                                                        <td><input readonly type="number"
+                                                                   min="0"
+                                                                   max="10" step="0.1" width="24"
+                                                                   height="24"
+
+                                                                   value="{{number_format($marks[$student->id]->avg_score9,1)}}"/>
+                                                        </td>
                                                         <td><input
-                                                                {{!in_array(4 , $scores)?'readonly':''}} type="number"
+                                                                readonly type="number"
                                                                 min="0" max="10" step="0.1" width="24"
                                                                 height="24"
-                                                                name="{{$student->id}}_score4"
-                                                                value="{{$marks[$student->id]->avg_score4}}"/></td>
-                                                        <td><input {{!in_array(5, $scores)?'readonly':''}} type="number"
-                                                                   min="0"
-                                                                   max="10" step="0.1" width="24"
-                                                                   height="24"
-                                                                   name="{{$student->id}}_score5"
-                                                                   value="{{$marks[$student->id]->avg_score5}}"/></td>
-                                                        <td><input {{!in_array(6, $scores)?'readonly':''}} type="number"
-                                                                   min="0"
-                                                                   max="10" step="0.1" width="24"
-                                                                   height="24"
-                                                                   name="{{$student->id}}_score6"
-                                                                   value="{{$marks[$student->id]->avg_score6}}"/></td>
-                                                        <td><input {{!in_array(7, $scores)?'readonly':''}} type="number"
-                                                                   min="0"
-                                                                   max="10" step="0.1" width="24"
-                                                                   height="24"
-                                                                   name="{{$student->id}}_score7"
-                                                                   value="{{$marks[$student->id]->avg_score7}}"/></td>
-                                                        <td><input {{!in_array(8, $scores)?'readonly':''}} type="number"
-                                                                   min="0"
-                                                                   max="10" step="0.1" width="24"
-                                                                   height="24"
-                                                                   name="{{$student->id}}_score8"
-                                                                   value="{{$marks[$student->id]->avg_score8}}"/></td>
-                                                        <td><input {{!in_array(9, $scores)?'readonly':''}} type="number"
-                                                                   min="0"
-                                                                   max="10" step="0.1" width="24"
-                                                                   height="24"
-                                                                   name="{{$student->id}}_score9"
-                                                                   value="{{$marks[$student->id]->avg_score9}}"/></td>
-                                                        <td><input
-                                                                {{!in_array(10, $scores)?'readonly':''}} type="number"
-                                                                min="0" max="10" step="0.1" width="24"
-                                                                height="24"
-                                                                name="{{$student->id}}_score10"
-                                                                value="{{$marks[$student->id]->avg_score10}}"/></td>
+
+                                                                value="{{number_format($marks[$student->id]->avg_score10,1)}}"/>
+                                                        </td>
                                                     @else
                                                         @foreach($markTypeDetail as $key=>$val)
                                                             @php
@@ -257,34 +263,39 @@
                                                             <td>
                                                                 <input
                                                                     readonly type="number"
+                                                                    class="{{$selected_course->benchmark<=$marks[$student->id]->$scoreField?'more-than':'less-than'}}"
                                                                     min="0" max="10" step="0.1" width="24"
                                                                     height="24"
                                                                     name="{{$student->id}}_score{{$val->column_number}}"
-                                                                    value="{{$marks[$student->id]->$scoreField}}"/></td>
-                                                        @endforeach
-                                                    @endif
-                                                        <td><input type="text"  name="{{$student->id}}_note"
-                                                                   value="{{$marks[$student->id]->note}}"></td>
-                                                @else
-                                                    @if(count($markTypeDetail)==0)
-                                                        <td><input readonly width="24" height="24" /></td>
-                                                        <td><input readonly width="24" height="24" /></td>
-                                                        <td><input readonly width="24" height="24" /></td>
-                                                        <td><input readonly width="24" height="24" /></td>
-                                                        <td><input readonly width="24" height="24" /></td>
-                                                        <td><input readonly width="24" height="24" /></td>
-                                                        <td><input readonly width="24" height="24" /></td>
-                                                        <td><input readonly width="24" height="24" /></td>
-                                                        <td><input readonly width="24" height="24" /></td>
-                                                        <td><input readonly width="24" height="24" /></td>
-                                                    @else
-                                                        @foreach($markTypeDetail as $key=>$val)
-                                                            <td>
-                                                                <input readonly type="number" width="24" height="24" />
+                                                                    value="{{number_format($marks[$student->id]->$scoreField,1)}}"/>
                                                             </td>
                                                         @endforeach
                                                     @endif
-                                                        <td><input type="text" readonly  /></td>
+                                                    <td>
+                                                        <input type="checkbox" name="student_ids[]"
+                                                               value="{{$student->id}}"/>
+                                                    </td>
+                                                @else
+                                                    @if(count($markTypeDetail)==0)
+                                                        <td><input readonly width="24" height="24"/></td>
+                                                        <td><input readonly width="24" height="24"/></td>
+                                                        <td><input readonly width="24" height="24"/></td>
+                                                        <td><input readonly width="24" height="24"/></td>
+                                                        <td><input readonly width="24" height="24"/></td>
+                                                        <td><input readonly width="24" height="24"/></td>
+                                                        <td><input readonly width="24" height="24"/></td>
+                                                        <td><input readonly width="24" height="24"/></td>
+                                                        <td><input readonly width="24" height="24"/></td>
+                                                        <td><input readonly width="24" height="24"/></td>
+                                                    @else
+                                                        @foreach($markTypeDetail as $key=>$val)
+                                                            <td>
+                                                                <input readonly type="number" width="24" height="24"/>
+                                                            </td>
+                                                        @endforeach
+                                                    @endif
+                                                    <td><input type="checkbox" name="student_ids[]"
+                                                               value="{{$student->id}}"/></td>
                                                 @endif
 
                                             </tr>
@@ -292,11 +303,46 @@
 
                                         </tbody>
                                     </table>
+                                    <div class="modal fade" id="modal-sm" style="display: none;" aria-hidden="true">
+                                        <div class="modal-dialog modal-sm">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title">Vui lòng chọn lớp cần nâng</h4>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+
+                                                    <div class="form-group">
+                                                        <div class="custom-control custom-radio">
+                                                            <input class="custom-control-input" type="radio"
+                                                                   id="customRadio1" name="customRadio">
+                                                            <label for="customRadio1" class="custom-control-label">Custom
+                                                                Radio</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer justify-content-between">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                                                        Đóng
+                                                    </button>
+                                                    <button type="button" id="btnExport" class="btn btn-primary">Xuất
+                                                        EXCEL
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <p>
+                                        Tổng số {{$courseStudent->count()}} học viên,
+                                        có {{$courseStudent->where('status','=',1)->count()}} học viên nghỉ học
+                                    </p>
                                 </form>
-                                <p>
-                                    Tổng số {{$courseStudent->count()}} học viên,
-                                    có {{$courseStudent->where('status','=',1)->count()}} học viên nghỉ học
-                                </p>
                             </div>
                             <div class="card-footer">
 

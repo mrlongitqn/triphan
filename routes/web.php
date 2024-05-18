@@ -61,6 +61,7 @@ Route::prefix("")->middleware('auth')->group(function () {
         Route::post('/update-session', [App\Http\Controllers\CourseStudentController::class, 'updateSession'])->name('courseStudents.updateSession');
         Route::get('/print-list/{course?}/{status?}', [App\Http\Controllers\CourseStudentController::class, 'printList'])->name('courseStudents.printList');
         Route::get('/print-list-by-session/{course?}/{session?}', [App\Http\Controllers\CourseStudentController::class, 'printListBySession'])->name('courseStudents.printListBySession');
+        Route::post('/up-level', [\App\Http\Controllers\CourseStudentController::class, 'upLevel'])->name('courseStudents.upLevel');
     });
 
     Route::prefix('fees')->group(function () {
@@ -88,11 +89,12 @@ Route::prefix("")->middleware('auth')->group(function () {
     });
     Route::prefix('marks')->group(function () {
         Route::get('/{id?}', [\App\Http\Controllers\MarkController::class, 'index'])->name('marks.index');
-        Route::get('/avg-marks/{id?}', [\App\Http\Controllers\MarkController::class, 'averageMark'])->name('avg_marks.index');
+
         Route::post('/save', [\App\Http\Controllers\MarkController::class, 'store'])->name('marks.store');
         Route::post('/import', [\App\Http\Controllers\MarkController::class, 'import'])->name('marks.import');
         Route::get('/export/{id?}', [\App\Http\Controllers\MarkController::class, 'exportMarks'])->name('marks.exportMarks');
     });
+    Route::get('mark/avg-marks/{id?}', [\App\Http\Controllers\MarkController::class, 'averageMark'])->name('marks.avg');
     //Route::resource('marks', App\Http\Controllers\MarkController::class);
 
     Route::resource('sessionMarks', App\Http\Controllers\SessionMarkController::class);

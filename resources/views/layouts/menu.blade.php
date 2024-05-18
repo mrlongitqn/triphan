@@ -54,8 +54,14 @@
 </li>
 <li class="nav-item">
     <a href="{{ route('marks.index') }}"
-       class="nav-link {{ Request::is('marks*') ? 'active' : '' }}">
+       class="nav-link {{ Request::is('marks/*') ? 'active' : '' }}">
         <p>Quản lý điểm</p>
+    </a>
+</li>
+<li class="nav-item">
+    <a href="{{ route('marks.avg') }}"
+       class="nav-link {{ Request::is('mark/avg-*') ? 'active' : '' }}">
+        <p>Điểm trung bình</p>
     </a>
 </li>
 <li class="nav-item">

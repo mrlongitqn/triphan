@@ -329,4 +329,9 @@ class CourseStudentController extends AppBaseController
         $sessionModel = $this->courseSessionRepository->find($session);
         return view('course_students.listStudent', compact('courseModel', 'studentSession', 'sessionModel'));
     }
+
+   public function upLevel(Request  $request)
+   {
+
+   }
 }

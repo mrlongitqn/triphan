@@ -234,8 +234,6 @@ class MarkController extends AppBaseController
 
 
             $mark->update($markScore);
-            if ($k == 3)
-                dd($mark, $markScore);
         }
 
 
