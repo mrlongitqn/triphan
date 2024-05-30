@@ -52,7 +52,7 @@ class CourseStudentController extends AppBaseController
     private $markRepository;
 
     public function __construct(CourseStudentRepository $courseStudentRepo, LevelRepository $levelRepository, CourseRepository $courseRepository, SubjectRepository $subjectRepository, StudentRepository $studentRepository,
-                                CourseSessionRepository $courseSessionRepository, CourseSessionStudentRepository $courseSessionStudentRepository, MarkRepository  $markRepository)
+                                CourseSessionRepository $courseSessionRepository, CourseSessionStudentRepository $courseSessionStudentRepository, MarkRepository $markRepository)
     {
         $this->courseStudentRepository = $courseStudentRepo;
         $this->levelRepository = $levelRepository;
@@ -75,7 +75,7 @@ class CourseStudentController extends AppBaseController
     {
         $levels = $this->levelRepository->all();
         $subjects = $this->subjectRepository->all();
-        $courses = $this->courseRepository->all(['status'=>0]);
+        $courses = $this->courseRepository->all(['status' => 0]);
         if (count($courses) === 0) {
             Flash::error('Vui lòng tạo các lớp học trước.');
             return redirect(route('courses.index'));
@@ -135,12 +135,7 @@ class CourseStudentController extends AppBaseController
             return redirect(route('courseStudents.index', $request->course_id));
         }
         $courseStudent = $this->courseStudentRepository->create($input);
-//        $this->markRepository->create([
-//            'course_student_id' => $courseStudent->id,
-//            'course_id'=>$request->course_id,
-//            'student_id'=>$request->student_id,
-//            'status'=>0
-//        ]);
+
         if ($request->has('courseSession')) {
             $courseSessions = $request->courseSession;
             foreach ($courseSessions as $courseSession) {
@@ -148,7 +143,7 @@ class CourseStudentController extends AppBaseController
                     'course_id' => $request->course_id,
                     'session_id' => $courseSession,
                     'student_id' => $request->student_id,
-                    'course_student_id'=>$courseStudent->id,
+                    'course_student_id' => $courseStudent->id,
                 ]);
             }
         }
@@ -184,7 +179,7 @@ class CourseStudentController extends AppBaseController
                     'course_id' => $courseStudent->course_id,
                     'student_id' => $courseStudent->student_id,
                     'session_id' => $i,
-                    'course_student_id'=>$data['studentCourseId']
+                    'course_student_id' => $data['studentCourseId']
                 ]);
             }
         } else {
@@ -313,25 +308,55 @@ class CourseStudentController extends AppBaseController
         ]);
     }
 
-    public function printList($course, $type='all'){
-        switch ($type){
-            case 'on':$status = [0]; break;
-            case 'off':$status = [1]; break;
-            default :$status = [0,1]; break;
+    public function printList($course, $type = 'all')
+    {
+        switch ($type) {
+            case 'on':
+                $status = [0];
+                break;
+            case 'off':
+                $status = [1];
+                break;
+            default :
+                $status = [0, 1];
+                break;
         }
-        $courseModel  = $this->courseRepository->find($course);
+        $courseModel = $this->courseRepository->find($course);
         $studentSession = $this->courseStudentRepository->getByCourse($course, $status)->get();
         return view('course_students.listStudent', compact('courseModel', 'studentSession'));
     }
-    public function printListBySession($course = 0, $session = 0){
-        $courseModel  = $this->courseRepository->find($course);
-        $studentSession = $this->courseSessionStudentRepository->listStudentBySession($course,$session);
+
+    public function printListBySession($course = 0, $session = 0)
+    {
+        $courseModel = $this->courseRepository->find($course);
+        $studentSession = $this->courseSessionStudentRepository->listStudentBySession($course, $session);
         $sessionModel = $this->courseSessionRepository->find($session);
         return view('course_students.listStudent', compact('courseModel', 'studentSession', 'sessionModel'));
     }
 
-   public function upLevel(Request  $request)
-   {
+    public function upLevel(Request $request)
+    {
+        $course_id = $request->course_up;
+        $studentIds = $request->student_ids;
+        $course = $this->levelRepository->find($course_id);
+        foreach ($studentIds as $key => $id) {
+            $exist = $this->courseStudentRepository->all([
+                'course_id' => $course_id,
+                'student_id' => $id
+            ])->count();
+            if ($exist > 0) {
+                continue;
+            }
 
-   }
+            $input['course_id'] = $course_id;
+            $input['student_id'] = $id;
+            $input['status'] = 0;
+            $input['fee_status'] = 0;
+            $input['note'] = '';
+            $input['user_id'] = $request->user()->id;
+            $this->courseStudentRepository->create($input);
+        }
+        Flash::success('Đã nâng lớp thành công.');
+        return redirect()->back();
+    }
 }

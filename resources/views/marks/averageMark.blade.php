@@ -152,7 +152,38 @@
                             </div>
 
                             <div class="card-body table-responsive p-0">
-                                <form action="{{route('courseStudent.upLevel')}}" method="post">
+                                <form id="frmUp" action="{{route('courseStudents.upLevel')}}" method="post">
+                                    {{csrf_field()}}
+                                    <div class="modal fade" id="modal-level" style="display: none;" aria-hidden="true">
+                                        <div class="modal-dialog modal-sm">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title">Nâng lớp</h4>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+
+                                                    <h6>Vui lòng chọn lớp cần nâng</h6>
+                                                        <div class="row">
+                                                            <select name="course_up" class="course-level" style="width: 100%">
+                                                                @foreach($courses as $course)
+
+                                                                    <option value="{{$course->id}}">{{$course->course}} - {{$course->start_date->format('d/m/Y')}}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                </div>
+                                                <div class="modal-footer justify-content-between">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal"> Đóng</button>
+                                                    <button type="button" id="btnUp" class="btn btn-primary">Nâng lớp</button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
                                     <table id="modalCourses" class="table table-hover text-nowrap">
                                         <thead>
                                         <tr>
@@ -190,67 +221,67 @@
                                                     @if(count($markTypeDetail)==0)
                                                         <td><input readonly type="number"
                                                                    min="0"
-                                                                   max="10" step="0.1" width="24"
+                                                                   max="10" step="0.1" size="5"
                                                                    height="24"
                                                                    value="{{number_format($marks[$student->id]->avg_score1,1)}}"/>
                                                         </td>
                                                         <td><input readonly type="number"
                                                                    min="0"
-                                                                   max="10" step="0.1" width="24"
+                                                                   max="10" step="0.1" size="5"
                                                                    height="24"
                                                                    value="{{number_format($marks[$student->id]->avg_score2,1)}}"/>
                                                         </td>
                                                         <td><input readonly type="number"
                                                                    min="0"
-                                                                   max="10" step="0.1" width="24"
+                                                                   max="10" step="0.1" size="5"
                                                                    height="24"
                                                                    value="{{number_format($marks[$student->id]->avg_score3,1)}}"/>
                                                         </td>
                                                         <td><input readonly
                                                                    type="number"
-                                                                   min="0" max="10" step="0.1" width="24"
+                                                                   min="0" max="10" step="0.1" size="5"
                                                                    height="24"
 
                                                                    value="{{number_format($marks[$student->id]->avg_score4,1)}}"/>
                                                         </td>
                                                         <td><input readonly type="number"
                                                                    min="0"
-                                                                   max="10" step="0.1" width="24"
+                                                                   max="10" step="0.1" size="5"
                                                                    height="24"
 
                                                                    value="{{number_format($marks[$student->id]->avg_score5,1)}}"/>
                                                         </td>
                                                         <td><input readonly type="number"
                                                                    min="0"
-                                                                   max="10" step="0.1" width="24"
+                                                                   max="10" step="0.1" size="5"
                                                                    height="24"
 
                                                                    value="{{number_format($marks[$student->id]->avg_score6,1)}}"/>
                                                         </td>
                                                         <td><input readonly type="number"
                                                                    min="0"
-                                                                   max="10" step="0.1" width="24"
+                                                                   max="10" step="0.1" size="5"
                                                                    height="24"
 
                                                                    value="{{number_format($marks[$student->id]->avg_score7,1)}}"/>
                                                         </td>
                                                         <td><input readonly type="number"
                                                                    min="0"
-                                                                   max="10" step="0.1" width="24"
+                                                                   max="10" step="0.1" size="5"
                                                                    height="24"
 
                                                                    value="{{number_format($marks[$student->id]->avg_score8,1)}}"/>
                                                         </td>
                                                         <td><input readonly type="number"
                                                                    min="0"
-                                                                   max="10" step="0.1" width="24"
+                                                                   max="10" step="0.1" size="5"
                                                                    height="24"
 
                                                                    value="{{number_format($marks[$student->id]->avg_score9,1)}}"/>
                                                         </td>
                                                         <td><input
                                                                 readonly type="number"
-                                                                min="0" max="10" step="0.1" width="24"
+                                                                min="0" max="10" step="0.1" size="5"
                                                                 height="24"
 
                                                                 value="{{number_format($marks[$student->id]->avg_score10,1)}}"/>
@@ -264,9 +295,8 @@
                                                                 <input
                                                                     readonly type="number"
                                                                     class="{{$selected_course->benchmark<=$marks[$student->id]->$scoreField?'more-than':'less-than'}}"
-                                                                    min="0" max="10" step="0.1" width="24"
+                                                                    min="0" max="10" step="0.1" size="5"
                                                                     height="24"
-                                                                    name="{{$student->id}}_score{{$val->column_number}}"
                                                                     value="{{number_format($marks[$student->id]->$scoreField,1)}}"/>
                                                             </td>
                                                         @endforeach
@@ -277,20 +307,20 @@
                                                     </td>
                                                 @else
                                                     @if(count($markTypeDetail)==0)
-                                                        <td><input readonly width="24" height="24"/></td>
-                                                        <td><input readonly width="24" height="24"/></td>
-                                                        <td><input readonly width="24" height="24"/></td>
-                                                        <td><input readonly width="24" height="24"/></td>
-                                                        <td><input readonly width="24" height="24"/></td>
-                                                        <td><input readonly width="24" height="24"/></td>
-                                                        <td><input readonly width="24" height="24"/></td>
-                                                        <td><input readonly width="24" height="24"/></td>
-                                                        <td><input readonly width="24" height="24"/></td>
-                                                        <td><input readonly width="24" height="24"/></td>
+                                                        <td><input readonly size="5" height="24"/></td>
+                                                        <td><input readonly size="5" height="24"/></td>
+                                                        <td><input readonly size="5" height="24"/></td>
+                                                        <td><input readonly size="5" height="24"/></td>
+                                                        <td><input readonly size="5" height="24"/></td>
+                                                        <td><input readonly size="5" height="24"/></td>
+                                                        <td><input readonly size="5" height="24"/></td>
+                                                        <td><input readonly size="5" height="24"/></td>
+                                                        <td><input readonly size="5" height="24"/></td>
+                                                        <td><input readonly size="5" height="24"/></td>
                                                     @else
                                                         @foreach($markTypeDetail as $key=>$val)
                                                             <td>
-                                                                <input readonly type="number" width="24" height="24"/>
+                                                                <input readonly type="number" size="5" height="24"/>
                                                             </td>
                                                         @endforeach
                                                     @endif
@@ -303,45 +333,22 @@
 
                                         </tbody>
                                     </table>
-                                    <div class="modal fade" id="modal-sm" style="display: none;" aria-hidden="true">
-                                        <div class="modal-dialog modal-sm">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title">Vui lòng chọn lớp cần nâng</h4>
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                            aria-label="Close">
-                                                        <span aria-hidden="true">×</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
 
-                                                    <div class="form-group">
-                                                        <div class="custom-control custom-radio">
-                                                            <input class="custom-control-input" type="radio"
-                                                                   id="customRadio1" name="customRadio">
-                                                            <label for="customRadio1" class="custom-control-label">Custom
-                                                                Radio</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer justify-content-between">
-                                                    <button type="button" class="btn btn-default" data-dismiss="modal">
-                                                        Đóng
-                                                    </button>
-                                                    <button type="button" id="btnExport" class="btn btn-primary">Xuất
-                                                        EXCEL
-                                                    </button>
-                                                </div>
-                                            </div>
+                                        <div>
 
+                                                <p style="width: 50%; float: left">
+                                                    Tổng số {{$courseStudent->count()}} học viên,
+                                                    có {{$courseStudent->where('status','=',1)->count()}} học viên nghỉ học
+                                                </p>
+
+                                            <button type="button" class="btn btn-primary float-right" data-toggle="modal"
+                                                    data-target="#modal-level">
+                                                <i class="fas fa-file-export"></i> Nâng lớp
+                                            </button>
                                         </div>
 
-                                    </div>
 
-                                    <p>
-                                        Tổng số {{$courseStudent->count()}} học viên,
-                                        có {{$courseStudent->where('status','=',1)->count()}} học viên nghỉ học
-                                    </p>
+
                                 </form>
                             </div>
                             <div class="card-footer">
@@ -463,44 +470,13 @@
                     $('#modal-sm').modal('hide');
                     $('#formExport').submit();
                 });
-                $('#btnSave').on('click', function () {
-                    let scores = $('#frmMark :input[type="number"]:not(:readonly)');
-                    $('#frmMark').submit();
-                });
-                $('#frmMark :input[type="number"]:not(:readonly)').on('keydown', function (e) {
-                    if (e.key === 'F5')
-                        e.preventDefault();
-                });
-                $('#frmMark :input[type="number"]:not(:readonly)').on('input', function () {
-                    // Lấy giá trị nhập vào
-                    var inputValue = $(this).val();
+                $('#btnUp').on('click', function () {
 
-                    // Chuyển đổi giá trị thành số thực (decimal)
-                    var floatValue = parseFloat(inputValue);
-
-                    // Kiểm tra nếu giá trị không nằm trong khoảng từ 0 đến 10
-                    if (isNaN(floatValue) || floatValue < 0 || floatValue > 10) {
-                        // Nếu không hợp lệ, đặt giá trị về null
-                        $(this).val(0);
-
-                    }
+                    $('#modal-sm').modal('hide');
+                    $('#frmUp').submit();
                 });
 
-                function isValidExcelFile(file) {
-                    const allowedExtensions = ['.xls', '.xlsx'];
-                    const fileName = file.name.toLowerCase();
-                    return allowedExtensions.some(ext => fileName.endsWith(ext));
-                }
-
-                $('#btnImport').on('click', function () {
-                    const selectedFile = $('#fileImport')[0].files[0];
-                    if (selectedFile && isValidExcelFile(selectedFile)) {
-                        $('#frmImport').submit();
-                    } else {
-                        alert('Vui lòng chọn một tệp Excel hợp lệ.');
-                    }
-                });
-
+                $('.course-level').select2();
             </script>
     @endpush
 

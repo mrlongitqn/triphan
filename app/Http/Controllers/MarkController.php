@@ -173,6 +173,7 @@ class MarkController extends AppBaseController
         }
 
         $selected_course = $id == null ? $courses[0] : $courses->find($id);
+
         if ($selected_course === null) {
             Flash::error('Lớp học không tồn tại.');
             return redirect(route('marks.index'));
@@ -180,7 +181,7 @@ class MarkController extends AppBaseController
 
         $courseStudent = $this->courseStudentRepository->getByCourse($selected_course->id, [0])->get();
         $markTypeDetail = $this->markTypeDetailRepository->all(['mark_type_id' => $selected_course->mark_type_id])->sortBy('column_number');
-        $marks = $this->markRepository->allQuery()->where('course_id', '=', $id)
+        $marks = $this->markRepository->allQuery()->where('course_id', '=', $selected_course->id)
             ->selectRaw('student_id, AVG(score1) as avg_score1, AVG(score2) as avg_score2, AVG(score3) as avg_score3, AVG(score4) as avg_score4, AVG(score5) as avg_score5, AVG(score6) as avg_score6, AVG(score7) as avg_score7, AVG(score8) as avg_score8, AVG(score9) as avg_score9, AVG(score10) as avg_score10')
             ->groupByRaw('student_id')
             ->get()->keyBy('student_id');
