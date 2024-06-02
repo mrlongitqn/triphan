@@ -216,75 +216,75 @@
                                             <tr>
                                                 <td>{{$student->code}}</td>
                                                 <td>{{$student->fullname}} {!! $student->fee_status==1?'':'<span class="badge bg-warning">Nợ học phí</span>' !!}</td>
-                                                @if(isset($marks[$student->id]))
+                                                @if(isset($marks[$student->student_id]))
 
                                                     @if(count($markTypeDetail)==0)
                                                         <td><input readonly type="number"
                                                                    min="0"
                                                                    max="10" step="0.1" size="5"
                                                                    height="24"
-                                                                   value="{{number_format($marks[$student->id]->avg_score1,1)}}"/>
+                                                                   value="{{number_format($marks[$student->student_id]->avg_score1,1)}}"/>
                                                         </td>
                                                         <td><input readonly type="number"
                                                                    min="0"
                                                                    max="10" step="0.1" size="5"
                                                                    height="24"
-                                                                   value="{{number_format($marks[$student->id]->avg_score2,1)}}"/>
+                                                                   value="{{number_format($marks[$student->student_id]->avg_score2,1)}}"/>
                                                         </td>
                                                         <td><input readonly type="number"
                                                                    min="0"
                                                                    max="10" step="0.1" size="5"
                                                                    height="24"
-                                                                   value="{{number_format($marks[$student->id]->avg_score3,1)}}"/>
+                                                                   value="{{number_format($marks[$student->student_id]->avg_score3,1)}}"/>
                                                         </td>
                                                         <td><input readonly
                                                                    type="number"
                                                                    min="0" max="10" step="0.1" size="5"
                                                                    height="24"
 
-                                                                   value="{{number_format($marks[$student->id]->avg_score4,1)}}"/>
+                                                                   value="{{number_format($marks[$student->student_id]->avg_score4,1)}}"/>
                                                         </td>
                                                         <td><input readonly type="number"
                                                                    min="0"
                                                                    max="10" step="0.1" size="5"
                                                                    height="24"
 
-                                                                   value="{{number_format($marks[$student->id]->avg_score5,1)}}"/>
+                                                                   value="{{number_format($marks[$student->student_id]->avg_score5,1)}}"/>
                                                         </td>
                                                         <td><input readonly type="number"
                                                                    min="0"
                                                                    max="10" step="0.1" size="5"
                                                                    height="24"
 
-                                                                   value="{{number_format($marks[$student->id]->avg_score6,1)}}"/>
+                                                                   value="{{number_format($marks[$student->student_id]->avg_score6,1)}}"/>
                                                         </td>
                                                         <td><input readonly type="number"
                                                                    min="0"
                                                                    max="10" step="0.1" size="5"
                                                                    height="24"
 
-                                                                   value="{{number_format($marks[$student->id]->avg_score7,1)}}"/>
+                                                                   value="{{number_format($marks[$student->student_id]->avg_score7,1)}}"/>
                                                         </td>
                                                         <td><input readonly type="number"
                                                                    min="0"
                                                                    max="10" step="0.1" size="5"
                                                                    height="24"
 
-                                                                   value="{{number_format($marks[$student->id]->avg_score8,1)}}"/>
+                                                                   value="{{number_format($marks[$student->student_id]->avg_score8,1)}}"/>
                                                         </td>
                                                         <td><input readonly type="number"
                                                                    min="0"
                                                                    max="10" step="0.1" size="5"
                                                                    height="24"
 
-                                                                   value="{{number_format($marks[$student->id]->avg_score9,1)}}"/>
+                                                                   value="{{number_format($marks[$student->student_id]->avg_score9,1)}}"/>
                                                         </td>
                                                         <td><input
                                                                 readonly type="number"
                                                                 min="0" max="10" step="0.1" size="5"
                                                                 height="24"
 
-                                                                value="{{number_format($marks[$student->id]->avg_score10,1)}}"/>
+                                                                value="{{number_format($marks[$student->student_id]->avg_score10,1)}}"/>
                                                         </td>
                                                     @else
                                                         @foreach($markTypeDetail as $key=>$val)
@@ -294,10 +294,10 @@
                                                             <td>
                                                                 <input
                                                                     readonly type="number"
-                                                                    class="{{$selected_course->benchmark<=$marks[$student->id]->$scoreField?'more-than':'less-than'}}"
+                                                                    class="{{$selected_course->benchmark<=$marks[$student->student_id]->$scoreField?'more-than':'less-than'}}"
                                                                     min="0" max="10" step="0.1" size="5"
                                                                     height="24"
-                                                                    value="{{number_format($marks[$student->id]->$scoreField,1)}}"/>
+                                                                    value="{{number_format($marks[$student->student_id]->$scoreField,1)}}"/>
                                                             </td>
                                                         @endforeach
                                                     @endif
