@@ -51,6 +51,7 @@ Route::prefix("")->middleware('auth')->group(function () {
 
     Route::resource('students', App\Http\Controllers\StudentController::class);
     Route::get('student/search', [App\Http\Controllers\StudentController::class, 'search'])->name('student.search');
+    Route::post('student/import', [App\Http\Controllers\StudentController::class, 'import'])->name('student.import');
 
     Route::prefix('courseStudents')->group(function () {
         Route::get('/{id?}', [App\Http\Controllers\CourseStudentController::class, 'index'])->name('courseStudents.index');

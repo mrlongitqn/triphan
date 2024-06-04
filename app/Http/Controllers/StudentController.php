@@ -6,6 +6,7 @@ use App\DataTables\StudentDataTable;
 use App\Http\Requests;
 use App\Http\Requests\CreateStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
+use App\Imports\StudentImport;
 use App\Mail\ReportTotalEmail;
 use App\Repositories\StudentRepository;
 use DateTime;
@@ -13,6 +14,7 @@ use Flash;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
 use Response;
 
 class StudentController extends AppBaseController
@@ -202,5 +204,13 @@ class StudentController extends AppBaseController
                 ]
             ]
         );
+    }
+
+    public function import(Request $request)
+    {
+        Excel::import(new StudentImport($request->user()->id), $request->fileImport);
+        Flash::success('Import học viên và lớp thành công');
+
+        return redirect()->back();
     }
 }
