@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,9 +18,11 @@ Auth::routes();
 //    return view('welcome');
 //});
 //
+
 Route::prefix("")->middleware('auth')->group(function () {
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/reset', [App\Http\Controllers\HomeController::class, 'reset'])->name('reset');
 
 
     Route::get('generator_builder', '\InfyOm\GeneratorBuilder\Controllers\GeneratorBuilderController@builder')->name('io_generator_builder');

@@ -46,12 +46,12 @@
     <div class="row">
         <div class="col-12" style="text-align: center">
             <h2>
-                CÔNG TY TNHH GIÁO DỤC TRÍ PHAN
+                {{config('app.info_name')}}
             </h2>
             <h4>
-                ĐC: 32-34 Bàu Năng 2, P.Hòa Minh, Q.Liên Chiểu, TP.Đà Nẵng
+                ĐC: {{config('app.info_add')}}
             </h4>
-            <h4>MST: 0401 828 513 * ĐT: 0905 290 857</h4>
+            <h4>ĐT: {{config('app.info_phone')}}</h4>
 
         </div>
     </div>

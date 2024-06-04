@@ -52,6 +52,7 @@
 @php
     $current = \Illuminate\Support\Facades\Date::now();
     $total = 0;
+    $newFee = 0;
 @endphp
 @section('body')
 
@@ -60,12 +61,22 @@
         <div class="row">
             <div class="col-12" style="text-align: center">
                 <h3>
-                    CÔNG TY TNHH GIÁO DỤC TRÍ PHAN
+                    {{config('app.info_name')}}
                 </h3>
                 <h5>
-                    ĐC: 32-34 Bàu Năng 2, P.Hòa Minh, Q.Liên Chiểu, TP.Đà Nẵng
+                    ĐC: {{config('app.info_add')}}
                 </h5>
-                <h5>MST: 0401 828 513 * ĐT: 0905 290 857</h5>
+                <h5>ĐT: {{config('app.info_phone')}} - Email: {{config('app.info_mail')}}</h5>
+
+            </div>
+            <div class="col-12" style="text-align: center">
+                <h3>
+                    TRUNG TÂM GIÁO DỤC TRÍ PHAN CLC
+                </h3>
+                <h5>
+                    ĐC: 19 Tống Duy Tân, Hòa Minh, Liên Chiểu, TP.Đà Nẵng
+                </h5>
+                <h5>ĐT: 0986 408 407 - Email: triphanclc@gmail.com</h5>
 
             </div>
         </div>
@@ -131,13 +142,20 @@
                     <tr>
                         <th width="40px">STT</th>
                         <th width="250px">Môn học</th>
-                        <th>Tình trạng</th>
                         <th>Học phí</th>
+                        <th>Tình trạng</th>
+
                     </tr>
                     @foreach($courses as $key => $course)
                         <tr>
                             <td class="text-center">{{$key+1}}</td>
                             <td>{{$course->course}}</td>
+                            <td>
+                                {{number_format($course->fee) }} VNĐ/Tháng
+                                @php
+                                    $newFee = $newFee + $course->fee
+                                @endphp
+                            </td>
                             <td>
                                 @if($course->fee_status==1)
                                     Đã hoàn tất
@@ -150,10 +168,6 @@
                                     Nợ từ tháng ({{$course->debt_month_start->format('m-Y')}})
                                 @endif
                             </td>
-
-                            <td>
-                                {{number_format($course->fee) }} VNĐ/Tháng
-                            </td>
                         </tr>
                     @endforeach
                 </table>
@@ -161,6 +175,8 @@
 
             <div class="col-12">
                 <h4>Học phí còn nợ : <strong>{{number_format($total)}} VNĐ</strong></h4>
+                <h4>Học phí đợt mới : <strong>{{number_format($newFee*2)}} VNĐ</strong></h4>
+                <h4>Tổng cần đóng : <strong>{{number_format($total + $newFee*2)}} VNĐ</strong></h4>
                 <p>Trong thời gian 2 tuần, quý phụ huynh vui lòng hoàn thành học phí học tập. Sau thời gian này, văn
                     phòng Trí Phan sẽ chốt danh sách học sinh cho giáo viên phụ trách để điểm danh cũng như việc đưa các
                     em vào lớp. </p>

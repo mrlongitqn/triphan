@@ -68,12 +68,12 @@
     <div class="row">
         <div class="col-9">
             <h2>
-               CÔNG TY TNHH GIÁO DỤC TRÍ PHAN
+                {{config('app.info_name')}}
             </h2>
             <h4>
-                ĐC: 32-34 Bàu Năng 2, P.Hòa Minh, Q.Liên Chiểu, TP.Đà Nẵng
+                ĐC: {{config('app.info_add')}}
             </h4>
-            <h4>MST: 0401 828 513 * ĐT: 0905 290 857</h4>
+            <h4>ĐT: {{config('app.info_phone')}} - Email: {{config('app.info_mail')}}</h4>
 
         </div>
         <div class="col-3">
@@ -126,17 +126,13 @@
 
     </div>
     <div class="row text-center" id="footer">
-        <div class="col-4">
-            <p><br/></p>
-            <p><strong>Giám đốc</strong></p>
-            <p>(Ký và ghi rõ họ tên)</p>
-        </div>
-        <div class="col-4">
+
+        <div class="col-6">
             <p><br/></p>
             <p><strong>Người nộp tiền</strong></p>
             <p>(Ký và ghi rõ họ tên)</p>
         </div>
-        <div class="col-4">
+        <div class="col-6">
             @php
             $date = \Carbon\Carbon::parse($fee->created_at);
             @endphp

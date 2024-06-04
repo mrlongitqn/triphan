@@ -14,6 +14,10 @@ return [
     */
 
     'name' => env('APP_NAME', 'Trí Phan'),
+    'info_name'=>'TRUNG TÂM GIÁO DỤC TRÍ PHAN CLC',
+    'info_add'=>'19 Tống Duy Tân, Hòa Minh, Liên Chiểu, TP.Đà Nẵng',
+    'info_phone'=>'0986 408 407',
+    'info_mail'=>'triphanclc@gmail.com',
 
     /*
     |--------------------------------------------------------------------------
